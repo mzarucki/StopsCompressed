@@ -1,3 +1,11 @@
+import os
+
+import FWCore.ParameterSet.VarParsing as VarParsing
+
+options = VarParsing.VarParsing ('standard')
+options.maxEvents = 100 # maxEvents is a registered option. 
+options.parseArguments()
+
 # Auto generated configuration file
 # using: 
 # Revision: 1.19 
@@ -33,7 +41,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(options.maxEvents)
 )
 
 # Input source
@@ -45,7 +53,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/SUS-RunIIAutumn18FSPremix-00052-fragment.py nevts:100'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/SUS-RunIIAutumn18FSPremix-00052-fragment.py nevts:%i'%options.maxEvents),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
