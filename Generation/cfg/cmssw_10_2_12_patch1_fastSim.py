@@ -1,3 +1,10 @@
+import FWCore.ParameterSet.VarParsing as VarParsing
+options = VarParsing.VarParsing ('standard')
+options.maxEvents=1000 # maxEvents is a registered option by default. 
+
+if not 'ipython' in VarParsing.sys.argv[0]: options.parseArguments()
+else: print "No parsing of arguments!"
+
 # Auto generated configuration file
 # using: 
 # Revision: 1.19 
@@ -33,7 +40,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(options.maxEvents)
 )
 
 # Input source
@@ -45,7 +52,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/SUS-RunIIAutumn18FSPremix-00052-fragment.py nevts:100'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/SUS-RunIIAutumn18FSPremix-00052-fragment.py nevts:%i'%options.maxEvents),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -244,7 +251,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(2)
+process.options.numberOfThreads=cms.untracked.uint32(1)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 # filter all path with the production filter sequence
 for path in process.paths:

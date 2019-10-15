@@ -31,7 +31,7 @@ events = Events(['file:/afs/hephy.at/data/cms07/StopsCompressed/fwlite_signals_f
 
 # RECO
 edmCollections = { 
-'genParticles':{'type':'vector<reco:GenParticle>', 'label': ( "genParticles" ) },
+'genParticles':{'type':'vector<reco:GenParticle>', 'label': ( "genParticles", "", "RECO" ) },
 #'jets':{'type':'vector<pat::Jet>', 'label': ( "slimmedJets" ) },
 #    'pfMet':        { 'label':('pfMet'), 'type':'vector<reco::PFMET>'},
     #'pfRecHitsHBHE':{ 'label':("particleFlowRecHitHBHE"), 'type':"vector<reco::PFRecHit>"},
