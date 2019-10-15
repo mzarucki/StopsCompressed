@@ -2,7 +2,6 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_("General")
-config.General.requestName = "Stops2l"
 config.General.workArea    = "Stops2l"
 config.General.transferLogs = True
 
@@ -31,10 +30,17 @@ if __name__ == '__main__':
     import os
     from CRABAPI.RawCommand import crabCommand
 
-    config.Data.outputDatasetTag = "Stops2l"
-    #config.JobType.inputFiles = [os.path.join(gridpack_dir, gridpack)]
-    #config.General.requestName = gridpack.rstrip('.tar.xz').replace('-','m').replace('.','p')
-    config.Data.outputPrimaryDataset = config.General.requestName # dataset name
-    
-    #crabCommand('submit', '--dryrun', config = config)
-    crabCommand('submit', config = config)
+    for mstop, ctau in [ 
+        #(200, 0.001), (200, 0.01), (200, 0.1), (200, 0.2),
+        (250, 0.001), (250, 0.01), (250, 0.1), (250, 0.2), (250, 200),
+        (500, 0.001), (500, 0.01), (500, 0.1), (500, 0.2), (500, 200),
+         ]:
+        config.Data.outputDatasetTag = "Stops2l"
+        #config.JobType.inputFiles = [os.path.join(gridpack_dir, gridpack)]
+        config.General.requestName = "DisplacedStops-mstop-%i-ctau-%s"%( mstop, str(ctau).replace('.','p') )
+        config.Data.outputPrimaryDataset = config.General.requestName # dataset name
+        config.JobType.pyCfgParams = ['mstop=%f'%mstop, 'ctau=%f'%ctau]
+        #print config.Data.outputPrimaryDataset, config.JobType.pyCfgParams
+        #crabCommand('submit', '--dryrun', config = config)
+        crabCommand('submit', config = config)
+    #crabCommand('submit', config = config)
