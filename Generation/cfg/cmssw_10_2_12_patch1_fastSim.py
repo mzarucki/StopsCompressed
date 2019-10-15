@@ -1,10 +1,9 @@
-import os
-
 import FWCore.ParameterSet.VarParsing as VarParsing
-
 options = VarParsing.VarParsing ('standard')
-options.maxEvents = 100 # maxEvents is a registered option. 
-options.parseArguments()
+options.maxEvents=1000 # maxEvents is a registered option by default. 
+
+if not 'ipython' in VarParsing.sys.argv[0]: options.parseArguments()
+else: print "No parsing of arguments!"
 
 # Auto generated configuration file
 # using: 
@@ -252,7 +251,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(2)
+process.options.numberOfThreads=cms.untracked.uint32(1)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 # filter all path with the production filter sequence
 for path in process.paths:
