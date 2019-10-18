@@ -30,17 +30,16 @@ if __name__ == '__main__':
     import os
     from CRABAPI.RawCommand import crabCommand
 
-    for mstop, ctau in [ 
-        #(200, 0.001), (200, 0.01), (200, 0.1), (200, 0.2),
-        (250, 0.001), (250, 0.01), (250, 0.1), (250, 0.2), (250, 200),
-        (500, 0.001), (500, 0.01), (500, 0.1), (500, 0.2), (500, 200),
+    for mstop, dm, ctau in [ 
+        (250, 20, 0.001), (250, 20, 0.01), (250, 20, 0.1), (250, 20, 0.2), (250, 20, 200),
+        (500, 20, 0.001), (500, 20, 0.01), (500, 20, 0.1), (500, 20, 0.2), (500, 20, 200),
          ]:
         config.Data.outputDatasetTag = "Stops2l"
         #config.JobType.inputFiles = [os.path.join(gridpack_dir, gridpack)]
-        config.General.requestName = "DisplacedStops-mstop-%i-ctau-%s"%( mstop, str(ctau).replace('.','p') )
+        config.General.requestName = "DisplacedStops-mstop-%i-dm-%i-ctau-%s"%( mstop, dm, str(ctau).replace('.','p') )
         config.Data.outputPrimaryDataset = config.General.requestName # dataset name
-        config.JobType.pyCfgParams = ['mstop=%f'%mstop, 'ctau=%f'%ctau]
+        config.JobType.pyCfgParams = ['mstop=%f'%mstop, 'dm=%f'%dm, 'ctau=%f'%ctau]
         #print config.Data.outputPrimaryDataset, config.JobType.pyCfgParams
-        #crabCommand('submit', '--dryrun', config = config)
-        crabCommand('submit', config = config)
+        crabCommand('submit', '--dryrun', config = config)
+        #crabCommand('submit', config = config)
     #crabCommand('submit', config = config)
