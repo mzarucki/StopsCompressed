@@ -32,6 +32,9 @@ events = Events(['file:/afs/hephy.at/data/cms07/StopsCompressed/fwlite_signals_f
 # RECO
 edmCollections = { 
 'genParticles':{'type':'vector<reco:GenParticle>', 'label': ( "genParticles", "", "RECO" ) },
+'inclusiveSecondaryVertices':{'type':'vector<reco:Vertex>', 'label': ( "inclusiveSecondaryVertices", "", "RECO" ) },
+'offlinePrimaryVerticesWithBS':{'type':'vector<reco:Vertex>', 'label': ( "offlinePrimaryVerticesWithBS", "", "RECO" ) },
+'inclusiveCandidateSecondaryVertices':{'type':'vector<reco:VertexCompositePtrCandidate>', 'label': ( "inclusiveCandidateSecondaryVertices", "", "RECO" ) },
 #'jets':{'type':'vector<pat::Jet>', 'label': ( "slimmedJets" ) },
 #    'pfMet':        { 'label':('pfMet'), 'type':'vector<reco::PFMET>'},
     #'pfRecHitsHBHE':{ 'label':("particleFlowRecHitHBHE"), 'type':"vector<reco::PFRecHit>"},
@@ -63,17 +66,23 @@ while r.run():
   eaux  = events.eventAuxiliary()
   print r.event.evt, r.event.lumi, r.event.run
   genparticles = r.event.genParticles
+  secondaryVertices = r.event.inclusiveSecondaryVertices
+  primaryVertices = r.event.offlinePrimaryVerticesWithBS
+  incSecondaryVertices = r.event.inclusiveCandidateSecondaryVertices
   print genparticles.size() 
+  print secondaryVertices.size() 
+  print primaryVertices.size() 
+  print incSecondaryVertices.size()
 #  # run/lumi/event
 #  run   = eaux.run()
 #  event = eaux.event()
 #  lumi  = eaux.luminosityBlock()
 #
-#  #read all products as specifed in edmCollections
-#  products = {}
-#  for k, v in edmCollections.iteritems():
-#    events.getByLabel(v['label'], v['handle'])
-#    products[k] = v['handle'].product()
+  #read all products as specifed in edmCollections
+  products = {}
+  for k, v in edmCollections.iteritems():
+    events.getByLabel(v['label'], v['handle'])
+    products[k] = v['handle'].product()
 #
 #  print run,lumi,event
 #  for p in genparticles:

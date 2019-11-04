@@ -1,14 +1,13 @@
 ''' FWLite example
 '''
 # Standard imports
-import ROOT, os
+import ROOT, os, array
 from DataFormats.FWLite import Events, Handle
 from PhysicsTools.PythonAnalysis import *
 from math   import pi, sqrt, sin, cos, atan2
 small = False
 from Analysis.Tools.GenSearch import *
 from RootTools.core.standard import *
-from StopsCompressed.samples.signals import *
 
 from StopsCompressed.tools.user import plot_directory
 #
@@ -29,24 +28,17 @@ args = argParser.parse_args()
 import RootTools.core.logger as _logger_rt
 logger = _logger_rt.get_logger(args.logLevel, logFile = None)
 
-if args.small: args.signalsample += "_small"
-plot_directory = os.path.join(plot_directory,'gen', args.targetDir,args.signalsample)
+if args.small: args.signal += "_small"
+plot_directory = os.path.join(plot_directory,'gen', args.targetDir,args.signal)
 if not os.path.exists( plot_directory ):
     os.makedirs(plot_directory)
     logger.info( "Created plot directory %s", plot_directory )
+from StopsCompressed.samples.signals import *
 
-
-
-
-sample = args.signal # fwlite_signals_DisplacedStops_250_200 #fwlite_signals_fastSim_Stops2l_200k #fwlite_signals_DisplacedStops_500_0p2
+sample = fwlite_signals_DisplacedStops_250_0p2 # fwlite_signals_DisplacedStops_250_200 #fwlite_signals_fastSim_Stops2l_200k #fwlite_signals_DisplacedStops_500_0p2
 print "loading files"
-path = '/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01'
-if not os.path.exists( path ):
-    os.makedirs(path)
-if args.small:
-    for s in sample:
-        s.reduceFiles( to = 1 )
-
+#if args.small:
+#        sample.reduceFiles( to = 1 )
 # example file
 #events = Events(['file:/afs/hephy.at/work/r/rschoefbeck/CMS/tmp/CMSSW_10_2_12_patch1/src/SUS-RunIIAutumn18FSPremix-00052.root'])
 #events = Events(['file:/afs/hephy.at/work/p/phussain/backup/CMSSW_10_2_12_patch1/src/StopsCompressed/Generation/cfg/SUS-RunIIAutumn18FSPremix-00052.root'])
@@ -108,6 +100,17 @@ def MET_dilep(n1_px,n1_py,n2_px,n2_py,nl1_px,nl1_py,nl2_px,nl2_py):
     #print "MET for dilep decay", MET_dilep
     return MET_dilep, MET_dilep_phi
 
+def MET_semilep(n1_px,n1_py,nl1_px,nl1_py,nl2_px,nl2_py):
+    MET_semilep = sqrt( (n1_px+nl1_px+nl2_px)**2 + (n1_py+nl1_py+nl2_py)**2)
+    MET_semilep_phi = atan2( (n1_px+nl1_px+nl2_px) , (n1_py+nl1_py+nl2_py))
+    #print "MET for semilep decay", MET_dilep
+    return MET_semilep, MET_semilep_phi
+
+def MET_chi(nl1_px,nl1_py,nl2_px,nl2_py):
+    MET_chi = sqrt( (nl1_px+nl2_px)**2 + (nl1_py+nl2_py)**2)
+    MET_chi_phi = atan2( (nl1_px+nl2_px) , (nl1_py+nl2_py))
+    #print "MET for semilep decay", MET_dilep
+    return MET_chi, MET_chi_phi
 
 histo   = ROOT.TH1F("histo","Stops Transverse decay length (13 TeV);Lxy[cm];number of events",500,0.00,10.0)
 histodphi   = ROOT.TH1F("histodphi","delta phi between stops (13 TeV);dphi;number of events",50,0.0,4.00)
@@ -123,16 +126,17 @@ histopt = ROOT.TH1F("histopt","Transverse Momentum of Leptons (13 TeV);pT[GeV];n
 histostopspt = ROOT.TH1F("histostopspt","Transverse Momentum of Stops (13 TeV);pT[GeV];number of events",100,0.0,700.0)
 histonlpt = ROOT.TH1F("histonlpt","Transverse Momentum of Neutralinos (13 TeV);pT[GeV];number of events",100,0.0,700.0)
 histonpt = ROOT.TH1F("histonpt","Transverse Momentum of Neutrinos (13 TeV);pT[GeV];number of events",50,0.0,100.0)
+histoMET_dilep = ROOT.TH1F("histoMET_dilep","MET dilep (13 TeV);pT[GeV];number of events",50,0.0,700.0)
 histod0 = ROOT.TH1F("histod0","Impact Parameters of leptons (13 TeV);d0[cm];number of events",50,0.0,10.0)
 histod02D = ROOT.TH2F("histod02D","Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]",10,0.0,0.5,10,0.0,0.5)
+#graph = ROOT.TGraph(50)
 canvasl= ROOT.TCanvas("canvasl", "Stops decay length ", 1000, 600)
 #nevents = 1
-r = signal.fwliteReader(products = edmCollections)
+r = sample.fwliteReader(products = edmCollections)
 r.start()
 runs = set()
 d0l1=array.array('d')
 d0l2=array.array('d')
-
 i = 0
 while r.run():
   #print r.event.evt, r.event.lumi, r.event.run
@@ -173,7 +177,7 @@ while r.run():
                             IP = dxy(x,y,px,py)
                             #print 'impact parameter is', IP
                             histod0.Fill(IP)
-                            lep = {"phi": d.phi() , "eta":d.eta(), "d0": IP}
+                            lep = {"pdgId": d.pdgId() ,"phi": d.phi() , "eta":d.eta(), "d0": IP}
                             leptons.append(lep)
                         else:
                             npt= d.pt()
@@ -213,14 +217,14 @@ while r.run():
             histo.Fill(l)
             histostopspt.Fill(spt)
             
-            neutralino = {"pdgId": p.pdgId(),"px": nlpx,"py":nlpy}
+            neutralino = {"pdgId": p.pdgId(),"px": nlpx,"py":nlpy }
             MET.append(neutralino)
             #print "stops proper time", tn, "decay length of stops", l
             #print "Lxy from neutralino" , vn.rho(), "mass of stop", m.pdgId(), m.mass(), m.pt() 
     elif abs(p.pdgId()) == 1000006 and p.status() == 22:
         stop = {"phi":p.phi(), "eta":p.eta()}
         stops.append(stop)
-        v= p.vertex()
+        #v= p.vertex()
         #print "stops: ",p.pdgId(), "pt: ", p.pt(), "phi:" ,p.phi(), "eta: ", p.eta()
         #print "stops phi", p.phi()
   DR = deltaR(stops[0]["phi"], stops[0]["eta"], stops[1]["phi"],stops[1]["eta"])
@@ -234,8 +238,14 @@ while r.run():
         histolepdphi.Fill(dphilep)
         histoDRlep.Fill(DRlep)
         d0l1.append(leptons[0]["d0"])
-        d0l2.append(leptons[1]["d0"])
+        d0l2.append(leptons[1]["d0"])       
         histod02D.Fill(leptons[0]["d0"], leptons[1]["d0"])
+        #if abs(leptons[0]["pdgId"]) == 13:
+        #    histod02D.Fill(leptons[0]["d0"], leptons[1]["d0"])
+        #    print "should be muon", leptons[0]["pdgId"],"should be el", leptons[1]["pdgId"]
+        #else:
+        #    histod02D.Fill(leptons[1]["d0"], leptons[0]["d0"]) 
+        #    print "should be muon", leptons[1]["pdgId"],"should be el", leptons[0]["pdgId"]
   if len(MET) == 4:
       dilep_MET, dilep_MET_phi = MET_dilep(MET[0]["px"],MET[0]["py"],MET[1]["px"], MET[1]["py"] ,MET[2]["px"],MET[2]["py"],MET[3]["px"],MET[3]["py"])      
       dphi_MET_1l = deltaPhi(leptons[0]["phi"],dilep_MET_phi)
@@ -243,13 +253,20 @@ while r.run():
       histoMET_dilep.Fill(dilep_MET)
       histoMET_dilep_1_dphi.Fill(dphi_MET_1l)
       histoMET_dilep_2_dphi.Fill(dphi_MET_2l)
-      #print "value after calling function: MET", dilep_MET, "MET_phi:", dilep_MET_phi
-      #print MET[0]["pdgId"], MET[0]["px"], MET[1]["pdgId"], MET[1]["px"] , MET[2]["pdgId"], MET[2]["px"], MET[3]["pdgId"], MET[3]["px"] 
+  #elif len(MET) == 3:
+  #    semilep_MET, semilep_MET_phi = MET_semilep(MET[0]["px"],MET[0]["py"],MET[1]["px"], MET[1]["py"] ,MET[2]["px"],MET[2]["py"])
+  #    #print MET[0]['pdgId'] , MET[1]['pdgId'], MET[2]['pdgId']
+  #    #print "semilep MET:" ,semilep_MET, "semilep dphi:" , semilep_MET_phi       
+  #elif len(MET) == 2:
+  #    MET_nl , MET_nl_phi = MET_chi(MET[0]["px"],MET[0]["py"],MET[1]["px"], MET[1]["py"] )
+  #    #print MET[0]['pdgId'] , MET[1]['pdgId']
+  #    #print "neutralino MET:" , MET_nl, "neutralino MET dphi:" , MET_nl_phi
+
   #print len(MET)
   if i% 1000==0:
     print "1000 events passed"
-  if i ==100000:
-    break  
+#  if i ==100000:
+#    break  
 #print  "Found the following run(s): %s", ",".join(str(run) for run in runs)
 #scale = 1 / histol.Integral()
 scales = 1 / histo.Integral()
@@ -258,7 +275,6 @@ scaledphi = 1 / histodphi.Integral()
 scalelepdphi = 1 / histolepdphi.Integral()
 scaled0 = 1 / histod0.Integral()
 scaled02D = 1 / histod02D.Integral()
-
 scalept = 1 / histopt.Integral()
 scalenlpt = 1 / histonlpt.Integral()
 scalenpt = 1 / histonpt.Integral()
@@ -278,8 +294,8 @@ graph.GetXaxis().SetTitle("1st lepton d0 [cm]")
 graph.GetYaxis().SetTitle("2nd lepton d0 [cm]")
 graph.SetMarkerStyle(21)
 graph.Draw("ap")
-canvasd02D.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/scatterplot_d0_test.png')
-canvasd02D.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/scatterplot_d0_test.root')
+canvasd02D.SaveAs(os.path.join(plot_directory,'scatterplot_d0.png'))
+canvasd02D.SaveAs(os.path.join(plot_directory,'scatterplot_d0.root'))
 
 histo.Scale(scales)
 histo.Draw()
@@ -287,8 +303,8 @@ myPad=canvasl.GetPad(1)
 canvasl.SetLogy()
 histo.GetMean()
 canvasl.Modified()
-canvasl.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/histostops_100k.png')
-canvasl.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/histostops_100k.root')
+canvasl.Print(os.path.join(plot_directory,'histostops.png'))
+canvasl.SaveAs(os.path.join(plot_directory,'histostops.root'))
 
 canvast= ROOT.TCanvas("canvast", "Stops proper time ", 1000, 600)
 histotn.Scale(scaletn)
@@ -298,8 +314,8 @@ histotn.GetMean()
 #print "RMS is" ,histotn.GetRMS()
 #print "Mean is", histotn.GetMean()
 canvast.Modified()
-canvast.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/histotime_100k.png')
-canvast.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/histotime_100k.root')
+canvast.SaveAs(os.path.join(plot_directory,'histotime.png'))
+canvast.SaveAs(os.path.join(plot_directory,'histotime.root'))
 
 canvasd0= ROOT.TCanvas("canvasd0", "ImpactParameter ", 1000, 600)
 histod0.Scale(scaled0)
@@ -307,8 +323,8 @@ histod0.Draw()
 histod0.GetMean()
 canvasd0.SetLogy()
 canvasd0.Modified()
-canvasd0.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01ImpactParameter_100k.png')
-canvasd0.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/ImpactParameter_100k.root')
+canvasd0.Print(os.path.join(plot_directory,'ImpactParameter.png'))
+canvasd0.SaveAs(os.path.join(plot_directory,'ImpactParameter.root'))
 
 canvaspt= ROOT.TCanvas("canvaspt", "Leptons pt ", 1000, 600)
 histopt.Scale(scalept)
@@ -316,8 +332,8 @@ histopt.Draw()
 histopt.GetMean()
 canvaspt.SetLogy()
 canvaspt.Modified()
-canvaspt.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptonspT_100k.png')
-canvaspt.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptonspT_100k.root')
+canvaspt.Print(os.path.join(plot_directory,'leptonspT.png'))
+canvaspt.SaveAs(os.path.join(plot_directory,'leptonspT.root'))
 
 canvasnlpt= ROOT.TCanvas("canvasnlpt", "Neutralinos pt ", 1000, 600)
 histonlpt.Scale(scalenlpt)
@@ -325,8 +341,8 @@ histonlpt.Draw()
 histonlpt.GetMean()
 canvasnlpt.SetLogy()
 canvasnlpt.Modified()
-canvasnlpt.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/neutralinospT_100k.png')
-canvasnlpt.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/neutralinospT_100k.root')
+canvasnlpt.Print(os.path.join(plot_directory,'neutralinospT.png'))
+canvasnlpt.SaveAs(os.path.join(plot_directory,'neutralinospT.root'))
 
 canvasnpt= ROOT.TCanvas("canvasnpt", "Neutrinos pt ", 1000, 600)
 histonpt.Scale(scalenpt)
@@ -334,8 +350,8 @@ histonpt.Draw()
 histonpt.GetMean()
 canvasnpt.SetLogy()
 canvasnpt.Modified()
-canvasnpt.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/neutrinopT_100k.png')
-canvasnpt.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/neutrinopT_100k.root')
+canvasnpt.Print(os.path.join(plot_directory,'neutrino_pT.png'))
+canvasnpt.SaveAs(os.path.join(plot_directory,'neutrino_pT.root'))
 
 canvasstopspt= ROOT.TCanvas("canvasstopspt", "Stops pt ", 1000, 600)
 histostopspt.Scale(scalestopspt)
@@ -343,8 +359,8 @@ histostopspt.Draw()
 histostopspt.GetMean()
 canvasstopspt.SetLogy()
 canvasstopspt.Modified()
-canvasstopspt.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stopspT_100k.png')
-canvasstopspt.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stopspT_100k.root')
+canvasstopspt.Print(os.path.join(plot_directory,'stops_pT.png'))
+canvasstopspt.SaveAs(os.path.join(plot_directory,'stops_pT.root'))
 
 canvasdphistop= ROOT.TCanvas("canvasdphistop", "deltaphi between Stops ", 1000, 600)
 histodphi.Scale(scaledphi)
@@ -352,8 +368,8 @@ histodphi.Draw()
 histodphi.GetMean()
 canvasdphistop.SetLogy()
 canvasdphistop.Modified()
-canvasdphistop.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stops_dphi_100k.png')
-canvasdphistop.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stops_dphi_100k.root')
+canvasdphistop.Print(os.path.join(plot_directory,'stops_dphi.png'))
+canvasdphistop.SaveAs(os.path.join(plot_directory,'stops_dphi.root'))
 
 canvaslepdphi= ROOT.TCanvas("canvaslepdphi", "deltaphi between Leptons", 1000, 600)
 histolepdphi.Scale(scalelepdphi)
@@ -361,8 +377,8 @@ histolepdphi.Draw()
 histolepdphi.GetMean()
 canvaslepdphi.SetLogy()
 canvaslepdphi.Modified()
-canvaslepdphi.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptons_dphi_100k.png')
-canvaslepdphi.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptons_dphi_100k.root')
+canvaslepdphi.Print(os.path.join(plot_directory,'leptons_dphi.png'))
+canvaslepdphi.SaveAs(os.path.join(plot_directory,'leptons_dphi.root'))
 
 canvasDR= ROOT.TCanvas("canvasDR", "deltaR between Stops", 1000, 600)
 histoDR.Scale(scaleDR)
@@ -370,8 +386,8 @@ histoDR.Draw()
 histoDR.GetMean()
 canvasDR.SetLogy()
 canvasDR.Modified()
-canvasDR.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stops_dR_100k.png')
-canvasDR.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/stops_dR_100k.root')
+canvasDR.Print(os.path.join(plot_directory,'stops_dR.png'))
+canvasDR.SaveAs(os.path.join(plot_directory,'stops_dR.root'))
 
 canvasDRlep= ROOT.TCanvas("canvasDRlep", "deltaR between Leptons", 1000, 600)
 histoDRlep.Scale(scaleDRlep)
@@ -379,8 +395,8 @@ histoDRlep.Draw()
 histoDRlep.GetMean()
 canvasDRlep.SetLogy()
 canvasDRlep.Modified()
-canvasDRlep.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptons_dR_100k.png')
-canvasDRlep.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/leptons_dR_100k.root')
+canvasDRlep.Print(os.path.join(plot_directory,'leptons_dR.png'))
+canvasDRlep.SaveAs(os.path.join(plot_directory,'leptons_dR.root'))
 
 canvasMET_dilep= ROOT.TCanvas("canvasMET_dilep", "MET_dilep ", 1000, 600)
 histoMET_dilep.Scale(scaleMET_dilep)
@@ -388,8 +404,8 @@ histoMET_dilep.Draw()
 histoMET_dilep.GetMean()
 canvasMET_dilep.SetLogy()
 canvasMET_dilep.Modified()
-canvasMET_dilep.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/MET_dilep_100k_test.png')
-canvasMET_dilep.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/MET_dilep_100k_test.root')
+canvasMET_dilep.Print(os.path.join(plot_directory,'MET_dilep.png'))
+canvasMET_dilep.SaveAs(os.path.join(plot_directory,'MET_dilep.root'))
 
 canvasdphiMET_dilep_1l= ROOT.TCanvas("canvasdphiMET_dilep_1l", "deltaphi between dilep MET and 1stl ", 1000, 600)
 histoMET_dilep_1_dphi.Scale(scaleMET_dilep_1l)
@@ -397,8 +413,8 @@ histoMET_dilep_1_dphi.Draw()
 histoMET_dilep_1_dphi.GetMean()
 canvasdphiMET_dilep_1l.SetLogy()
 canvasdphiMET_dilep_1l.Modified()
-canvasdphiMET_dilep_1l.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/METdilep_1l_dphi_100k_test.png')
-canvasdphiMET_dilep_1l.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/METdilep_1l_dphi_100k_test.root')
+canvasdphiMET_dilep_1l.Print(os.path.join(plot_directory,'METdilep_1l_dphi.png'))
+canvasdphiMET_dilep_1l.SaveAs(os.path.join(plot_directory,'METdilep_1l_dphi.root'))
 
 canvasdphiMET_dilep_2l= ROOT.TCanvas("canvasdphiMET_dilep_2l", "deltaphi between dilep MET and 2ndl ", 1000, 600)
 histoMET_dilep_2_dphi.Scale(scaleMET_dilep_2l)
@@ -406,8 +422,8 @@ histoMET_dilep_2_dphi.Draw()
 histoMET_dilep_2_dphi.GetMean()
 canvasdphiMET_dilep_2l.SetLogy()
 canvasdphiMET_dilep_2l.Modified()
-canvasdphiMET_dilep_2l.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/METdilep_2l_dphi_100k_test.png')
-canvasdphiMET_dilep_2l.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/METdilep_2l_dphi_100k_test.root')
+canvasdphiMET_dilep_2l.Print(os.path.join(plot_directory,'METdilep_2l_dphi.png'))
+canvasdphiMET_dilep_2l.SaveAs(os.path.join(plot_directory,'METdilep_2l_dphi.root'))
 
 canvasd02Dhist= ROOT.TCanvas("canvasd02Dhist", "ImpactParameter of leptons in dilepton state", 1000, 600)
 histod02D.Scale(scaled02D)
@@ -415,10 +431,9 @@ histod02D.Draw("COLZ")
 histod02D.GetMean()
 canvasd02Dhist.SetLogz()
 #canvasd02Dhist.Modified()
-canvasd02Dhist.Print('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/ImpactParameter2D_test.png')
-canvasd02Dhist.SaveAs('/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/ImpactParameter2D_test.root')
-
-
+canvasd02Dhist.Print(os.path.join(plot_directory,'ImpactParameter2D.png'))
+canvasd02Dhist.SaveAs(os.path.join(plot_directory,'ImpactParameter2D.root'))
+#
 #histo.Draw('E')
 #histo.Draw()
 #canvas.Print('/afs/hephy.at/user/p/phussain/www/histo2.png')       
