@@ -31,10 +31,17 @@ logger = _logger_rt.get_logger(args.logLevel, logFile = None)
 #path = '/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/reco/'
 
 if args.small: args.targetDir += "_small"
-plot_directory = os.path.join(plot_directory,'reco', args.targetDir)
+plot_directory = os.path.join(plot_directory,'reco', args.targetDir, 'signal_bkg')
 if not os.path.exists( plot_directory ):
     os.makedirs(plot_directory)
     logger.info( "Created plot directory %s", plot_directory )
+
+# Text on the plots
+#
+tex = ROOT.TLatex()
+tex.SetNDC()
+tex.SetTextSize(0.04)
+tex.SetTextAlign(11) # align right
 
 def drawObjects( plotData ):
     lines = [
@@ -65,14 +72,21 @@ def getCollection(c, prefix, variables, counter_variable):
 
 def muSelector( p ):
     return p['pt']>5 and abs(p['eta'])<2.4 and p['miniPFRelIso_all']<0.2
+
 # importing background samples
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import TTLep_pow
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p01
+from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p1
+
 #define the sample
-sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01]
+sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01] + [DisplacedStops_mStop_250_ctau_0p1] 
+TTLep_pow.style = styles.lineStyle(ROOT.kRed)
+DisplacedStops_mStop_250_ctau_0p01.style = styles.lineStyle(ROOT.kBlue)
+DisplacedStops_mStop_250_ctau_0p1.style = styles.lineStyle(ROOT.kGreen)
 if args.small:
     for s in sample:
-        s.reduceFiles( to = 10 )
+        s.reduceFiles( to = 1 )
+        #print s.normalization
 #defining variables for the leptons in dilep
 electronVars = [ 'pt', 'eta','phi', 'pdgId', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all']
 muonVars = [ 'pt', 'eta','phi', 'pdgId', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all', 'mediumId']
@@ -88,18 +102,13 @@ read_variables = [ \
     VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
+    TreeVariable.fromString('genWeight/F'),
+    TreeVariable.fromString('nJet/I'),
+    VectorTreeVariable.fromString('Jet[pt/F,eta/F,phi/F]')
 ]
 
-##writing lep variables
-#lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','dxy/F','dz/F','charge/I','mediumId/I','eleIndex/I','muIndex/I']
-#lepVarNames     = [x.split('/')[0] for x in lepVars]
-
-##new variables to be used
-#new_variables = ['nlep/I','nGoodMuons/I', 'nGoodElectrons/I', 'nGoodLeptons/I','l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I','l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F','l1_eleIndex/I', 'l1_muIndex/I','l2_pt/F', 'l2_eta/F', 'l2_phi/F', 'l2_pdgId/I', 'l2_index/I','l2_miniRelIso/F', 'l2_relIso03/F', 'l2_dxy/F', 'l2_dz/F','l2_eleIndex/I', 'l2_muIndex/I','isEE/I', 'isMuMu/I', 'isEMu/I', 'isOS/I'] 
-
-
-
-## Define a reader
+#make a sequence for your leptons selection
+sequence = []
 def makeLeptons( event, sample ):
     electrons = getElectrons( event )
 
@@ -108,41 +117,57 @@ def makeLeptons( event, sample ):
 
     muons_     = getMuons( event )
     muons      = filter (muSelector, muons_)
+
     leptons = electrons + muons
-
-    #print leptons
-    #print muons
-
     leptons.sort(key = lambda p:-p['pt'])
     
-    ##fill_vector_collection( event, "lep", lepVarNames, leptons) #thinking about it 
     event.nlep = len(leptons)
+    event.mu1 = -999
+    event.mu2 = -999
     if len(muons) > 1 and event.nlep >= 1:
-        dl1.Fill(abs(muons[0]['dxy']))
-        dl2.Fill(abs(muons[1]['dxy']))
-        d2.Fill(abs(muons[0]['dxy']),abs(muons[1]['dxy'])) 
-        #print event.nlep , leptons[0]['dxy']
+        event.mu1 = abs(muons[0]['dxy'])
+        event.mu2 = abs(muons[1]['dxy'])
+        #d2.Fill(abs(muons[0]['dxy']),abs(muons[1]['dxy'])) 
     else: pass
-sequence = [makeLeptons]
-i = 0
-for s in sample:
-    sname = s.name
-    dl1 = ROOT.TH1F('1stmuon dxy','Impact Parameter of 1st muon',50,0.0,1.5)
-    dl2 = ROOT.TH1F('2ndmuon dxy','Impact Parameter of 1st muon',50,0.0,1.5)
-    d2 = ROOT.TH2F('dxy','Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]',50,0.0,1.0,50,0.0,1.0)
-    r = s.treeReader( \
-        variables = read_variables ,
-        #selectionString = "&&".join(skimConds)
-        sequence = sequence,
-        )
+sequence.append(makeLeptons)#def makeweight (event, sample):
 
-    r.start()
-    while r.run():
-        i += 1
-        pass
-    plotl1 = Plot.fromHisto(name = "1st_muon_dxy_%s_10"%sname, histos = [[dl1]], texX = "dxy of 1st muon (cm)", texY = "Number of events" )
-    plotl2 = Plot.fromHisto(name = "2nd_muon_dxy_%s_10"%sname, histos = [[dl2]], texX = "dxy of 2nd muon(cm)", texY = "Number of events" )
-    plot1 = Plot2D.fromHisto(name = "dxy_of_Muons_%s_2D_10"%sname, histos = [[d2]], texX = "dxy 1st muon (cm)", texY = "dxy 2nd muon(cm)" )
-    plotting.draw(plotl1, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
-    plotting.draw(plotl2, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None ,drawObjects = drawObjects( False ) )
-    plotting.draw2D(plot1, plot_directory = plot_directory, logX = False, logY = False,logZ = True , drawObjects = drawObjects( False ))
+def makeweight (event, sample):
+    #print event.genWeight 
+    if "TTLep" in sample.name:
+        event.weight = ((sample.xSection*1000)/ sample.normalization)* event.genWeight
+        print sample.xSection, sample.normalization, event.genWeight
+        #print event.weight, sample.name
+    elif "Displ" in sample.name:
+        event.weight = ((24.8*1000)/ sample.normalization)* event.genWeight
+        print sample.name,  sample.normalization , event.genWeight
+        #print event.weight, sample.name
+sequence.append(makeweight)
+weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227'
+weight_0p01 = '((24.8*1000)/223923)'
+weight_0p1  =' ((24.8*1000)/164370)'
+#for s in sample:
+#    if "TTLep" in s.name:
+#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_TT)['val']
+#    elif s.name == 'DisplacedStops_mStop_250_ctau_0p01':
+#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_0p01)['val']
+#    elif s.name == 'DisplacedStops_mStop_250_ctau_0p1':
+#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_0p1)['val']
+    #s.weight = lambda event,sample: event.weight
+    #print s.weight
+        
+#sequence = [makeLeptons]
+i = 0
+
+weight_ = lambda event, sample: event.weight
+
+stack = Stack( TTLep_pow, DisplacedStops_mStop_250_ctau_0p01 , DisplacedStops_mStop_250_ctau_0p1)
+
+Plot.setDefaults(stack = stack, weight=staticmethod( weight_ ), histo_class=ROOT.TH1D)
+plots = []
+plots.append(Plot( name = "1st_muon_dxy", texX = "dxy of 1st muon (cm)", texY = "Number of events", attribute = lambda event, sample: event.mu1, binning=[100,0.0,10.0]),)
+plots.append(Plot( name = "2nd_muon_dxy", texX = "dxy of 2nd muon (cm)", texY = "Number of events", attribute = lambda event, sample: event.mu2, binning=[100,0.0,10.0]),)
+
+plotting.fill(plots, read_variables = read_variables, sequence = sequence, max_events=1)
+
+#for plot in plots:
+#    plotting.draw(plot, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
