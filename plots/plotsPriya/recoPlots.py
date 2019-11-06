@@ -16,7 +16,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v01_log')
+argParser.add_argument('--targetDir',          action='store',      default='v02_log')
 
 args = argParser.parse_args()
 
@@ -35,6 +35,14 @@ plot_directory = os.path.join(plot_directory,'reco', args.targetDir)
 if not os.path.exists( plot_directory ):
     os.makedirs(plot_directory)
     logger.info( "Created plot directory %s", plot_directory )
+
+# Text on the plots
+#
+tex = ROOT.TLatex()
+tex.SetNDC()
+tex.SetTextSize(0.04)
+tex.SetTextAlign(11) # align right
+
 
 def drawObjects( plotData ):
     lines = [
@@ -68,8 +76,9 @@ def muSelector( p ):
 # importing background samples
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import TTLep_pow
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p01
+from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p1
 #define the sample
-sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01]
+sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01] + [DisplacedStops_mStop_250_ctau_0p1]
 if args.small:
     for s in sample:
         s.reduceFiles( to = 10 )

@@ -132,30 +132,17 @@ def makeLeptons( event, sample ):
 sequence.append(makeLeptons)#def makeweight (event, sample):
 
 def makeweight (event, sample):
-    #print event.genWeight 
     if "TTLep" in sample.name:
         event.weight = ((sample.xSection*1000)/ sample.normalization)* event.genWeight
-        print sample.xSection, sample.normalization, event.genWeight
+        #print sample.xSection, sample.normalization, event.genWeight
         #print event.weight, sample.name
     elif "Displ" in sample.name:
         event.weight = ((24.8*1000)/ sample.normalization)* event.genWeight
-        print sample.name,  sample.normalization , event.genWeight
+        #print sample.name,  sample.normalization , event.genWeight
         #print event.weight, sample.name
 sequence.append(makeweight)
-weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227'
-weight_0p01 = '((24.8*1000)/223923)'
-weight_0p1  =' ((24.8*1000)/164370)'
-#for s in sample:
-#    if "TTLep" in s.name:
-#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_TT)['val']
-#    elif s.name == 'DisplacedStops_mStop_250_ctau_0p01':
-#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_0p01)['val']
-#    elif s.name == 'DisplacedStops_mStop_250_ctau_0p1':
-#        print s.name, s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_0p1)['val']
-    #s.weight = lambda event,sample: event.weight
-    #print s.weight
         
-#sequence = [makeLeptons]
+sequence = [makeLeptons]
 i = 0
 
 weight_ = lambda event, sample: event.weight
@@ -169,5 +156,5 @@ plots.append(Plot( name = "2nd_muon_dxy", texX = "dxy of 2nd muon (cm)", texY = 
 
 plotting.fill(plots, read_variables = read_variables, sequence = sequence, max_events=1)
 
-#for plot in plots:
-#    plotting.draw(plot, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
+for plot in plots:
+    plotting.draw(plot, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
