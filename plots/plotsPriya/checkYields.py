@@ -69,28 +69,43 @@ read_variables = [ \
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('genWeight/F'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Jet[pt/F,eta/F,phi/F]')
+    VectorTreeVariable.fromString('Jet[pt/F,eta/F,phi/F]'),
+    TreeVariable.fromString('MET_pt/F'),
 ]
 
-weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227'
+#weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 * 138.4'
+#weight_0p01 = '((24.8*1000)/223923)* 138.4'
+#weight_0p1  =' ((24.8*1000)/164370)* 138.4'
+weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 '
 weight_0p01 = '((24.8*1000)/223923)'
 weight_0p1  =' ((24.8*1000)/164370)'
-
-nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)'
+#print weight_TT , weight_0p01 , weight_0p1
+#nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)'
+nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2)'
 nisr   = 'Sum$(Jet_pt>100)'
-
+MET    = 'MET_pt>250'
 for nLep in [0,1,2]:
     for nisrJet in [0,1]:
         print "nLep", nLep, "nisrJet", nisrJet
         for s in sample:
-            selectionString =  nmuon+">=%i"%nLep+"&&"+nisr+">=%i"%nisrJet
+            selectionString =  nmuon+">=%i"%nLep+"&&"+nisr+">=%i"%nisrJet+"&&"+MET
+            print "selection: ", selectionString 
             #print "nLep", nLep, "nisrJet", nisrJet
             if "TTLep" in s.name:
-                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_TT)['val']
+                print s.name , s.getYieldFromDraw()['val'], "0"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_TT)['val'], "selection and weights"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString)['val'], "no weights"
+                print s.name , s.getYieldFromDraw( weightString = weight_TT)['val'], "only weights"
             elif s.name == 'DisplacedStops_mStop_250_ctau_0p01':
-                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_0p01)['val']
+                print s.name , s.getYieldFromDraw()['val'], "0"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_0p01)['val'], "selection and weights"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString)['val'], "no weights"
+                print s.name , s.getYieldFromDraw( weightString = weight_0p01)['val'], "only weights"
             elif s.name == 'DisplacedStops_mStop_250_ctau_0p1':
-                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_0p1)['val']
+                print s.name , s.getYieldFromDraw()['val'], "0"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_0p1)['val'], "selection and weights"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString)['val'], "no weights"
+                print s.name , s.getYieldFromDraw( weightString = weight_0p1)['val'], "only weights"
 
 #print s.name,"Di muon", s.getYieldFromDraw(selectionString='Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)==2',weightString = weight_0p1)['val']
 #
