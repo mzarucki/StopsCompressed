@@ -17,7 +17,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='eff_v03test_dR_1p0_pt_5_f')
+argParser.add_argument('--targetDir',          action='store',      default='eff_v03test_dR_0p5_pt_5_f')
 #argParser.add_argument('--signal',       action='store',      default='fwlite_signals_fastSim_Stops2l_200k',choices=['fwlite_signals_DisplacedStops_250_0p001','fwlite_signals_DisplacedStops_250_0p01','fwlite_signals_DisplacedStops_250_0p1','fwlite_signals_DisplacedStops_250_0p2','fwlite_signals_DisplacedStops_250_200'], help='generated signal samples we get plots for')
 
 args = argParser.parse_args()
@@ -87,7 +87,9 @@ def reco_matched(gen_muon_phi,gen_muon_eta, recoList, threshold ):
     for i,rm in enumerate(recoList):
         dR = deltaR(rm.phi(),rm.eta(),gmu_phi,gmu_eta)
         if dR < threshold:
-            matches.append({'idx':i, 'deltaR':dR,'muon':rm})
+            deta = abs(gmu_eta - rm.eta() )
+            dphi = deltaPhi( rm.phi(), gmu_phi )
+            matches.append({'idx':i, 'deltaR':dR,'deta':deta,'dphi': dphi,'muon':rm})
             
     return sorted(matches, key=lambda dic:dic['deltaR'])
 def dxy(x, y, px, py):
@@ -141,9 +143,13 @@ histo2Dmatchmu = ROOT.TH2F("histo2Dmatchmu","Impact Parameter and transverse dec
 histo2Dmatchgen = ROOT.TH2F("histo2Dmatchgen","Impact Parameter and transverse decay length of RECO(matched) with gen muons(13 TeV);  gen_d0 muons[cm]; gen_Lxy [cm]",50,0.0,50.0,50,0.0,100.0)
 histo2D = ROOT.TH2I("histo2D", "number of gen vs reco muons; gen muons;reco muons", 2,0,2,2,0,2)
 
-histolepdphi   = ROOT.TH1F("histolepdphi","delta phi between gen and reco muons (13 TeV);dphi;number of events",50,0.0,4.00)
-histolepdeta   = ROOT.TH1F("histolepdeta","delta eta between gen and reco muons (13 TeV);deta;number of events",50,0.0,3.00)
-histoDRlep   = ROOT.TH1F("histoDRlep","deltaR between gen and reco muons (13 TeV);dR;number of events",10,0.0,0.8)
+histolepdphi   = ROOT.TH1F("histolepdphi","delta phi between gen and reco muons (13 TeV);dphi;number of events",200,0.0,0.5)
+histolepdeta   = ROOT.TH1F("histolepdeta","delta eta between gen and reco muons (13 TeV);deta;number of events",200,0.0,0.5)
+histoDRlep   = ROOT.TH1F("histoDRlep","deltaR between gen and reco muons (13 TeV);dR;number of events",200,0.0,0.5)
+histoDRweighted   = ROOT.TH1F("histoDRweighted","deltaR(weighted) between gen and reco(matched) muons (13 TeV);dR;number of events",200,0.0,0.5)
+#histoDR   = ROOT.TH1F("histoDR","deltaR between gen and reco(matched) muons (13 TeV);dR;number of events",100,0.0,4.0)
+histo2Ddetadphi = ROOT.TH2F("histo2Ddetadphi","dEta vs dPhi of RECO(matched) muons and gen muons (13 TeV);  dEta; dPhi",100,0.0,0.5,100,0.0,0.5)
+
 #histoeff = ROOT.TEfficiency ("histoeff","Efficiency Reco vs gen muons (13 TeV);  d0 [cm]; Lxy [cm]",50,0.0,50.0,50,0.0,100.0)
 #histod02D = ROOT.TH2F("histod02D","Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]",50,0.0,200.0,50,0.0,200.0)
 #graph = ROOT.TGraph(50)
@@ -220,13 +226,19 @@ while r.run():
     etagmu = gen_mu[gmu]["eta"]
     d0gmu  = gen_mu[gmu]["d0"]
     Lxygmu = gen_mu[gmu]["Lxy"]
-    matchedRecoMuons=reco_matched(phigmu,etagmu,muons,threshold=1.0)
+    matchedRecoMuons=reco_matched(phigmu,etagmu,muons,threshold=0.5)
     if len( matchedRecoMuons)>0 and gen_mu not in matched_gen:
         print gen_mu
         #print "matched muons" , len( matchedRecoMuons)
         rm = matchedRecoMuons[0]['muon']
         histo2Dmatchgen.Fill(d0gmu , Lxygmu)
-        histoDRlep.Fill(matchedRecoMuons[0]['deltaR'])
+        dR = matchedRecoMuons[0]['deltaR']
+        norm = 1/dR
+        histoDRlep.Fill(dR)
+        histoDRweighted.Fill(dR,norm)
+        histolepdphi.Fill(matchedRecoMuons[0]['dphi'])
+        histolepdeta.Fill(matchedRecoMuons[0]['deta'])
+        histo2Ddetadphi.Fill(matchedRecoMuons[0]['deta'],matchedRecoMuons[0]['dphi'])
         #print "deltaR of matched reco&gen should be less than threshold 0.002",matchedRecoMuons[0]['deltaR'] 
         phirmu = rm.phi()
         etarmu = rm.eta()
@@ -313,7 +325,7 @@ while r.run():
  #   print "1000 events passed"
   if args.small:
       print "number of event", i
-      if i == 50:
+      if i == 5000:
         break  
 #print  "Found the following run(s): %s", ",".join(str(run) for run in runs)
 #scale = 1 / histol.Integral()
@@ -324,9 +336,10 @@ scaled0 = 1 / histomud0.Integral()
 scalelxy = 1 / histomulxy.Integral()
 #scale2Dmu = 1 / histo2Dmu.Integral()
 
-#scalelepdeta = 1 / histolepdeta.Integral()
-#scalelepdphi = 1 / histolepdphi.Integral()
+scalelepdeta = 1 / histolepdeta.Integral()
+scalelepdphi = 1 / histolepdphi.Integral()
 scaleDRlep = 1 / histoDRlep.Integral()
+scaleDRw = 1 / histoDRweighted.Integral()
 
 canvasd0= ROOT.TCanvas("canvasd0", "Impact parameter reco  muons ", 1000, 600)
 histomud0.Scale(scaled0)
@@ -424,24 +437,24 @@ histoeff.Draw("COLZ")
 canvaseff.Print(os.path.join(plot_directory,'Efficiency.png'))
 canvaseff.SaveAs(os.path.join(plot_directory,'Efficiency.root'))
 
-#canvaslepdphi= ROOT.TCanvas("canvaslepdphi", "deltaphi between reco and gen muons", 1000, 600)
-#histolepdphi.Scale(scalelepdphi)
-#histolepdphi.Draw()
-#histolepdphi.GetMean()
-#canvaslepdphi.SetLogy()
-#canvaslepdphi.Modified()
-#canvaslepdphi.Print(os.path.join(plot_directory,'reco_gen_dphi.png'))
-#canvaslepdphi.SaveAs(os.path.join(plot_directory,'reco_gen_dphi.root'))
-#
-#
-#canvaslepdeta= ROOT.TCanvas("canvaslepdeta", "deltaeta between reco and gen muons", 1000, 600)
-#histolepdeta.Scale(scalelepdeta)
-#histolepdeta.Draw()
-#histolepdeta.GetMean()
-#canvaslepdeta.SetLogy()
-#canvaslepdeta.Modified()
-#canvaslepdeta.Print(os.path.join(plot_directory,'reco_gen_deta.png'))
-#canvaslepdeta.SaveAs(os.path.join(plot_directory,'reco_gen_deta.root'))
+canvaslepdphi= ROOT.TCanvas("canvaslepdphi", "deltaphi between reco and gen muons", 1000, 600)
+histolepdphi.Scale(scalelepdphi)
+histolepdphi.Draw()
+histolepdphi.GetMean()
+canvaslepdphi.SetLogy()
+canvaslepdphi.Modified()
+canvaslepdphi.Print(os.path.join(plot_directory,'reco_matched_gen_dphi.png'))
+canvaslepdphi.SaveAs(os.path.join(plot_directory,'reco_matched_gen_dphi.root'))
+
+
+canvaslepdeta= ROOT.TCanvas("canvaslepdeta", "deltaeta between reco and gen muons", 1000, 600)
+histolepdeta.Scale(scalelepdeta)
+histolepdeta.Draw()
+histolepdeta.GetMean()
+canvaslepdeta.SetLogy()
+canvaslepdeta.Modified()
+canvaslepdeta.Print(os.path.join(plot_directory,'reco_matched_gen_deta.png'))
+canvaslepdeta.SaveAs(os.path.join(plot_directory,'reco_matched_gen_deta.root'))
 
 canvasDRlep= ROOT.TCanvas("canvasDRlep", "deltaR between reco and gen muons", 1000, 600)
 histoDRlep.Scale(scaleDRlep)
@@ -451,3 +464,22 @@ canvasDRlep.SetLogy()
 canvasDRlep.Modified()
 canvasDRlep.Print(os.path.join(plot_directory,'reco_gen_muons_dR.png'))
 canvasDRlep.SaveAs(os.path.join(plot_directory,'reco_gen_muons_dR.root'))
+
+
+canvasDRw= ROOT.TCanvas("canvasDRw", "deltaR(weighted) between reco and gen muons", 1000, 600)
+histoDRweighted.Scale(scaleDRw)
+histoDRweighted.Draw()
+histoDRweighted.GetMean()
+canvasDRw.SetLogy()
+canvasDRw.Modified()
+canvasDRw.Print(os.path.join(plot_directory,'reco_gen_muons_dR_weighted.png'))
+canvasDRw.SaveAs(os.path.join(plot_directory,'reco_gen_muons_dR_weighted.root'))
+
+canvas2Detaphi= ROOT.TCanvas("canvas2Detaphi", "gen and reco muons deta vs dphi", 1000, 600)
+histo2Ddetadphi.Draw("COLZ")
+histo2Ddetadphi.GetMean()
+canvas2Detaphi.SetLogz()
+canvas2Detaphi.Print(os.path.join(plot_directory,'gen_reco_deta_vs_dphi.png'))
+canvas2Detaphi.SaveAs(os.path.join(plot_directory,'gen_reco_deta_vs_dphi.root'))
+
+
