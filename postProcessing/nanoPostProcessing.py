@@ -22,9 +22,11 @@ from RootTools.core.standard import *
 # User specific
 import StopsCompressed.Tools.user as user
 
-# Tools for systematics
-from StopsCompressed.Tools.helpers             import writeObjToFile, deltaR, bestDRMatchInCollection, deltaPhi, nonEmptyFile, fill_vector_collection
-from StopsCompressed.Tools.objectSelection     import getMuons, getElectrons, muonSelector, eleSelector, getGoodMuons, getGoodElectrons,  getGoodJets, isBJet, jetId, isBJet, getGenPartsAll, getJets, getPhotons, getAllJets
+# Tools for object selection
+from StopsCompressed.Tools.helpers           import nonEmptyFile, fill_vector_collection
+from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
+from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector, getGoodMuons, getGoodElectrons
+from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
 #from StopsDilepton.Tools.leptonSF            import leptonSF as leptonSF_
 #from StopsDilepton.Tools.leptonFastSimSF     import leptonFastSimSF as leptonFastSimSF_
@@ -53,7 +55,7 @@ def get_parser():
     argParser.add_argument('--job',         action='store',                     type=int, default=0,                                    help="Run only jobs i" )
     argParser.add_argument('--targetDir',   action='store',         nargs='?',  type=str, default=user.postProcessing_output_directory, help="Name of the directory the post-processed files will be saved" )
     argParser.add_argument('--processingEra', action='store',       nargs='?',  type=str, default='postProcessed_80X_v22',              help="Name of the processing era" )
-    argParser.add_argument('--skim',        action='store',         nargs='?',  type=str, default='dilepTiny',                          help="Skim conditions to be applied for post-processing" )
+    argParser.add_argument('--skim',        action='store',         nargs='?',  type=str, default='singleLep',                          help="Skim conditions to be applied for post-processing" )
     argParser.add_argument('--LHEHTCut',    action='store',         nargs='?',  type=int, default=-1,                                   help="LHE cut." )
     argParser.add_argument('--year',        action='store',                     type=int,                                               help="Which year?" )
     argParser.add_argument('--overwrite',   action='store_true',                                                                        help="Overwrite existing output files, bool flag set to True  if used" )
@@ -84,7 +86,7 @@ import RootTools.core.logger as _logger_rt
 logger_rt = _logger_rt.get_logger(options.logLevel, logFile = logFile )
 
 # Flags 
-isSingleLep     = options.skim.lower().startswith('singleLep')
+isSingleLep     = options.skim.lower().startswith('singlelep')
 
 # Skim condition
 skimConds = []
@@ -140,9 +142,6 @@ else:
 
 # set default era
 era = None
-
-# L1 prefire weight
-L1PW = L1PrefireWeight(options.year)
 
 ## Trigger selection
 #if isData and options.triggerSelection:
@@ -287,16 +286,8 @@ addSystematicVariations = (not isData)
 from Analysis.Tools.BTagEfficiency import BTagEfficiency
 btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
 
-# Directory for individual signal files
-if options.susySignal:
-    signalSubDir = options.samples[0].split('_')[1]
-    signalDir = os.path.join(directory, options.skim, signalSubDir)
-    logger.info("Separate files for each mass point will be located in %s"%signalDir)
-    if not os.path.exists(signalDir): 
-        try:
-            os.makedirs(signalDir)
-        except OSError:
-            pass
+# L1 prefire weight
+L1PW = L1PrefireWeight(options.year)
 
 if os.path.exists(output_directory) and options.overwrite:
     if options.nJobs > 1:
@@ -312,10 +303,10 @@ except:
     pass
 
 filename, ext = os.path.splitext( os.path.join(output_directory, sample.name + '.root') )
-fileNumber = options.job if options.job is not None else 0
-outfilename = filename+ext
-# checking overwrite or file exists
+fileNumber    = options.job if options.job is not None else 0
+outfilename   = filename+ext
 
+# checking overwrite or file exists
 if not options.overwrite:
     if os.path.isfile(outfilename):
         logger.info( "Output file %s found.", outfilename)
@@ -336,8 +327,7 @@ else:
 #branches to be kept for data and MC
 branchKeepStrings_DATAMC = [\
     "run", "luminosityBlock", "event", "fixedGridRhoFastjetAll", "PV_npvs", "PV_npvsGood",
-    "MET_*",
-    "RawMET_phi", "RawMET_pt", "RawMET_sumEt",
+    "MET_*", "RawMET_phi", "RawMET_pt", "RawMET_sumEt",
     "Flag_*",
     "nJet", "Jet_*",
     "nElectron", "Electron_*",
@@ -355,6 +345,7 @@ if options.year == 2017:
 branchKeepStrings_MC = [ "Generator_*", "GenPart_*", "nGenPart", "genWeight", "Pileup_nTrueInt","GenMET_pt","GenMET_phi"] #, "nISR"] keep, if you run the nanoAODTools ISR counter
 if not options.fastSim:
     branchKeepStrings_MC.append("LHEScaleWeight")
+
 #branches to be kept for data only
 branchKeepStrings_DATA = [ ]
 

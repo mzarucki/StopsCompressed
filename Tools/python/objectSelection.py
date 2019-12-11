@@ -74,10 +74,6 @@ genVars = ['eta','pt','phi','mass','charge', 'status', 'pdgId', 'genPartIdxMothe
 def getGenPartsAll(c, genVars=genVars):
     return [getObjDict(c, 'GenPart_', genVars, i) for i in range(int(getVarValue(c, 'nGenPart')))]
 
-def filterGenPhotons( genParts, status=None ):
-    photons = list( filter( lambda l: abs(l['pdgId']) == 22 and l['status'] > 0, genParts ) )
-    return photons
-
 def genLepFromZ( genParts ):
     ''' get all gen leptons (e,m,tau) from Z
     '''
