@@ -8,7 +8,7 @@ from math                               import sqrt, cos, sin, pi, acos
 
 from RootTools.core.standard            import *
 
-from StopsCompressed.tools.user         import output_directory
+from StopsCompressed.Tools.user         import postProcessing_output_directory
 
 from Analysis.Tools.GenSearch           import *
 import imp
@@ -54,7 +54,7 @@ if args.small:
 #lumiweight1fb = xsec * 1000. / nEvents
 
 # output directory
-output_directory = os.path.join(output_directory, 'gen', args.targetDir, 'fwlite_signals_fastSim_Stops2l_200k') 
+output_directory = os.path.join(postProcessing_output_directory, 'gen', args.targetDir, 'fwlite_signals_fastSim_Stops2l_200k') 
 if not os.path.exists( output_directory ): 
     os.makedirs( output_directory )
     logger.info( "Created output directory %s", output_directory )
