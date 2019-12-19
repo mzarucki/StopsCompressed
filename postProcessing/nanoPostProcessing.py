@@ -98,7 +98,7 @@ if isSingleLep:
 maxN = 1 if options.small else None
 if options.small:
     options.job = 0
-    options.nJobs = 10000 # set high to just run over 1 input file
+    options.nJobs = 1000 # set high to just run over 1 input file
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
@@ -284,7 +284,8 @@ addSystematicVariations = (not isData)
 
 # B tagging SF
 from Analysis.Tools.BTagEfficiency import BTagEfficiency
-btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
+#btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
+btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='CSVv2' )
 
 # L1 prefire weight
 L1PW = L1PrefireWeight(options.year)
@@ -413,6 +414,8 @@ read_variables += [\
 new_variables += [\
     'nlep/I',
     'JetGood[%s]'% ( ','.join(jetVars+['index/I']) + ',genPt/F' ),
+    'BTag[%s]'% ( ','.join(jetVars+['index/I'])  ),
+    'BTagd[%s]'% ( ','.join(jetVars +['index/I'])  ),
     'met_pt/F', 'met_phi/F', 'met_pt_min/F'
 ]
 
@@ -421,13 +424,13 @@ if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I', 'ht/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I','nSoftBJets/I','nHardBJets/I', 'ht/F'] )
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep:
     new_variables.extend( ['nGoodMuons/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
-    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' ] )
+    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
 #    if isMC: 
 #        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
 
@@ -504,8 +507,8 @@ reader = sample.treeReader( \
     )
 
 # using miniRelIso 0.2 as baseline 
-eleSelector_ = eleSelector( "tightMiniIso02", year = options.year )
-muSelector_  = muonSelector("tightMiniIso02", year = options.year )
+eleSelector_ = eleSelector( "hybridIso", year = options.year )
+muSelector_  = muonSelector("hybridIso", year = options.year )
 
 def filler( event ):
     # shortcut
@@ -631,7 +634,8 @@ def filler( event ):
     event.nlep = len(leptons_pt10)
 
 
-    leptons      = filter(lambda l:l['pt']>20, leptons_pt10)
+    #leptons      = filter(lambda l:l['pt']>20, leptons_pt10)
+    leptons      = leptons_pt10
     leptons.sort(key = lambda p:-p['pt'])
 
 
@@ -643,10 +647,15 @@ def filler( event ):
     allJetsNotClean = getAllJets(r, [], ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar=None)
     reallyAllJets= getAllJets(r, leptons, ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar='jetId') # keeping robert's comment: ... yeah, I know.
     allJets      = filter(lambda j:abs(j['eta'])<jetAbsEtaCut, reallyAllJets)
-    jets         = filter(lambda j:jetId(j, ptCut=30, absEtaCut=jetAbsEtaCut, ptVar=jetPtVar), allJets)
-    soft_jets    = filter(lambda j:jetId(j, ptCut=0,  absEtaCut=jetAbsEtaCut) and j['pt']<30., allJets) if options.keepAllJets else []
-    bJets        = filter(lambda j:isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4    , jets)
-    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4 ), jets)
+    jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar=jetPtVar), allJets)
+    soft_jets    = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut) and j['pt']<60., jets) if options.keepAllJets else []
+    hard_jets    = filter(lambda j:jetId(j, ptCut=60,   absEtaCut=jetAbsEtaCut), jets) if options.keepAllJets else []
+    ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
+
+    bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
+    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
 
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
     
@@ -663,7 +672,7 @@ def filler( event ):
 
     # Filling jets
     maxNJet = 100
-    store_jets = jets if not options.keepAllJets else soft_jets + jets
+    store_jets = jets if not options.keepAllJets else soft_jets + hard_jets 
     store_jets = store_jets[:maxNJet]
     store_jets.sort( key = lambda j:-j[jetPtVar])
     event.nJetGood   = len(store_jets)
@@ -682,9 +691,34 @@ def filler( event ):
                     event.JetGood_genPt[iJet] = -1
         getattr(event, "JetGood_pt")[iJet] = jet['pt']
 
+    # Filling bjets sorted by pt
+    maxNBJet = 10
+    store_bjets = bJets #if not options.keepAllJets else soft_jets + hard_jets 
+    store_bjets = store_bjets[:maxNBJet]
+    store_bjets.sort( key = lambda j:-j[jetPtVar])
+    event.nBJetStored   = len(store_bjets)
+    for iJet, jet in enumerate(store_bjets):
+        event.BTag_index[iJet] = jet['index']
+        for b in jetVarNames:
+            getattr(event, "BTag_"+b)[iJet] = jet[b]
+        getattr(event, "BTag_pt")[iJet] = jet['pt']
+
+    # Filling bjets sorted by pt
+    maxNBJet = 10
+    store_bjets_d = bJets #if not options.keepAllJets else soft_jets + hard_jets 
+    store_bjets_d = store_bjets_d[:maxNBJet]
+    store_bjets_d.sort( key = lambda j:-j['btagCSVV2'])
+    for iJet, jet in enumerate(store_bjets_d):
+        event.BTagd_index[iJet] = jet['index']
+        for b in jetVarNames:
+            getattr(event, "BTagd_"+b)[iJet] = jet[b]
+        getattr(event, "BTagd_pt")[iJet] = jet['pt']
+
     event.ht         = sum([j[jetPtVar] for j in jets])
     event.nBTag      = len(bJets)
-
+    event.nSoftBJets  = len(softBJets)
+    event.nHardBJets  = len(hardBJets)
+    event.nISRJets   = len(ISRJets)
     alljets_sys   = {}
     jets_sys      = {}
     bjets_sys     = {}
@@ -725,7 +759,7 @@ def filler( event ):
             event.l1_dz         = leptons[0]['dz']
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
-
+            event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
 #        if isMC:
 #            leptonsForSF   = ( leptons[:1]) if isSingleLep else [] )
 #            leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
