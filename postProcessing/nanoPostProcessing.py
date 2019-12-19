@@ -424,13 +424,17 @@ if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I','nSoftBJets/I','nHardBJets/I', 'ht/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I','nSoftBJets/I','nHardBJets/I', 'ht/F', 'dphij0j1/F'] )
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep:
     new_variables.extend( ['nGoodMuons/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
+#    if isMC: 
+#        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
+
+
 #    if isMC: 
 #        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
 
@@ -641,13 +645,13 @@ def filler( event ):
 
     # now get jets, cleaned against good leptons
 
-    jetPtVar = 'pt_nom' # see comment below
+    #jetPtVar = 'pt_nom' # see comment below
 
     # with the latest change, getAllJets calculates the correct jet pt (removing JER) and stores it as Jet_pt again. No need for Jet_pt_nom anymore
     allJetsNotClean = getAllJets(r, [], ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar=None)
     reallyAllJets= getAllJets(r, leptons, ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar='jetId') # keeping robert's comment: ... yeah, I know.
     allJets      = filter(lambda j:abs(j['eta'])<jetAbsEtaCut, reallyAllJets)
-    jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar=jetPtVar), allJets)
+    jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
     soft_jets    = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut) and j['pt']<60., jets) if options.keepAllJets else []
     hard_jets    = filter(lambda j:jetId(j, ptCut=60,   absEtaCut=jetAbsEtaCut), jets) if options.keepAllJets else []
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
@@ -669,12 +673,14 @@ def filler( event ):
         event.met_phi   = r.MET_phi_nom
 
         event.met_pt_min = 0
-
+     
     # Filling jets
     maxNJet = 100
     store_jets = jets if not options.keepAllJets else soft_jets + hard_jets 
     store_jets = store_jets[:maxNJet]
-    store_jets.sort( key = lambda j:-j[jetPtVar])
+    store_jets.sort( key = lambda j:-j['pt'])
+    print store_jets[0]['pt'],store_jets[1]['pt'],len (jets), len (store_jets)
+    # dphi between leading and subleading jet with pt >60
     event.nJetGood   = len(store_jets)
     for iJet, jet in enumerate(store_jets):
         event.JetGood_index[iJet] = jet['index']
@@ -690,12 +696,14 @@ def filler( event ):
                 else:
                     event.JetGood_genPt[iJet] = -1
         getattr(event, "JetGood_pt")[iJet] = jet['pt']
-
+    if len (store_jets) > 1 and store_jets[1]['pt']> 60:
+      event.dphij0j1= deltaPhi(store_jets[0]['phi'],store_jets[1]['phi'])  
+        
     # Filling bjets sorted by pt
     maxNBJet = 10
     store_bjets = bJets #if not options.keepAllJets else soft_jets + hard_jets 
     store_bjets = store_bjets[:maxNBJet]
-    store_bjets.sort( key = lambda j:-j[jetPtVar])
+    store_bjets.sort( key = lambda j:-j['pt'])
     event.nBJetStored   = len(store_bjets)
     for iJet, jet in enumerate(store_bjets):
         event.BTag_index[iJet] = jet['index']
@@ -703,7 +711,7 @@ def filler( event ):
             getattr(event, "BTag_"+b)[iJet] = jet[b]
         getattr(event, "BTag_pt")[iJet] = jet['pt']
 
-    # Filling bjets sorted by pt
+    # Filling bjets sorted by CSVv2 
     maxNBJet = 10
     store_bjets_d = bJets #if not options.keepAllJets else soft_jets + hard_jets 
     store_bjets_d = store_bjets_d[:maxNBJet]
@@ -714,7 +722,7 @@ def filler( event ):
             getattr(event, "BTagd_"+b)[iJet] = jet[b]
         getattr(event, "BTagd_pt")[iJet] = jet['pt']
 
-    event.ht         = sum([j[jetPtVar] for j in jets])
+    event.ht         = sum([j['pt'] for j in jets])
     event.nBTag      = len(bJets)
     event.nSoftBJets  = len(softBJets)
     event.nHardBJets  = len(hardBJets)
@@ -747,7 +755,7 @@ def filler( event ):
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
 
-        if len(leptons)>=1:
+        if len(leptons)>=1 or (len(leptons)>=2 and leptons[1]<20):
             event.l1_pt         = leptons[0]['pt']
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
@@ -760,6 +768,8 @@ def filler( event ):
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
+        
+            
 #        if isMC:
 #            leptonsForSF   = ( leptons[:1]) if isSingleLep else [] )
 #            leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
