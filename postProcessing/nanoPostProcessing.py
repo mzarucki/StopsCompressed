@@ -92,13 +92,13 @@ isSingleLep     = options.skim.lower().startswith('singlelep')
 skimConds = []
 
 if isSingleLep:
-    skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>5&&abs(Muon_eta)<2.5)>=1" )
+    skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)>=1" )
 
 #Samples: Load samples
 maxN = 1 if options.small else None
 if options.small:
     options.job = 0
-    options.nJobs = 1000 # set high to just run over 1 input file
+    options.nJobs = 10000 # set high to just run over 1 input file
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
@@ -675,33 +675,35 @@ def filler( event ):
         event.met_pt_min = 0
      
     # Filling jets
-    maxNJet = 100
-    store_jets = jets if not options.keepAllJets else soft_jets + hard_jets 
-    store_jets = store_jets[:maxNJet]
-    store_jets.sort( key = lambda j:-j['pt'])
-    print store_jets[0]['pt'],store_jets[1]['pt'],len (jets), len (store_jets)
-    # dphi between leading and subleading jet with pt >60
-    event.nJetGood   = len(store_jets)
-    for iJet, jet in enumerate(store_jets):
-        event.JetGood_index[iJet] = jet['index']
-        for b in jetVarNames:
-            getattr(event, "JetGood_"+b)[iJet] = jet[b]
-        if isMC:
-            if store_jets[iJet]['genJetIdx'] >= 0:
-                if r.nGenJet<maxNJet:
-                    try:
-                        event.JetGood_genPt[iJet] = r.GenJet_pt[store_jets[iJet]['genJetIdx']]
-                    except IndexError:
+    #veto events with 3rd jet pt>60
+    if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
+        maxNJet = 100
+        store_jets = jets if not options.keepAllJets else soft_jets + hard_jets 
+        store_jets = store_jets[:maxNJet]
+        store_jets.sort( key = lambda j:-j['pt'])
+        event.nJetGood   = len(store_jets)
+        for iJet, jet in enumerate(store_jets):
+            event.JetGood_index[iJet] = jet['index']
+            for b in jetVarNames:
+                getattr(event, "JetGood_"+b)[iJet] = jet[b]
+            if isMC:
+                if store_jets[iJet]['genJetIdx'] >= 0:
+                    if r.nGenJet<maxNJet:
+                        try:
+                            event.JetGood_genPt[iJet] = r.GenJet_pt[store_jets[iJet]['genJetIdx']]
+                        except IndexError:
+                            event.JetGood_genPt[iJet] = -1
+                    else:
                         event.JetGood_genPt[iJet] = -1
-                else:
-                    event.JetGood_genPt[iJet] = -1
-        getattr(event, "JetGood_pt")[iJet] = jet['pt']
-    if len (store_jets) > 1 and store_jets[1]['pt']> 60:
-      event.dphij0j1= deltaPhi(store_jets[0]['phi'],store_jets[1]['phi'])  
+            getattr(event, "JetGood_pt")[iJet] = jet['pt']
+    # dphi between leading(ISR) and subleading jet with pt >60
+    if len (jets) > 1 and jets[1]['pt']> 60:
+      event.dphij0j1= deltaPhi(jets[0]['phi'],jets[1]['phi'])  
+           
         
     # Filling bjets sorted by pt
     maxNBJet = 10
-    store_bjets = bJets #if not options.keepAllJets else soft_jets + hard_jets 
+    store_bjets = bJets if not options.keepAllJets else soft_jets + hard_jets 
     store_bjets = store_bjets[:maxNBJet]
     store_bjets.sort( key = lambda j:-j['pt'])
     event.nBJetStored   = len(store_bjets)
@@ -713,7 +715,7 @@ def filler( event ):
 
     # Filling bjets sorted by CSVv2 
     maxNBJet = 10
-    store_bjets_d = bJets #if not options.keepAllJets else soft_jets + hard_jets 
+    store_bjets_d = bJets if not options.keepAllJets else soft_jets + hard_jets 
     store_bjets_d = store_bjets_d[:maxNBJet]
     store_bjets_d.sort( key = lambda j:-j['btagCSVV2'])
     for iJet, jet in enumerate(store_bjets_d):
@@ -755,7 +757,7 @@ def filler( event ):
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
 
-        if len(leptons)>=1 or (len(leptons)>=2 and leptons[1]<20):
+        if len(leptons)>=1 or (len(leptons)>=2 and leptons[1]['pt']<20):
             event.l1_pt         = leptons[0]['pt']
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
