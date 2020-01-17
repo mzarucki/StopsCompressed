@@ -55,6 +55,7 @@ def get_parser():
     argParser.add_argument('--job',         action='store',                     type=int, default=0,                                    help="Run only jobs i" )
     argParser.add_argument('--targetDir',   action='store',         nargs='?',  type=str, default=user.postProcessing_output_directory, help="Name of the directory the post-processed files will be saved" )
     argParser.add_argument('--processingEra', action='store',       nargs='?',  type=str, default='postProcessed_80X_v22',              help="Name of the processing era" )
+    argParser.add_argument('--runOnLxPlus',   action='store_true',                                                                      help="Change the global redirector of samples to run on lxplus")
     argParser.add_argument('--skim',        action='store',         nargs='?',  type=str, default='singleLep',                          help="Skim conditions to be applied for post-processing" )
     argParser.add_argument('--LHEHTCut',    action='store',         nargs='?',  type=int, default=-1,                                   help="LHE cut." )
     argParser.add_argument('--year',        action='store',                     type=int,                                               help="Which year?" )
@@ -99,6 +100,10 @@ maxN = 1 if options.small else None
 if options.small:
     options.job = 0
     options.nJobs = 10000 # set high to just run over 1 input file
+
+if options.runOnLxPlus:
+    # Set the redirector in the samples repository to the global redirector
+    from Samples.Tools.config import redirector_global as redirector
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
@@ -414,17 +419,17 @@ read_variables += [\
 new_variables += [\
     'nlep/I',
     'JetGood[%s]'% ( ','.join(jetVars+['index/I']) + ',genPt/F' ),
-    'BTag[%s]'% ( ','.join(jetVars+['index/I'])  ),
-    'BTagd[%s]'% ( ','.join(jetVars +['index/I'])  ),
+    #'BTag[%s]'% ( ','.join(jetVars+['index/I'])  ),
+    'JetGoodBTS[%s]'% ( ','.join(jetVars +['index/I'])  ),
     'met_pt/F', 'met_phi/F', 'met_pt_min/F'
 ]
 
 # Add weight branches for susy signal samples from friend tree
-if has_susy_weight_friend:
-    new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
+#if has_susy_weight_friend:
+#    new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I','nSoftBJets/I','nHardBJets/I', 'ht/F', 'dphij0j1/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I', 'HT/F', 'dphij0j1/F'] )
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
@@ -434,14 +439,10 @@ if isSingleLep:
 #    if isMC: 
 #        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
 
-
-#    if isMC: 
-#        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
-
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jer', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
         if not var.startswith('unclust'):
-            new_variables.extend( ['nJetGood_'+var+'/I', 'nBTag_'+var+'/I'] )
+            new_variables.extend( ['nJetGood_'+var+'/I', 'HT_'+var+'/F', 'nBTag_'+var+'/I'] )
         new_variables.extend( ['met_pt_'+var+'/F', 'met_phi_'+var+'/F'] )
 
 # Btag weights Method 1a
@@ -530,12 +531,12 @@ def filler( event ):
 
     # weight
     if options.susySignal:
-        if has_susy_weight_friend:
-            if weight_friend.chain.GetEntryWithIndex(r.luminosityBlock, r.event)>0:
-                event.LHE_weight_original =  weight_friend.chain.GetLeaf("LHE_weight_original").GetValue()
-                event.nLHE = int(weight_friend.chain.GetLeaf("nLHE").GetValue())
-                for nEvt in range(event.nLHE):
-                    event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
+        #if has_susy_weight_friend:
+        #    if weight_friend.chain.GetEntryWithIndex(r.luminosityBlock, r.event)>0:
+        #        event.LHE_weight_original =  weight_friend.chain.GetLeaf("LHE_weight_original").GetValue()
+        #        event.nLHE = int(weight_friend.chain.GetLeaf("nLHE").GetValue())
+        #        for nEvt in range(event.nLHE):
+        #            event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
 
         r.GenSusyMStop = max([p['mass']*(abs(p['pdgId']==1000006)) for p in gPart])
         r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
@@ -587,7 +588,7 @@ def filler( event ):
         event.jsonPassed_ = event.jsonPassed
 
     if isMC and hasattr(r, "Pileup_nTrueInt"):
-        event.reweightPU     = nTrueInt_puRW       ( r.Pileup_nTrueInt ) # is this correct?
+        event.reweightPU     = nTrueInt_puRW       ( r.Pileup_nTrueInt ) 
         event.reweightPUDown = nTrueInt_puRWDown   ( r.Pileup_nTrueInt )
         event.reweightPUVDown= nTrueInt_puRWVDown  ( r.Pileup_nTrueInt )
         event.reweightPUUp   = nTrueInt_puRWUp     ( r.Pileup_nTrueInt )
@@ -615,33 +616,26 @@ def filler( event ):
         event.reweightL1Prefire, event.reweightL1PrefireUp, event.reweightL1PrefireDown = L1PW.getWeight(allSlimmedPhotons, allSlimmedJets)
 
     # get leptons before jets in order to clean jets
-    electrons_pt10  = getGoodElectrons(r, ele_selector = eleSelector_)
-    muons_pt10      = getGoodMuons(r,     mu_selector = muSelector_ )
+    electrons  = getGoodElectrons(r, ele_selector = eleSelector_)
+    muons      = getGoodMuons(r,     mu_selector = muSelector_ )
 
-    for e in electrons_pt10:
+    for e in electrons:
         e['pdgId']      = int( -11*e['charge'] )
         e['eleIndex']   = e['index']
         e['muIndex']    = -1
-    for m in muons_pt10:
+    for m in muons:
         m['pdgId']      = int( -13*m['charge'] )
         m['muIndex']    = m['index']
         m['eleIndex']   = -1
 
-    leptons_pt10 = electrons_pt10+muons_pt10
-
-    leptons_pt10.sort(key = lambda p:-p['pt'])
-
-    for iLep, lep in enumerate(leptons_pt10):
-        lep['index'] = iLep
-
-    fill_vector_collection( event, "lep", lepVarNames, leptons_pt10)
-    event.nlep = len(leptons_pt10)
-
-
-    #leptons      = filter(lambda l:l['pt']>20, leptons_pt10)
-    leptons      = leptons_pt10
+    leptons = electrons + muons
     leptons.sort(key = lambda p:-p['pt'])
 
+    for iLep, lep in enumerate(leptons):
+        lep['index'] = iLep
+
+    fill_vector_collection( event, "lep", lepVarNames, leptons)
+    event.nlep = len(leptons)
 
     # now get jets, cleaned against good leptons
 
@@ -652,13 +646,11 @@ def filler( event ):
     reallyAllJets= getAllJets(r, leptons, ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar='jetId') # keeping robert's comment: ... yeah, I know.
     allJets      = filter(lambda j:abs(j['eta'])<jetAbsEtaCut, reallyAllJets)
     jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
-    soft_jets    = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut) and j['pt']<60., jets) if options.keepAllJets else []
-    hard_jets    = filter(lambda j:jetId(j, ptCut=60,   absEtaCut=jetAbsEtaCut), jets) if options.keepAllJets else []
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
     bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
-    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
-    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+    #softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+    #hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
     nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
 
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
@@ -675,59 +667,62 @@ def filler( event ):
         event.met_pt_min = 0
      
     # Filling jets
-    #veto events with 3rd jet pt>60
-    if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
-        maxNJet = 100
-        store_jets = jets if not options.keepAllJets else soft_jets + hard_jets 
-        store_jets = store_jets[:maxNJet]
-        store_jets.sort( key = lambda j:-j['pt'])
-        event.nJetGood   = len(store_jets)
-        for iJet, jet in enumerate(store_jets):
-            event.JetGood_index[iJet] = jet['index']
-            for b in jetVarNames:
-                getattr(event, "JetGood_"+b)[iJet] = jet[b]
-            if isMC:
-                if store_jets[iJet]['genJetIdx'] >= 0:
-                    if r.nGenJet<maxNJet:
-                        try:
-                            event.JetGood_genPt[iJet] = r.GenJet_pt[store_jets[iJet]['genJetIdx']]
-                        except IndexError:
-                            event.JetGood_genPt[iJet] = -1
-                    else:
+    maxNJet = 100
+    store_jets = jets 
+    store_jets = store_jets[:maxNJet]
+    store_jets.sort( key = lambda j:-j['pt'])
+    event.nJetGood   = len(store_jets)
+    for iJet, jet in enumerate(store_jets):
+        event.JetGood_index[iJet] = jet['index']
+        for b in jetVarNames:
+            getattr(event, "JetGood_"+b)[iJet] = jet[b]
+        if isMC:
+            if store_jets[iJet]['genJetIdx'] >= 0:
+                if r.nGenJet<maxNJet:
+                    try:
+                        event.JetGood_genPt[iJet] = r.GenJet_pt[store_jets[iJet]['genJetIdx']]
+                    except IndexError:
                         event.JetGood_genPt[iJet] = -1
-            getattr(event, "JetGood_pt")[iJet] = jet['pt']
+                else:
+                    event.JetGood_genPt[iJet] = -1
+        getattr(event, "JetGood_pt")[iJet] = jet['pt']
+
+    #veto events with 3rd jet pt>60
+    #if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
+
     # dphi between leading(ISR) and subleading jet with pt >60
-    if len (jets) > 1 and jets[1]['pt']> 60:
+    if len (jets) > 1 and jets[1]['pt']>60:
       event.dphij0j1= deltaPhi(jets[0]['phi'],jets[1]['phi'])  
            
         
-    # Filling bjets sorted by pt
-    maxNBJet = 10
-    store_bjets = bJets if not options.keepAllJets else soft_jets + hard_jets 
-    store_bjets = store_bjets[:maxNBJet]
-    store_bjets.sort( key = lambda j:-j['pt'])
-    event.nBJetStored   = len(store_bjets)
-    for iJet, jet in enumerate(store_bjets):
-        event.BTag_index[iJet] = jet['index']
-        for b in jetVarNames:
-            getattr(event, "BTag_"+b)[iJet] = jet[b]
-        getattr(event, "BTag_pt")[iJet] = jet['pt']
+#    # Filling bjets sorted by pt
+#    maxNBJet = 10
+#    store_bjets = bJets if not options.keepAllJets else soft_jets + hard_jets 
+#    store_bjets = store_bjets[:maxNBJet]
+#    store_bjets.sort( key = lambda j:-j['pt'])
+#    event.nBJetStored   = len(store_bjets)
+#    for iJet, jet in enumerate(store_bjets):
+#        event.BTag_index[iJet] = jet['index']
+#        for b in jetVarNames:
+#            getattr(event, 'BTag_'+b)[iJet] = jet[b]
+#        getattr(event, 'BTag_pt')[iJet] = jet['pt']
 
-    # Filling bjets sorted by CSVv2 
+    # Filling bjets sorted by bTag
     maxNBJet = 10
     store_bjets_d = bJets if not options.keepAllJets else soft_jets + hard_jets 
     store_bjets_d = store_bjets_d[:maxNBJet]
     store_bjets_d.sort( key = lambda j:-j['btagCSVV2'])
+    event.nJetGoodBTS = len(store_bjets_d)
     for iJet, jet in enumerate(store_bjets_d):
-        event.BTagd_index[iJet] = jet['index']
+        event.JetGoodBTS_index[iJet] = jet['index']
         for b in jetVarNames:
-            getattr(event, "BTagd_"+b)[iJet] = jet[b]
-        getattr(event, "BTagd_pt")[iJet] = jet['pt']
+            getattr(event, 'JetGoodBTS_'+b)[iJet] = jet[b]
+        getattr(event, 'JetGoodBTS_pt')[iJet] = jet['pt']
 
-    event.ht         = sum([j['pt'] for j in jets])
+    event.HT         = sum([j['pt'] for j in jets])
     event.nBTag      = len(bJets)
-    event.nSoftBJets  = len(softBJets)
-    event.nHardBJets  = len(hardBJets)
+    #event.nSoftBJets  = len(softBJets)
+    #event.nHardBJets  = len(hardBJets)
     event.nISRJets   = len(ISRJets)
     alljets_sys   = {}
     jets_sys      = {}
@@ -746,11 +741,11 @@ def filler( event ):
                 nonBjets_sys[var]   = filter(lambda j: not ( isBJet(j) and abs(j['eta'])<2.4), jets_sys[var])
                 
                 # calculate ht
-                ht = sum([j['pt_nom']*j['corr_JER'] for j in jets_sys[var]]) if var == 'jer' else sum([j['pt_'+var] for j in jets_sys[var]])
+                HT = sum([j['pt_nom']*j['corr_JER'] for j in jets_sys[var]]) if var == 'jer' else sum([j['pt_'+var] for j in jets_sys[var]])
 
-                setattr(event, "nJetGood_"+var, len(jets_sys[var]))
-                setattr(event, "ht_"+var,       ht)
-                setattr(event, "nBTag_"+var,    len(bjets_sys[var]))
+                setattr(event, 'nJetGood_'+var, len(jets_sys[var]))
+                setattr(event, 'HT_'+var,       HT)
+                setattr(event, 'nBTag_'+var,    len(bjets_sys[var]))
 
     if isSingleLep:
         event.nGoodMuons      = len(filter( lambda l:abs(l['pdgId'])==13, leptons))
