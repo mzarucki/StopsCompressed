@@ -37,3 +37,4 @@ python nanoPostProcessing.py  --skim singleLep --triggerSelection --year 2016 --
 python nanoPostProcessing.py  --skim singleLep --triggerSelection --year 2016 --processingEra stops_2016_nano_v1  --sample SingleElectron_Run2016F_17Jul2018 #SPLIT10
 python nanoPostProcessing.py  --skim singleLep --triggerSelection --year 2016 --processingEra stops_2016_nano_v1  --sample SingleElectron_Run2016G_17Jul2018 #SPLIT10
 python nanoPostProcessing.py  --skim singleLep --triggerSelection --year 2016 --processingEra stops_2016_nano_v1  --sample SingleElectron_Run2016H_17Jul2018 #SPLIT10
+# python nanoPostProcessing.py  --skim singleLep --year 2016 --processingEra stops_2016_nano_v1   --sample DYJetsToLL_M50_ext2 --small
