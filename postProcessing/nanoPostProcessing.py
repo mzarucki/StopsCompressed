@@ -25,7 +25,7 @@ import StopsCompressed.Tools.user as user
 # Tools for object selection
 from StopsCompressed.Tools.helpers           import nonEmptyFile, fill_vector_collection
 from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
-from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector, getGoodMuons, getGoodElectrons, getGoodTaus 
+from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus #tauSelector,
 from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
 #from StopsDilepton.Tools.leptonSF            import leptonSF as leptonSF_
@@ -100,7 +100,7 @@ if isSingleLep:
 maxN = 1 if options.small else None
 if options.small:
     options.job = 0
-    options.nJobs = 10000 # set high to just run over 1 input file
+    options.nJobs = 1000 # set high to just run over 1 input file
 
 if options.runOnLxPlus:
     # Set the redirector in the samples repository to the global redirector
@@ -416,7 +416,7 @@ read_variables += [\
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/O,neutralIso/F,idAntiMu/O,genPartFlav/O,genPartIdx/I,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,genPartFlav/O,genPartIdx/I,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
@@ -426,7 +426,7 @@ new_variables += [\
     'JetGood[%s]'% ( ','.join(jetVars+['index/I']) + ',genPt/F' ),
     #'BTag[%s]'% ( ','.join(jetVars+['index/I'])  ),
     'JetGoodBTS[%s]'% ( ','.join(jetVars +['index/I'])  ),
-    'met_pt/F', 'met_phi/F', 'met_pt_min/F'
+    'met_pt/F', 'met_phi/F', 'met_pt_min/F', 'ISRJets_pt/F', 'CT1/F', 'CT2/F'
 ]
 
 # Add weight branches for susy signal samples from friend tree
@@ -446,7 +446,7 @@ if options.susySignal:
     masspoints = signalWeight.keys()
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I', 'HT/F', 'dphij0j1/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
@@ -531,7 +531,7 @@ reader = sample.treeReader( \
 # using hybridIsolation as defined in 2016 AN 
 eleSelector_ = eleSelector( "hybridIso", year = options.year )
 muSelector_  = muonSelector("hybridIso", year = options.year )
-
+#tauSelector_ = tauSelector("loose")
 def filler( event ):
     # shortcut
     r = reader.event
@@ -636,7 +636,8 @@ def filler( event ):
     # get leptons before jets in order to clean jets
     electrons  = getGoodElectrons(r, ele_selector = eleSelector_)
     muons      = getGoodMuons(r,     mu_selector = muSelector_ )
-    taus       = getGoodTaus(r )
+    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
+    taus       = getGoodTaus(r)
     for e in electrons:
         e['pdgId']      = int( -11*e['charge'] )
         e['eleIndex']   = e['index']
@@ -667,8 +668,8 @@ def filler( event ):
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
     bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
-    #softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
-    #hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
     nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
 
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
@@ -682,8 +683,6 @@ def filler( event ):
         event.met_pt    = r.MET_pt_nom 
         event.met_phi   = r.MET_phi_nom
 
-        event.met_pt_min = 0
-     
     # Filling jets
     maxNJet = 100
     store_jets = jets 
@@ -737,11 +736,16 @@ def filler( event ):
             getattr(event, 'JetGoodBTS_'+b)[iJet] = jet[b]
         getattr(event, 'JetGoodBTS_pt')[iJet] = jet['pt']
 
-    event.HT         = sum([j['pt'] for j in jets])
-    event.nBTag      = len(bJets)
-    #event.nSoftBJets  = len(softBJets)
-    #event.nHardBJets  = len(hardBJets)
-    event.nISRJets   = len(ISRJets)
+    event.HT          = sum([j['pt'] for j in jets])
+    event.nBTag       = len(bJets)
+    event.nSoftBJets  = len(softBJets)
+    event.nHardBJets  = len(hardBJets)
+    event.nISRJets    = len(ISRJets)
+    if event.nISRJets >= 1:
+        event.ISRJets_pt  = ISRJets[0]['pt'] 
+        
+    event.CT1         = min(event.met_pt, event.HT-100) 
+    event.CT2         = min(event.met_pt, event.ISRJets_pt)
     alljets_sys   = {}
     jets_sys      = {}
     bjets_sys     = {}
@@ -770,7 +774,7 @@ def filler( event ):
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
         event.nGoodTaus       = len(taus)
-        if len(leptons)>=1 or (len(leptons)>=2 and leptons[1]['pt']<20):
+        if len(leptons)>=1 :
             event.l1_pt         = leptons[0]['pt']
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
