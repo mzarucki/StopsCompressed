@@ -55,13 +55,13 @@ elif "2018" in args.era:
     year = 2018
 logger.info( "Working in year %i", year )
 if args.eos and "2016" in args.era:
-    mc_2016_data_directory = "/eos/cms/store/group/phys_susy/hephy/"
-    mc_2016_postProcessing_directory = "stopsCompressed/nanoTuples/"
+    data_directory = "/eos/cms/store/group/phys_susy/hephy/"
+    postProcessing_directory = "StopsCompressed/nanoTuples/"
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     samples = [TTLep_pow_16 , TTSingleLep_pow_16]
     
     
-if "2016" in args.era and not args.eos:
+elif "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     samples = [TTLep_pow_16 , TTSingleLep_pow_16]
 elif "2018" in args.era and not args.eos:
