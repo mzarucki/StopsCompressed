@@ -26,9 +26,9 @@ argParser.add_argument('--logLevel',           action='store',      default='INF
 argParser.add_argument('--era',                action='store',      type=str,      default="2018")
 argParser.add_argument('--eos',                action='store_true', help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v01')
-argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-deltaPhiJets-jet3Veto-lepSel-met200-ht300')
-#argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-deltaPhiJets-nHardJetsTo2-lepSel-met200-ht300')
+argParser.add_argument('--targetDir',          action='store',      default='v01p4')
+#argParser.add_argument('--selection',          action='store',      default='nISRJets1-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-deltaPhiJets-nHardJetsTo2-lepSel-met200-ht300')
 argParser.add_argument('--badMuonFilters',     action='store',      default="Summer2016",  help="Which bad muon filters" )
 argParser.add_argument('--noBadPFMuonFilter',           action='store_true', default=False)
 argParser.add_argument('--noBadChargedCandidateFilter', action='store_true', default=False)
@@ -55,22 +55,22 @@ elif "2018" in args.era:
     year = 2018
 logger.info( "Working in year %i", year )
 if args.eos and "2016" in args.era:
-    mc_2016_data_directory = "/eos/cms/store/group/phys_susy/hephy/"
-    mc_2016_postProcessing_directory = "stopsCompressed/nanoTuples/"
+    data_directory = "/eos/cms/store/group/phys_susy/hephy/"
+    postProcessing_directory = "stopsCompressed/nanoTuples/"
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     samples = [TTLep_pow_16 , TTSingleLep_pow_16]
     
     
 if "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
-    samples = [TTLep_pow_16 , TTSingleLep_pow_16]
+    samples = [TTLep_pow_16 , TTSingleLep_pow_16 , DY_HT_LO_16, singleTop_16 , WJetsToLNu_HT_16 , VV_16, TTX_16]
 elif "2018" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
     samples =[Top_pow_1l_18, WJets_18, Top_pow_18]
 
 if args.small:
     for sample in samples:
-        #sample.reduceFiles( factor=40 )
+        #sample.reduceFiles( factor=20 )
         sample.reduceFiles( to=1 ) 
 # Text on the plots
 #
@@ -140,7 +140,7 @@ weight_ = lambda event, sample: event.weight
 for sample in samples: sample.style = styles.fillStyle(sample.color)
 for sample in samples: sample.scale = lumi_scale
 
-stack = Stack( TTSingleLep_pow_16, TTLep_pow_16)
+stack = Stack(WJetsToLNu_HT_16, TTSingleLep_pow_16, TTLep_pow_16,  DY_HT_LO_16, singleTop_16, VV_16, TTX_16)
 # Use some defaults
 Plot.setDefaults(stack = stack, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection), addOverFlowBin='upper', histo_class=ROOT.TH1D)
 plots = []
