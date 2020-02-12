@@ -636,8 +636,6 @@ def filler( event ):
     # get leptons before jets in order to clean jets
     electrons  = getGoodElectrons(r, ele_selector = eleSelector_)
     muons      = getGoodMuons(r,     mu_selector = muSelector_ )
-    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
-    taus       = getGoodTaus(r)
     for e in electrons:
         e['pdgId']      = int( -11*e['charge'] )
         e['eleIndex']   = e['index']
@@ -655,6 +653,11 @@ def filler( event ):
 
     fill_vector_collection( event, "lep", lepVarNames, leptons)
     event.nlep = len(leptons)
+
+    # getting clean taus against leptons
+    
+    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
+    taus       = getGoodTaus(r, leptons)
 
     # now get jets, cleaned against good leptons
 
@@ -864,9 +867,9 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     tmp_directory.cd()
 
     if options.small: 
-        logger.info("Running 'small'. Not more than 10000 events") 
+        logger.info("Running 'small'. Not more than 100 events") 
         nMaxEvents = eventRange[1]-eventRange[0]
-        eventRange = ( eventRange[0], eventRange[0] +  min( [nMaxEvents, 10000] ) )
+        eventRange = ( eventRange[0], eventRange[0] +  min( [nMaxEvents, 100] ) )
 
     # Set the reader to the event range
     reader.setEventRange( eventRange )

@@ -12,6 +12,7 @@ mIsoWP = { "VT":5, "T":4, "M":3 , "L":2 , "VL":1, 0:"None" }
 special_cuts = {
     "deltaPhiJets"  :  "dphij0j1<2.5",
     "lepSel"        :  "Sum$(lep_pt>20)<=1&&l1_pt>0",
+    "lpt"           :  "l1_pt>0",
     "jet3Veto"      :  "(nJetGood<=2||JetGood_pt[2]<60)",
     "nHardJetsTo2"  :  "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2",
   }
@@ -38,6 +39,8 @@ class cutInterpreter:
            return "l1_miniRelIso<%3.2f&&l2_miniRelIso<%3.2f"%( iso, iso )
         # special cuts
         if string in special_cuts.keys(): return special_cuts[string]
+        if string == "":
+            return "(1)"
 
         # continous Variables
         for var, tree_var in continous_variables:
@@ -91,12 +94,10 @@ class cutInterpreter:
         # ignore
         cuts = filter( lambda c: not any( ign in c for ign in ignore ), cuts )
 
+
         cutString = "&&".join( map( cutInterpreter.translate_cut_to_string, cuts ) )
-
-        if photonEstimated:
-          for var in ['met_pt','met_phi','metSig','dl_mt2ll','dl_mt2bb']:
-            cutString = cutString.replace(var, var + '_photonEstimated')
-
+        if cut == "":
+          cutString = "(1)"
         return cutString
     
     @staticmethod
@@ -113,4 +114,5 @@ class cutInterpreter:
 
 if __name__ == "__main__":
     print cutInterpreter.cutString("lepSel-nISRJets1p-nHardJetsTo2-deltaPhiJets-met300")
+    #print cutInterpreter.cutString("")
     #print cutInterpreter.cutList("njet2-btag0p-multiIsoVT-relIso0.12-looseLeptonVeto-mll20-onZ-met80-metSig5-dPhiJet0-dPhiJet1-mt2ll100")

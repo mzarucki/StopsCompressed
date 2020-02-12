@@ -2,7 +2,7 @@
 '''
 
 # StopsCompressed
-from StopsCompressed.Tools.helpers import getVarValue, getObjDict, deltaR
+from StopsCompressed.Tools.helpers import getVarValue, getObjDict, deltaR, ptRatio
 
 # standard imports 
 from math import *
@@ -30,7 +30,7 @@ def getAllJets(c, leptons, ptCut=30, absEtaCut=2.4, jetVars=jetVars, jetCollecti
     for jet in jets:
         clean = True
         for lepton in leptons:
-            if deltaR(lepton, jet) < 0.4:
+            if deltaR(lepton, jet) < 0.4 and ptRatio(jet, lepton) < 2: # remove jet with jet_pt/lep_pt < 50% 
                 clean = False
                 break
         if clean:
@@ -157,21 +157,6 @@ def muonSelector( lepton_selection, year):
                     and l["looseId"] 
     return func
 
-#def muonSelectorString(relIso03 = 0.2, ptCut = 20, absEtaCut = 2.4, dxy = 0.05, dz = 0.1, index = "Sum"):
-#    idx = None if (index is None) or (type(index)==type("") and index.lower()=="sum") else index
-#    index_str = get_index_str( index  = idx)
-#    string = [\
-#                "Muon_pt"+index_str+">=%s"%ptCut ,
-#                "abs(Muon_eta"+index_str+")<%s" % absEtaCut ,
-#                "Muon_looseId"+index_str+">=1" ,
-#                "abs(Muon_dxy"+index_str+")<%s" % dxy ,
-#                "abs(Muon_dz"+index_str+")<%s" % dz ,
-#                "Muon_pfRelIso03_all"+index_str+"<%s" % relIso03 ,
-#             ]
-#    if type(index)==type("") and index.lower()=='sum':
-#        return 'Sum$('+'&&'.join(string)+')'
-#    else:
-#        return '&&'.join(string)
 
 ## ELECTRONS ##
 
@@ -191,30 +176,6 @@ vidNestedWPBitMapNamingList = \
      'MinPtCut']
 vidNestedWPBitMap           = { 'fail':0, 'veto':1, 'loose':2, 'medium':3, 'tight':4 }  # Bitwise (Electron vidNestedWPBitMap ID flags (3 bits per cut), '000'=0 is fail, '001'=1 is veto, '010'=2 is loose, '011'=3 is medium, '100'=4 is tight)
 
-#def cutBasedEleBitmap( integer ):
-#    return [int( x, 2 ) for x in textwrap.wrap("{0:030b}".format(integer),3) ]
-#
-#def cbEleSelector( quality, removeCuts = [] ):
-#    if quality not in vidNestedWPBitMap.keys():
-#        raise Exception( "Don't know about quality %r" % quality )
-#    if type( removeCuts ) == str:
-#        removeCuts = [removeCuts]
-#
-#    # construct a list of thresholds the electron has to satisfy 
-#    thresholds = []
-#    for cut in removeCuts:
-#        if cut not in vidNestedWPBitMapNamingList:
-#            raise Exception( "Don't know about ele cut %r" % cut )
-#    for cut in vidNestedWPBitMapNamingList:
-#        if cut not in removeCuts: 
-#            thresholds.append( vidNestedWPBitMap[quality] )
-#        else:
-#            thresholds.append( 0 )
-#
-#    # construct the selector
-#    def _selector( integer ):
-#        return all(map( lambda x: operator.ge(*x), zip( cutBasedEleBitmap(integer), thresholds ) ))
-#    return _selector
 
 def vidNestedWPBitMapToDict( val ):
     # convert int of vidNestedWPBitMap ( e.g. val = 611099940 ) to bitmap ( e.g. "100100011011001010010100100100")
@@ -299,25 +260,6 @@ def eleSelector( lepton_selection, year):
                     and abs(l["dz"])        < 0.5 
     return func
 
-#def eleSelectorString(relIso03 = 0.2, eleId = 1, ptCut = 20, absEtaCut = 2.5, dxy = 0.05, dz = 0.1, index = "Sum", noMissingHits=True):
-#    idx = None if (index is None) or (type(index)==type("") and index.lower()=="sum") else index
-#    index_str = get_index_str( index  = idx)
-#    string = [\
-#                "Electron_pt"+index_str+">=%s" % ptCut ,
-#                "abs(Electron_eta"+index_str+")<%s" % absEtaCut ,
-#                "Electron_convVeto"+index_str+"",
-#                "Electron_lostHits"+index_str+"==0" if noMissingHits else "(1)",
-#                "Electron_sip3d"+index_str+"<4.0" ,
-#                "abs(Electron_dxy"+index_str+")<%s" % dxy ,
-#                "abs(Electron_dz"+index_str+")<%s" % dz ,
-#                "Electron_pfRelIso03_all"+index_str+"<%s" % relIso03 ,
-#                "Electron_cutBased"+index_str+">=%s"%eleId , # Fall17V2 ID
-#             ]
-#
-#    if type(index)==type("") and index.lower()=='sum':
-#        return 'Sum$('+'&&'.join(string)+')'
-#    else:
-#        return '&&'.join(string)
 
 leptonVars_data = ['eta','etaSc', 'pt','phi','dxy', 'dz','tightId', 'pdgId', 'mediumMuonId', 'miniRelIso', 'relIso03', 'sip3d', 'mvaIdSpring15', 'convVeto', 'lostHits', 'jetPtRelv2', 'jetPtRatiov2', 'eleCutId_Spring2016_25ns_v1_ConvVetoDxyDz']
 leptonVars = leptonVars_data + ['mcMatchId','mcMatchAny']
@@ -358,8 +300,20 @@ def looseTauID( l, ptCut=20, absEtaCut=2.4):
     and ord(l["idMVAnewDM2017v2"])>=2\
     and abs(l["eta"])<absEtaCut\
 
-def getGoodTaus(c, collVars=tauVars):
-    return [l for l in getTaus(c,collVars=tauVars) if looseTauID(l)]
+def getGoodTaus(c, leptons, collVars=tauVars):
+    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
+    #return [l for l in getTaus(c,collVars=tauVars) if looseTauID(l)]
+    taus =  [l for l in getTaus(c,collVars=tauVars) if looseTauID(l)]
+    res  =  []
+    for tau in taus:
+        clean = True
+        for lepton in leptons:
+            if deltaR(lepton, tau) < 0.4:
+                clean = False
+                break
+        if clean:
+            res.append(tau)
+    return res
 
 #def tauSelector( tau_selection, ):
 #    if tau_selection == 'loose':

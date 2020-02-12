@@ -28,6 +28,9 @@ def deltaR2(l1, l2):
 def deltaR(l1, l2):
     return sqrt(deltaR2(l1,l2))
 
+def ptRatio(l1, l2):
+    return float( l1['pt']) / float(l2['pt'])
+    
 def add_histos( l ):
     res = l[0].Clone()
     for h in l[1:]: res.Add(h)
