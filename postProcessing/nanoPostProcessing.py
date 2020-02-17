@@ -108,7 +108,8 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
+    from Samples.nanoAOD.Run2016_17Jul2018_private  import allSamples as dataSamples
+    #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
@@ -254,6 +255,7 @@ output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4())
 targetPath       = os.path.join( directory, options.skim, sampleName )
 if not os.path.exists( targetPath ):
     try:    os.makedirs( targetPath ) 
+    except: pass
 
 len_orig = len(sample.files)
 ## sort the list of files?
@@ -278,7 +280,9 @@ try:    #Avoid trouble with race conditions in multithreading
     logger.info( "Created output directory %s.", output_directory )
 except:
     pass
-
+# checking overwrite or file exists
+sel = "&&".join(skimConds)
+nEvents = sample.getYieldFromDraw(weightString="1", selectionString=sel)['val']
 
 # checking overwrite or file exists
 if not options.overwrite:
@@ -970,15 +974,15 @@ for dirname, subdirs, files in os.walk( output_directory ):
 #                    subprocess.call( cmd )
                     raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
 
-    existingSample = Sample.fromFiles( "existing", targetFilePath, treeName = "Events" )
-    nEventsExist = existingSample.getYieldFromDraw(weightString="1")['val']
-    if nEvents == nEventsExist:
-        logger.info( "All events processed!")
-    else:
-        logger.info( "Error: Target events not equal to processing sample events! Is: %s, should be: %s!"%(nEventsExist, nEvents) )
-        logger.info( "Removing file from target." )
-        os.remove( targetFilePath )
-        logger.info( "Sorry." )
+existingSample = Sample.fromFiles( "existing", targetFilePath, treeName = "Events" )
+nEventsExist = existingSample.getYieldFromDraw(weightString="1")['val']
+if nEvents == nEventsExist:
+	logger.info( "All events processed!")
+else:
+	logger.info( "Error: Target events not equal to processing sample events! Is: %s, should be: %s!"%(nEventsExist, nEvents) )
+	logger.info( "Removing file from target." )
+	os.remove( targetFilePath )
+	logger.info( "Sorry." )
 
 # There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
 # Thus the job is resubmitted on condor even if the output is ok
