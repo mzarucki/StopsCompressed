@@ -249,14 +249,55 @@ sampleName = sample.name
 
 # output directory (store temporarily when running on dpm)
 from StopsCompressed.Tools.user import postProcessing_output_directory as user_directory
-directory = os.path.join( options.targetDir, options.processingEra ) 
-output_directory = os.path.join( directory, options.skim, sampleName )
+directory        = os.path.join( options.targetDir, options.processingEra ) 
+output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) ) 
+targetPath       = os.path.join( directory, options.skim, sampleName )
+if not os.path.exists( targetPath ):
+    try:    os.makedirs( targetPath ) 
 
 len_orig = len(sample.files)
 ## sort the list of files?
 sample = sample.split( n=options.nJobs, nSub=options.job)
 logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
 logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
+
+targetFilePath  = os.path.join( targetPath, sample.name + '.root' )
+filename, ext   = os.path.splitext( os.path.join(output_directory, sample.name + '.root') )
+fileNumber      = options.job if options.job is not None else 0
+outfilename     = filename+ext
+
+if os.path.exists(output_directory) and options.overwrite:
+    if options.nJobs > 1:
+        logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
+    else:
+        logger.info( "Output directory %s exists. Deleting.", output_directory )
+        shutil.rmtree(output_directory)
+
+try:    #Avoid trouble with race conditions in multithreading
+    os.makedirs(output_directory)
+    logger.info( "Created output directory %s.", output_directory )
+except:
+    pass
+
+
+# checking overwrite or file exists
+if not options.overwrite:
+    if os.path.isfile(outfilename):
+        logger.info( "Output file %s found.", outfilename)
+        if checkRootFile( outfilename, checkForObjects=["Events"] ) and deepCheckRootFile( outfilename ) and deepCheckWeight( outfilename ):
+            logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
+            sys.exit(0)
+        else:
+            logger.info( "File corrupt. Removing file from target." )
+            os.remove( outfilename )
+            logger.info( "Reprocessing." )
+    else:
+        logger.info( "Sample not processed yet." )
+        logger.info( "Processing." )
+
+else:
+    logger.info( "Overwriting.")
+
 
 ## top pt reweighting
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
@@ -296,41 +337,6 @@ btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='
 
 # L1 prefire weight
 L1PW = L1PrefireWeight(options.year)
-
-if os.path.exists(output_directory) and options.overwrite:
-    if options.nJobs > 1:
-        logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
-    else:
-        logger.info( "Output directory %s exists. Deleting.", output_directory )
-        shutil.rmtree(output_directory)
-
-try:    #Avoid trouble with race conditions in multithreading
-    os.makedirs(output_directory)
-    logger.info( "Created output directory %s.", output_directory )
-except:
-    pass
-
-filename, ext = os.path.splitext( os.path.join(output_directory, sample.name + '.root') )
-fileNumber    = options.job if options.job is not None else 0
-outfilename   = filename+ext
-
-# checking overwrite or file exists
-if not options.overwrite:
-    if os.path.isfile(outfilename):
-        logger.info( "Output file %s found.", outfilename)
-        if checkRootFile( outfilename, checkForObjects=["Events"] ) and deepCheckRootFile( outfilename ) and deepCheckWeight( outfilename ):
-            logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
-            sys.exit(0)
-        else:
-            logger.info( "File corrupt. Removing file from target." )
-            os.remove( outfilename )
-            logger.info( "Reprocessing." )
-    else:
-        logger.info( "Sample not processed yet." )
-        logger.info( "Processing." )
-
-else:
-    logger.info( "Overwriting.")
 
 #branches to be kept for data and MC
 branchKeepStrings_DATAMC = [\
@@ -901,7 +907,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
 
   # Destroy the TTree
     maker.clear()
-    sample.clear()
+    #sample.clear()
 
 logger.info( "Converted %i events of %i, cloned %i",  convertedEvents, reader.nEvents , clonedEvents )
 
@@ -927,6 +933,59 @@ else:
     logger.info( "Successfully copied log file" )
     os.remove(logFile)
     logger.info( "Removed temporary log file" )
+
+for dirname, subdirs, files in os.walk( output_directory ):
+        logger.debug( 'Found directory: %s',  dirname )
+
+        for fname in files:
+            if not fname.endswith(".root") or fname.startswith("nanoAOD_") or "_for_" in fname: continue # remove that for copying log files
+
+            source  = os.path.abspath( os.path.join( dirname, fname ) )
+            target  = os.path.join( targetPath, fname )
+
+            if checkRootFile( source, checkForObjects=["Events"] ) and deepCheckRootFile( source ) and deepCheckWeight( source ):
+                logger.info( "Source: File check ok!" )
+            else:
+                raise Exception("Corrupt rootfile at source! File not copied: %s"%source )
+
+            cmd = [ 'cp', source, target ]
+            logger.info( "Issue copy command: %s", " ".join( cmd ) )
+            subprocess.call( cmd )
+
+            if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ) and deepCheckWeight( target ):
+                logger.info( "Target: File check ok!" )
+            else:
+                logger.info( "Corrupt rootfile at target! Trying again: %s"%target )
+                logger.info( "2nd try: Issue copy command: %s", " ".join( cmd ) )
+                subprocess.call( cmd )
+
+                # Many files are corrupt after copying, a 2nd try fixes that
+                if checkRootFile( target, checkForObjects=["Events"] ) and deepCheckRootFile( target ) and deepCheckWeight( target ):
+                    logger.info( "2nd try successfull!" )
+                else:
+                    # if not successful, the corrupt root file needs to be deleted from DPM
+                    cmd = [ 'rm', target ]
+                    logger.info( "2nd try: No success, removing file: %s"%target )
+                    logger.info( "Issue rm command: %s", " ".join( cmd ) )
+#                    subprocess.call( cmd )
+                    raise Exception("Corrupt rootfile at target! File not copied: %s"%source )
+
+    existingSample = Sample.fromFiles( "existing", targetFilePath, treeName = "Events" )
+    nEventsExist = existingSample.getYieldFromDraw(weightString="1")['val']
+    if nEvents == nEventsExist:
+        logger.info( "All events processed!")
+    else:
+        logger.info( "Error: Target events not equal to processing sample events! Is: %s, should be: %s!"%(nEventsExist, nEvents) )
+        logger.info( "Removing file from target." )
+        os.remove( targetFilePath )
+        logger.info( "Sorry." )
+
+# There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
+# Thus the job is resubmitted on condor even if the output is ok
+# Current idea is that the problem is with xrootd having a non-closed root file
+# Let's see if this works...
+sample.clear()
+shutil.rmtree( output_directory, ignore_errors=True )
 
 if checkRootFile( outfilename, checkForObjects=["Events"] ) and deepCheckRootFile( outfilename ) and deepCheckWeight( outfilename ):
     logger.info( "Target: File check ok!" )
