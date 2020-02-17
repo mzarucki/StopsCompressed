@@ -26,8 +26,9 @@ argParser.add_argument('--logLevel',           action='store',      default='INF
 argParser.add_argument('--era',                action='store',      type=str,      default="2018")
 argParser.add_argument('--eos',                action='store_true', help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v04')
-argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+argParser.add_argument('--targetDir',          action='store',      default='v01')
+argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-deltaPhiJets-jet3Veto-lepSel-met200-ht300')
+#argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-deltaPhiJets-nHardJetsTo2-lepSel-met200-ht300')
 argParser.add_argument('--badMuonFilters',     action='store',      default="Summer2016",  help="Which bad muon filters" )
 argParser.add_argument('--noBadPFMuonFilter',           action='store_true', default=False)
 argParser.add_argument('--noBadChargedCandidateFilter', action='store_true', default=False)
@@ -53,24 +54,17 @@ elif "2017" in args.era:
 elif "2018" in args.era:
     year = 2018
 logger.info( "Working in year %i", year )
+
 if args.eos and "2016" in args.era:
     data_directory = "/eos/cms/store/group/phys_susy/hephy/"
-    postProcessing_directory = "stopsCompressed/nanoTuples/"
+    postProcessing_directory = "StopsCompressed/nanoTuples/"
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     samples = [TTLep_pow_16 , TTSingleLep_pow_16]
-    
-    
-elif "2016" in args.era and not args.eos:
-    from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
-    samples = [WJetsToLNu_HT_16 ,Top_pow_16 , singleTop_16, DY_HT_LO_16,VV_16, TTX_16]
-elif "2018" in args.era and not args.eos:
-    from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
-    samples =[Top_pow_1l_18, WJets_18, Top_pow_18]
 
 if args.small:
     for sample in samples:
-        sample.reduceFiles( factor=60 )
-        #sample.reduceFiles( to=1 ) 
+        #sample.reduceFiles( factor=40 )
+        sample.reduceFiles( to=1 ) 
 # Text on the plots
 #
 tex = ROOT.TLatex()
@@ -90,9 +84,10 @@ def drawPlots(plots):
   for log in [False, True]:
     plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era , args.selection, ("log" if log else ""))
     for plot in plots:
-      #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
+      if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
 
       _drawObjects = []
+
       plotting.draw(plot,
         plot_directory = plot_directory_,
         ratio = None,
@@ -101,7 +96,7 @@ def drawPlots(plots):
         scaling = {},
         legend = ( (0.18,0.88-0.03*sum(map(len, plot.histos)),0.9,0.88), 2),
         drawObjects = drawObjects( True ) + _drawObjects,
-        copyIndexPHP = True, extensions = ["png","pdf", "root"],
+        copyIndexPHP = True, extensions = ["png"],
       )
 
 # Read variables and sequences
@@ -137,8 +132,8 @@ weight_ = lambda event, sample: event.weight
 
 for sample in samples: sample.style = styles.fillStyle(sample.color)
 for sample in samples: sample.scale = lumi_scale
-stack = Stack( samples)
 
+stack = Stack( TTSingleLep_pow_16, TTLep_pow_16)
 # Use some defaults
 Plot.setDefaults(stack = stack, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection), addOverFlowBin='upper', histo_class=ROOT.TH1D)
 plots = []
@@ -146,7 +141,7 @@ plots = []
 plots.append(Plot(
     texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
     attribute = TreeVariable.fromString( "l1_pt/F" ),
-    binning=[20,0,200],
+    binning=[40,0,200],
   ))
 
 plots.append(Plot(
@@ -157,7 +152,7 @@ plots.append(Plot(
 plots.append(Plot(
     texX = 'MET (GeV)', texY = 'Number of Events ',
     attribute = TreeVariable.fromString( "met_pt/F" ),
-    binning=[50,0,1000],
+    binning=[40,200,1000],
   ))
 plots.append(Plot(
     texX = 'H_{T} (GeV)', texY = 'Number of Events ',
@@ -165,16 +160,11 @@ plots.append(Plot(
     binning=[40,200,1000],
   ))
 plots.append(Plot(
-    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
-    attribute = TreeVariable.fromString( "mt/F" ),
-    binning=[40,0,200],
-  ))
-
-plots.append(Plot(
     texX = 'p_{T}(leading jet) (GeV)', texY = 'Number of Events / 30 GeV',
-    attribute = TreeVariable.fromString( "JetGood_pt/F"),
+    name = 'jet1_pt', attribute = lambda event, sample: event.JetGood_pt[0],
     binning=[45,100,1000],
   ))
+
 plots.append(Plot(
     texX = 'C_{T1} (GeV)', texY = 'Number of Events ',
     attribute = TreeVariable.fromString( "CT1/F" ),
@@ -191,7 +181,5 @@ plots.append(Plot(
     binning=[14,0,14],
   ))
 plotting.fill(plots, read_variables = read_variables, sequence = sequence)
-
 drawPlots(plots)
-
 logger.info( "Done with prefix %s and selectionString %s", args.selection, cutInterpreter.cutString(args.selection) )

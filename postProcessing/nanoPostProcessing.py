@@ -25,7 +25,7 @@ import StopsCompressed.Tools.user as user
 # Tools for object selection
 from StopsCompressed.Tools.helpers           import nonEmptyFile, fill_vector_collection
 from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
-from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector, getGoodMuons, getGoodElectrons
+from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus #tauSelector,
 from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
 #from StopsDilepton.Tools.leptonSF            import leptonSF as leptonSF_
@@ -64,6 +64,7 @@ def get_parser():
     argParser.add_argument('--small',       action='store_true',                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used" )
     argParser.add_argument('--susySignal',  action='store_true',                                                                        help="Is SUSY signal?" )
     argParser.add_argument('--fastSim',     action='store_true',                                                                        help="FastSim?" )
+    argParser.add_argument('--TTDM',        action='store_true',                                                                        help="Is TTDM signal?" )
     # argParser.add_argument('--triggerSelection',            action='store_true',                                                        help="Trigger selection?" ) 
     argParser.add_argument('--keepLHEWeights',              action='store_true',                                                        help="Keep LHEWeights?" )
     argParser.add_argument('--skipNanoTools',               action='store_true',                                                        help="Skipt the nanoAOD tools step for computing JEC/JER/MET etc uncertainties")
@@ -99,7 +100,7 @@ if isSingleLep:
 maxN = 1 if options.small else None
 if options.small:
     options.job = 0
-    options.nJobs = 10000 # set high to just run over 1 input file
+    options.nJobs = 1000 # set high to just run over 1 input file
 
 if options.runOnLxPlus:
     # Set the redirector in the samples repository to the global redirector
@@ -107,7 +108,7 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2016_17Jul2018_private  import allSamples as dataSamples
+    from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
@@ -147,7 +148,8 @@ else:
 
 # set default era
 era = None
-
+if isData:
+    era = extractEra(samples[0].name)[-1]
 ## Trigger selection
 #if isData and options.triggerSelection:
 #    from StopsDilepton.tools.triggerSelector import triggerSelector
@@ -180,7 +182,7 @@ else:
 has_susy_weight_friend = False
 if options.susySignal and options.fastSim:
     # Make friend sample
-    friend_dir = "/afs/hephy.at/data/cms05/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
+    friend_dir = "/afs/hephy.at/data/cms05/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
     if os.path.exists( friend_dir ):
         weight_friend = Sample.fromDirectory( "weight_friend", directory = [friend_dir] ) 
         if weight_friend.chain.BuildIndex("luminosityBlock", "event")>0:
@@ -338,6 +340,7 @@ branchKeepStrings_DATAMC = [\
     "nJet", "Jet_*",
     "nElectron", "Electron_*",
     "nMuon", "Muon_*",
+    "nTau", "Tau_*",
 ]
 if not options.fastSim:
     branchKeepStrings_DATAMC += ["HLT_*"]
@@ -413,6 +416,8 @@ read_variables += [\
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,genPartFlav/O,genPartIdx/I,dxy/F,dz/F,charge/I]'),
+    TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
 
@@ -421,20 +426,32 @@ new_variables += [\
     'JetGood[%s]'% ( ','.join(jetVars+['index/I']) + ',genPt/F' ),
     #'BTag[%s]'% ( ','.join(jetVars+['index/I'])  ),
     'JetGoodBTS[%s]'% ( ','.join(jetVars +['index/I'])  ),
-    'met_pt/F', 'met_phi/F', 'met_pt_min/F'
+    'met_pt/F', 'met_phi/F', 'met_pt_min/F', 'ISRJets_pt/F', 'CT1/F', 'CT2/F'
 ]
 
 # Add weight branches for susy signal samples from friend tree
-#if has_susy_weight_friend:
-#    new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
+if has_susy_weight_friend:
+    new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
+cache_dir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/2016"
+if options.susySignal:
+    from StopsCompressed.samples.helpers import getT2ttSignalWeight #, getT2ttISRNorm
+    logger.info( "SUSY signal samples to be processed: %s", ",".join(s.name for s in samples) )
+    assert len(samples)==1, "Can only process one SUSY sample at a time."
+    logger.info( "Signal weights will be drawn from %s files. If that's not the whole sample, stuff will be wrong.", len(samples[0].files))
+    logger.info( "Fetching signal weights..." )
+    logger.info( "Weights will be stored in %s for future use.", output_directory)
+    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir ) #Can use same x-sec/weight for T8bbllnunu as for T2tt
+    logger.info("Done fetching signal weights.")
+
+    masspoints = signalWeight.keys()
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I', 'HT/F', 'dphij0j1/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep:
-    new_variables.extend( ['nGoodMuons/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
+    new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
 #    if isMC: 
 #        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
@@ -511,10 +528,10 @@ reader = sample.treeReader( \
     selectionString = "&&".join(skimConds)
     )
 
-# using miniRelIso 0.2 as baseline 
+# using hybridIsolation as defined in 2016 AN 
 eleSelector_ = eleSelector( "hybridIso", year = options.year )
 muSelector_  = muonSelector("hybridIso", year = options.year )
-
+#tauSelector_ = tauSelector("loose")
 def filler( event ):
     # shortcut
     r = reader.event
@@ -531,12 +548,13 @@ def filler( event ):
 
     # weight
     if options.susySignal:
-        #if has_susy_weight_friend:
-        #    if weight_friend.chain.GetEntryWithIndex(r.luminosityBlock, r.event)>0:
-        #        event.LHE_weight_original =  weight_friend.chain.GetLeaf("LHE_weight_original").GetValue()
-        #        event.nLHE = int(weight_friend.chain.GetLeaf("nLHE").GetValue())
-        #        for nEvt in range(event.nLHE):
-        #            event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
+        if has_susy_weight_friend:
+            if weight_friend.chain.GetEntryWithIndex(r.luminosityBlock, r.event)>0:
+                event.LHE_weight_original =  weight_friend.chain.GetLeaf("LHE_weight_original").GetValue()
+                event.nLHE = int(weight_friend.chain.GetLeaf("nLHE").GetValue())
+                for nEvt in range(event.nLHE):
+                    event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
+
 
         r.GenSusyMStop = max([p['mass']*(abs(p['pdgId']==1000006)) for p in gPart])
         r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
@@ -618,7 +636,6 @@ def filler( event ):
     # get leptons before jets in order to clean jets
     electrons  = getGoodElectrons(r, ele_selector = eleSelector_)
     muons      = getGoodMuons(r,     mu_selector = muSelector_ )
-
     for e in electrons:
         e['pdgId']      = int( -11*e['charge'] )
         e['eleIndex']   = e['index']
@@ -637,6 +654,11 @@ def filler( event ):
     fill_vector_collection( event, "lep", lepVarNames, leptons)
     event.nlep = len(leptons)
 
+    # getting clean taus against leptons
+    
+    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
+    taus       = getGoodTaus(r, leptons)
+
     # now get jets, cleaned against good leptons
 
     #jetPtVar = 'pt_nom' # see comment below
@@ -649,8 +671,8 @@ def filler( event ):
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
     bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
-    #softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
-    #hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
     nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
 
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
@@ -664,8 +686,6 @@ def filler( event ):
         event.met_pt    = r.MET_pt_nom 
         event.met_phi   = r.MET_phi_nom
 
-        event.met_pt_min = 0
-     
     # Filling jets
     maxNJet = 100
     store_jets = jets 
@@ -719,11 +739,16 @@ def filler( event ):
             getattr(event, 'JetGoodBTS_'+b)[iJet] = jet[b]
         getattr(event, 'JetGoodBTS_pt')[iJet] = jet['pt']
 
-    event.HT         = sum([j['pt'] for j in jets])
-    event.nBTag      = len(bJets)
-    #event.nSoftBJets  = len(softBJets)
-    #event.nHardBJets  = len(hardBJets)
-    event.nISRJets   = len(ISRJets)
+    event.HT          = sum([j['pt'] for j in jets])
+    event.nBTag       = len(bJets)
+    event.nSoftBJets  = len(softBJets)
+    event.nHardBJets  = len(hardBJets)
+    event.nISRJets    = len(ISRJets)
+    if event.nISRJets >= 1:
+        event.ISRJets_pt  = ISRJets[0]['pt'] 
+        
+    event.CT1         = min(event.met_pt, event.HT-100) 
+    event.CT2         = min(event.met_pt, event.ISRJets_pt)
     alljets_sys   = {}
     jets_sys      = {}
     bjets_sys     = {}
@@ -751,8 +776,8 @@ def filler( event ):
         event.nGoodMuons      = len(filter( lambda l:abs(l['pdgId'])==13, leptons))
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
-
-        if len(leptons)>=1 or (len(leptons)>=2 and leptons[1]['pt']<20):
+        event.nGoodTaus       = len(taus)
+        if len(leptons)>=1 :
             event.l1_pt         = leptons[0]['pt']
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
@@ -842,9 +867,9 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     tmp_directory.cd()
 
     if options.small: 
-        logger.info("Running 'small'. Not more than 10000 events") 
+        logger.info("Running 'small'. Not more than 100 events") 
         nMaxEvents = eventRange[1]-eventRange[0]
-        eventRange = ( eventRange[0], eventRange[0] +  min( [nMaxEvents, 10000] ) )
+        eventRange = ( eventRange[0], eventRange[0] +  min( [nMaxEvents, 100] ) )
 
     # Set the reader to the event range
     reader.setEventRange( eventRange )
