@@ -7,7 +7,8 @@ class color():
   pass
 
 color.data           = ROOT.kBlack
-color.DY             = ROOT.kOrange-3
+color.ZInv           = ROOT.kOrange-3
+color.DY             = ROOT.kMagenta-6
 color.DY_HT_LO       = color.DY
 color.TTJets         = ROOT.kAzure+1
 color.TTJets_1l      = ROOT.kAzure+2
@@ -36,8 +37,8 @@ color.ZG             = ROOT.kOrange-10
 color.triBoson       = ROOT.kYellow
 color.WZZ            = ROOT.kYellow
 color.WWG            = ROOT.kYellow-5
-color.QCD            = 46
-color.QCD_HT         = 46
+color.QCD            = ROOT.kMagenta+3
+color.QCD_HT         = color.QCD
 color.QCD_Mu5        = 46
 color.QCD_EMbcToE    = 46
 color.QCD_Mu5EMbcToE = 46
