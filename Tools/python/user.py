@@ -9,8 +9,9 @@ if os.environ['USER'] in ['phussain']:
     
 if os.environ['USER'] in ['priya.hussain']:
     results_directory                   = "/mnt/hephy/cms/priya.hussain/StopsCompressed/"
+    cache_directory                     = "/mnt/hephy/cms/priya.hussain/StopsCompressed/"
     postProcessing_output_directory     = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
-    plot_directory                      = "/users/priya.hussain/www/StopsCompressed/"
+    plot_directory                      = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/"
     private_results_directory           = "/mnt/hephy/cms/priya.hussain/"
 if os.environ['USER'] in ['prhussai']:
     results_directory                   = "/afs/cern.ch/work/p/prhussai/private/StopsCompressed"

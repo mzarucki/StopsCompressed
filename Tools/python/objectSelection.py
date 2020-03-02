@@ -288,7 +288,7 @@ idCutBased={'loose':0 ,'medium':1, 'tight':2}
 photonVars=['eta','pt','phi','mass','cutBased']
 photonVarsMC = photonVars + ['mcPt']
 
-tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'idAntiMu','idAntiE','genPartFlav','genPartIdx', 'idMVAnewDM2017v2'] #idMVAnewDM2017v2 :2 =VLose
+tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'idAntiMu','idAntiE', 'idMVAnewDM2017v2'] #idMVAnewDM2017v2 :2 =VLose
 def getTaus(c, collVars=tauVars):
     return [getObjDict(c, 'Tau_', collVars, i) for i in range(int(getVarValue(c, 'nTau')))]
 
