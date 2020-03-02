@@ -36,6 +36,7 @@ from Analysis.Tools.L1PrefireWeight          import L1PrefireWeight
 from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
 from Analysis.Tools.isrWeight                import ISRweight
 from Analysis.Tools.helpers                  import checkRootFile, deepCheckRootFile, deepCheckWeight
+#from Analysis.Tools.MetSignificance          import MetSignificance
 
 # central configuration
 targetLumi = 1000 #pb-1 Which lumi to normalize to
@@ -65,7 +66,7 @@ def get_parser():
     argParser.add_argument('--susySignal',  action='store_true',                                                                        help="Is SUSY signal?" )
     argParser.add_argument('--fastSim',     action='store_true',                                                                        help="FastSim?" )
     argParser.add_argument('--TTDM',        action='store_true',                                                                        help="Is TTDM signal?" )
-    # argParser.add_argument('--triggerSelection',            action='store_true',                                                        help="Trigger selection?" ) 
+    argParser.add_argument('--triggerSelection',            action='store_true',                                                        help="Trigger selection?" ) 
     argParser.add_argument('--keepLHEWeights',              action='store_true',                                                        help="Keep LHEWeights?" )
     argParser.add_argument('--skipNanoTools',               action='store_true',                                                        help="Skipt the nanoAOD tools step for computing JEC/JER/MET etc uncertainties")
     argParser.add_argument('--keepNanoAOD',                 action='store_true',                                                        help="Keep nanoAOD output?")
@@ -88,17 +89,21 @@ import RootTools.core.logger as _logger_rt
 logger_rt = _logger_rt.get_logger(options.logLevel, logFile = logFile )
 
 # Flags 
-isSingleLep     = options.skim.lower().startswith('singlelep')
+isSingleLep        = options.skim.lower().startswith('singlelep')
+isMetSingleLep     = options.skim.lower().startswith('metsinglelep')
 
 # Skim condition
 skimConds = []
 
 if isSingleLep:
     skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)>=1" )
-
+elif isMetSingleLep:
+    skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)>=1 && MET_pt>=100" )
 #Samples: Load samples
 maxN = 1 if options.small else None
 if options.small:
+    maxNFiles = 1
+    maxNEvents = 100
     options.job = 0
     options.nJobs = 1000 # set high to just run over 1 input file
 
@@ -108,15 +113,17 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
+    #from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
+    from Samples.nanoAOD.Run2016_nanoAODv6  import allSamples as dataSamples
+    #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
-    from Samples.nanoAOD.Run2017_31Mar2018_private  import allSamples as dataSamples
+    from Samples.nanoAOD.Run2017_nanoAODv6  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2018:
     from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2018_17Sep2018_private  import allSamples as dataSamples
+    from Samples.nanoAOD.Run2018_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 else:
     raise NotImplementedError
@@ -150,19 +157,19 @@ else:
 era = None
 if isData:
     era = extractEra(samples[0].name)[-1]
-## Trigger selection
-#if isData and options.triggerSelection:
-#    from StopsDilepton.tools.triggerSelector import triggerSelector
-#    era = extractEra(samples[0].name)[-1]
-#    logger.info( "######### Era %s ########", era )
-#    ts = triggerSelector(options.year, era=era)
-#    triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
-#    treeFormulas = {"triggerDecision": {'string':triggerCond} }
-#
-#    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
-#    skimConds.append( triggerCond )
-#elif isData and not options.triggerSelection:
-#    raise Exception( "Data should have a trigger selection" )
+# Trigger selection
+if isData and options.triggerSelection:
+    from StopsCompressed.Tools.triggerSelector import triggerSelector
+    era = extractEra(samples[0].name)[-1]
+    logger.info( "######### Era %s ########", era )
+    ts = triggerSelector(options.year, era=era)
+    triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
+    treeFormulas = {"triggerDecision": {'string':triggerCond} }
+
+    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+    skimConds.append( triggerCond )
+elif isData and not options.triggerSelection:
+    raise Exception( "Data should have a trigger selection" )
 #
 #triggerEff          = triggerEfficiency(options.year)
 
@@ -182,7 +189,7 @@ else:
 has_susy_weight_friend = False
 if options.susySignal and options.fastSim:
     # Make friend sample
-    friend_dir = "/afs/hephy.at/data/cms05/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
+    friend_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
     if os.path.exists( friend_dir ):
         weight_friend = Sample.fromDirectory( "weight_friend", directory = [friend_dir] ) 
         if weight_friend.chain.BuildIndex("luminosityBlock", "event")>0:
@@ -263,7 +270,7 @@ logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.
 
 targetFilePath  = os.path.join( targetPath, sample.name + '.root' )
 filename, ext   = os.path.splitext( os.path.join(output_directory, sample.name + '.root') )
-fileNumber      = options.job if options.job is not None else 0
+#fileNumber      = options.job if options.job is not None else 0
 outfilename     = filename+ext
 
 if os.path.exists(output_directory) and options.overwrite:
@@ -278,7 +285,9 @@ try:    #Avoid trouble with race conditions in multithreading
     logger.info( "Created output directory %s.", output_directory )
 except:
     pass
-
+# checking overwrite or file exists
+sel = "&&".join(skimConds)
+nEvents = sample.getYieldFromDraw(weightString="1", selectionString=sel)['val']
 
 # checking overwrite or file exists
 if not options.overwrite:
@@ -438,7 +447,7 @@ new_variables += [\
 # Add weight branches for susy signal samples from friend tree
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
-cache_dir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/2016"
+cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/2016"
 if options.susySignal:
     from StopsCompressed.samples.helpers import getT2ttSignalWeight #, getT2ttISRNorm
     logger.info( "SUSY signal samples to be processed: %s", ",".join(s.name for s in samples) )
@@ -456,7 +465,7 @@ new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', '
 
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
-if isSingleLep:
+if isSingleLep or isMetSingleLep:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
 #    if isMC: 
@@ -483,13 +492,23 @@ if options.susySignal:
         new_variables  += ['weight_pol_L/F', 'weight_pol_R/F']
 
 if not options.skipNanoTools:
+    # prepare metsignificance and jes/jer
+    #MetSig = MetSignificance( sample, options.year, output_directory )
+    #MetSig( "&&".join(skimConds) )
+    #newfiles = MetSig.getNewSampleFilenames()
+    #sample.clear()
+    #sample.files = copy.copy(newfiles)
+    #sample.name  = MetSig.name
+    #if isMC: sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
+    #sample.isData = isData
+    #del MetSig
     ### nanoAOD postprocessor
     from importlib import import_module
     from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor   import PostProcessor
     from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel       import Collection
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
-    ## ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
+    ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
     #from PhysicsTools.NanoAODTools.postprocessing.modules.common.ISRcounter        import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
@@ -514,17 +533,17 @@ if not options.skipNanoTools:
             JMECorrector()
         ]
         
-        #if not sample.isData:
-        #    modules.append( ISRcounter() )
+       # if not sample.isData:
+       #     modules.append( ISRcounter() )
 
-        # need a hash to avoid data loss
+       ##  need a hash to avoid data loss
         file_hash = str(hash(f))
         p = PostProcessor(output_directory, [f], cut=cut, modules=modules, postfix="_for_%s_%s"%(sample.name, file_hash))
         if not options.reuseNanoAOD:
             p.run()
         newFileList += [output_directory + '/' + f.split('/')[-1].replace('.root', '_for_%s_%s.root'%(sample.name, file_hash))]
     logger.info("Done. Replacing input files for further processing.")
-    
+    sample.clear() 
     sample.files = newFileList
 
 # Define a reader
@@ -533,7 +552,6 @@ reader = sample.treeReader( \
     variables = read_variables ,
     selectionString = "&&".join(skimConds)
     )
-
 # using hybridIsolation as defined in 2016 AN 
 eleSelector_ = eleSelector( "hybridIso", year = options.year )
 muSelector_  = muonSelector("hybridIso", year = options.year )
@@ -689,9 +707,11 @@ def filler( event ):
         event.met_phi   = r.METFixEE2017_phi_nom
         #event.met_pt_min = r.MET_pt_min not done anymore
     else:
-        event.met_pt    = r.MET_pt_nom 
-        event.met_phi   = r.MET_phi_nom
+        event.met_pt    = r.MET_pt 
+        event.met_phi   = r.MET_phi
 
+        #event.met_pt    = r.MET_pt_nom 
+        #event.met_phi   = r.MET_phi_nom
     # Filling jets
     maxNJet = 100
     store_jets = jets 
@@ -778,7 +798,7 @@ def filler( event ):
                 setattr(event, 'HT_'+var,       HT)
                 setattr(event, 'nBTag_'+var,    len(bjets_sys[var]))
 
-    if isSingleLep:
+    if isSingleLep or isMetSingleLep:
         event.nGoodMuons      = len(filter( lambda l:abs(l['pdgId'])==13, leptons))
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
@@ -873,9 +893,9 @@ for ievtRange, eventRange in enumerate( eventRanges ):
     tmp_directory.cd()
 
     if options.small: 
-        logger.info("Running 'small'. Not more than 100 events") 
-        nMaxEvents = eventRange[1]-eventRange[0]
-        eventRange = ( eventRange[0], eventRange[0] +  min( [nMaxEvents, 100] ) )
+        logger.info("Running 'small'. Not more than %i events"%maxNEvents) 
+        numEvents = eventRange[1]-eventRange[0]
+        eventRange = ( eventRange[0], eventRange[0] +  min( [numEvents, maxNEvents] ) )
 
     # Set the reader to the event range
     reader.setEventRange( eventRange )
@@ -907,7 +927,7 @@ for ievtRange, eventRange in enumerate( eventRanges ):
 
   # Destroy the TTree
     maker.clear()
-    #sample.clear()
+    sample.clear()
 
 logger.info( "Converted %i events of %i, cloned %i",  convertedEvents, reader.nEvents , clonedEvents )
 
@@ -972,14 +992,14 @@ for dirname, subdirs, files in os.walk( output_directory ):
 
 existingSample = Sample.fromFiles( "existing", targetFilePath, treeName = "Events" )
 nEventsExist = existingSample.getYieldFromDraw(weightString="1")['val']
-if nEvents == nEventsExist:
-        logger.info( "All events processed!")
-else:
-        logger.info( "Error: Target events not equal to processing sample events! Is: %s, should be: %s!"%(nEventsExist, nEvents) )
-        logger.info( "Removing file from target." )
-        os.remove( targetFilePath )
-        logger.info( "Sorry." )
-
+#if nEvents == nEventsExist or options.small: #FIXME not a good solution
+#	logger.info( "All events processed!")
+#else:
+#	logger.info( "Error: Target events not equal to processing sample events! Is: %s, should be: %s!"%(nEventsExist, nEvents) )
+#	logger.info( "Removing file from target." )
+#	os.remove( targetFilePath )
+#	logger.info( "Sorry." )
+#
 # There is a double free corruption due to stupid ROOT memory management which leads to a non-zero exit code
 # Thus the job is resubmitted on condor even if the output is ok
 # Current idea is that the problem is with xrootd having a non-closed root file
@@ -993,4 +1013,3 @@ shutil.rmtree( output_directory, ignore_errors=True )
 #    logger.info( "Corrupt rootfile! Removing file: %s"%outfilename )
 #    os.remove( outfilename )
 #    raise Exception("Corrupt rootfile! File not copied: %s"%source )
-#
