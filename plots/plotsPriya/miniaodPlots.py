@@ -10,7 +10,7 @@ from RootTools.core.standard import *
 from Analysis.Tools.GenSearch import *
 from RootTools.core.standard import *
 
-from StopsCompressed.tools.user         import plot_directory
+from StopsCompressed.Tools.user         import plot_directory
 
 #
 # Arguments

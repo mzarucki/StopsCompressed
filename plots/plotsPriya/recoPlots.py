@@ -7,7 +7,7 @@ from DataFormats.FWLite import Events, Handle
 from PhysicsTools.PythonAnalysis import *
 from math   import pi, sqrt, sin, cos, atan2
 from RootTools.core.standard import *
-from StopsCompressed.tools.user         import plot_directory
+from StopsCompressed.Tools.user         import plot_directory
 
 #
 # Arguments
@@ -16,7 +16,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v02_log')
+argParser.add_argument('--targetDir',          action='store',      default='v04')
 
 args = argParser.parse_args()
 
@@ -31,7 +31,7 @@ logger = _logger_rt.get_logger(args.logLevel, logFile = None)
 #path = '/afs/hephy.at/user/p/phussain/www/stopsCompressed/v01/reco/'
 
 if args.small: args.targetDir += "_small"
-plot_directory = os.path.join(plot_directory,'reco', args.targetDir)
+plot_directory = os.path.join(plot_directory,'reco', args.targetDir, 'log')
 if not os.path.exists( plot_directory ):
     os.makedirs(plot_directory)
     logger.info( "Created plot directory %s", plot_directory )
@@ -81,10 +81,10 @@ from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_
 sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01] + [DisplacedStops_mStop_250_ctau_0p1]
 if args.small:
     for s in sample:
-        s.reduceFiles( to = 10 )
+        s.reduceFiles( to = 1 )
 #defining variables for the leptons in dilep
-electronVars = [ 'pt', 'eta','phi', 'pdgId', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all']
-muonVars = [ 'pt', 'eta','phi', 'pdgId', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all', 'mediumId']
+electronVars = [ 'pt', 'eta','phi', 'pdgId','genPartIdx', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all']
+muonVars = [ 'pt', 'eta','phi','genPartIdx', 'pdgId', 'dxy', 'dz', 'charge', 'miniPFRelIso_all', 'pfRelIso03_all', 'mediumId']
 
 def getMuons(c, collVars=muonVars):
     return [getObjDict(c, 'Muon_', collVars, i) for i in range(int(getVarValue(c, 'nMuon')))]
@@ -94,9 +94,9 @@ def getElectrons(c, collVars=electronVars):
 #variables to be read from Tree
 read_variables = [ \
     TreeVariable.fromString('nElectron/I'), 
-    VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,genPartIdx/I,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,genPartIdx/I,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
 ]
 
 ##writing lep variables
@@ -119,11 +119,24 @@ def makeLeptons( event, sample ):
     muons      = filter (muSelector, muons_)
     leptons = electrons + muons
 
-    #print leptons
-    #print muons
+    if 'TTLep' in sample.name:
+        weight_ = ((87.315047712*1000)/4635769526.2) * 72.6983032227 
+        #print sample.name
+    elif "0p01" in sample.name:
+        weight_ = ((24.8*1000)/223923)
+        #print sample.name
+    else:
+        weight_ = ((24.8*1000)/164370)
+        #print sample.name
 
     leptons.sort(key = lambda p:-p['pt'])
-    
+    for i in range(len(muons)):
+        if muons[i]['genPartIdx'] >= 0:
+            dxy_match.Fill(abs(muons[i]['dxy']), (weight_))
+            #event.match = abs( muons[i]['dxy'])
+            #print muons[i]['genPartIdx']
+            #print abs(muons[i]['dxy'])
+            
     ##fill_vector_collection( event, "lep", lepVarNames, leptons) #thinking about it 
     event.nlep = len(leptons)
     if len(muons) > 1 and event.nlep >= 1:
@@ -136,9 +149,10 @@ sequence = [makeLeptons]
 i = 0
 for s in sample:
     sname = s.name
-    dl1 = ROOT.TH1F('1stmuon dxy','Impact Parameter of 1st muon',50,0.0,1.5)
-    dl2 = ROOT.TH1F('2ndmuon dxy','Impact Parameter of 1st muon',50,0.0,1.5)
-    d2 = ROOT.TH2F('dxy','Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]',50,0.0,1.0,50,0.0,1.0)
+    dl1 = ROOT.TH1F('1stmuon dxy','Impact Parameter of 1st muon',50,0.0,20.0)
+    dxy_match = ROOT.TH1F('dxy of gen matched muon','Impact Parameter of gen matched muon',50,0.0,10.0)
+    dl2 = ROOT.TH1F('2ndmuon dxy','Impact Parameter of 1st muon',50,0.0,20.0)
+    d2 = ROOT.TH2F('dxy','Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]',50,0.0,20.0,50,0.0,20.0)
     r = s.treeReader( \
         variables = read_variables ,
         #selectionString = "&&".join(skimConds)
@@ -149,9 +163,12 @@ for s in sample:
     while r.run():
         i += 1
         pass
-    plotl1 = Plot.fromHisto(name = "1st_muon_dxy_%s_10"%sname, histos = [[dl1]], texX = "dxy of 1st muon (cm)", texY = "Number of events" )
-    plotl2 = Plot.fromHisto(name = "2nd_muon_dxy_%s_10"%sname, histos = [[dl2]], texX = "dxy of 2nd muon(cm)", texY = "Number of events" )
-    plot1 = Plot2D.fromHisto(name = "dxy_of_Muons_%s_2D_10"%sname, histos = [[d2]], texX = "dxy 1st muon (cm)", texY = "dxy 2nd muon(cm)" )
+    plotl1 = Plot.fromHisto(name = "1st_muon_dxy_%s"%sname, histos = [[dl1]], texX = "dxy of 1st muon (cm)", texY = "Number of events" )
+    plotdxy = Plot.fromHisto(name = "gen_matched_muon_dxy_%s"%sname, histos = [[dxy_match]], texX = "dxy of matched muons (cm)", texY = "Number of events" )
+    plotl2 = Plot.fromHisto(name = "2nd_muon_dxy_%s"%sname, histos = [[dl2]], texX = "dxy of 2nd muon(cm)", texY = "Number of events" )
+    plot1 = Plot2D.fromHisto(name = "dxy_of_Muons_%s_2D"%sname, histos = [[d2]], texX = "dxy 1st muon (cm)", texY = "dxy 2nd muon(cm)" )
     plotting.draw(plotl1, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
+    plotting.draw(plotdxy, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None, drawObjects = drawObjects( False )  )
     plotting.draw(plotl2, plot_directory = plot_directory, logX = False, logY = True, sorting = False, ratio = None ,drawObjects = drawObjects( False ) )
-    plotting.draw2D(plot1, plot_directory = plot_directory, logX = False, logY = False,logZ = True , drawObjects = drawObjects( False ))
+    plotting.draw2D(plot1, plot_directory = plot_directory, zRange= (10**-1, 10**7) ,logX = False, logY = False,logZ = True , drawObjects = drawObjects( False ))
+

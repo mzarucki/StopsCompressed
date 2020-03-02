@@ -31,6 +31,7 @@ events = Events(['file:/afs/hephy.at/data/cms07/StopsCompressed/fwlite_signals_f
 
 # RECO
 edmCollections = { 
+'muons':{'type':'vector<reco:Muon>', 'label': ( "muons", "", "RECO" ) },
 'genParticles':{'type':'vector<reco:GenParticle>', 'label': ( "genParticles", "", "RECO" ) },
 'inclusiveSecondaryVertices':{'type':'vector<reco:Vertex>', 'label': ( "inclusiveSecondaryVertices", "", "RECO" ) },
 'offlinePrimaryVerticesWithBS':{'type':'vector<reco:Vertex>', 'label': ( "offlinePrimaryVerticesWithBS", "", "RECO" ) },
@@ -64,25 +65,30 @@ while r.run():
 #  events.to(i)
   runs.add(r.evt[0])
   eaux  = events.eventAuxiliary()
-  print r.event.evt, r.event.lumi, r.event.run
   genparticles = r.event.genParticles
-  secondaryVertices = r.event.inclusiveSecondaryVertices
-  primaryVertices = r.event.offlinePrimaryVerticesWithBS
-  incSecondaryVertices = r.event.inclusiveCandidateSecondaryVertices
+  muons = r.event.muons
+  #secondaryVertices = r.event.inclusiveSecondaryVertices
+  #primaryVertices = r.event.offlinePrimaryVerticesWithBS
+  #incSecondaryVertices = r.event.inclusiveCandidateSecondaryVertices
   print genparticles.size() 
-  print secondaryVertices.size() 
-  print primaryVertices.size() 
-  print incSecondaryVertices.size()
+  print muons.size() 
+  #print secondaryVertices.size() 
+  #print primaryVertices.size() 
+  #print incSecondaryVertices.size()
 #  # run/lumi/event
-#  run   = eaux.run()
-#  event = eaux.event()
-#  lumi  = eaux.luminosityBlock()
+  run   = eaux.run()
+  event = eaux.event()
+  lumi  = eaux.luminosityBlock()
+  #print r.event.evt, r.event.lumi, r.event.run
 #
   #read all products as specifed in edmCollections
   products = {}
   for k, v in edmCollections.iteritems():
     events.getByLabel(v['label'], v['handle'])
     products[k] = v['handle'].product()
+  for m in muons:
+    v = m.vertex()
+    print "Lxy", v.rho(),"v.x",v.x(), "v.y",v.y(),"pdgId", m.pdgId() , "phi", m.phi(), "pt", m.pt()
 #
 #  print run,lumi,event
 #  for p in genparticles:

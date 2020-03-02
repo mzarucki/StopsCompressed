@@ -62,7 +62,8 @@ if args.eos and "2016" in args.era:
     
 elif "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
-    samples = [WJetsToLNu_HT_16 ,Top_pow_16 , singleTop_16, DY_HT_LO_16,VV_16, TTX_16]
+    samples = [WJetsToLNu_HT_16 ,Top_pow_16 , singleTop_16, TTX_16]
+    #samples = [WJetsToLNu_HT_16 ,Top_pow_16 , singleTop_16, DY_HT_LO_16,VV_16, TTX_16]
 elif "2018" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
     samples =[Top_pow_1l_18, WJets_18, Top_pow_18]

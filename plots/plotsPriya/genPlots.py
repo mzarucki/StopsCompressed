@@ -17,8 +17,8 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v01')
-argParser.add_argument('--signal',       action='store',      default='fwlite_signals_fastSim_Stops2l_200k',choices=['fwlite_signals_DisplacedStops_250_0p001','fwlite_signals_DisplacedStops_250_0p01','fwlite_signals_DisplacedStops_250_0p1','fwlite_signals_DisplacedStops_250_0p2','fwlite_signals_DisplacedStops_250_200'], help='generated signal samples we get plots for')
+argParser.add_argument('--targetDir',          action='store',      default='v02')
+#argParser.add_argument('--signal',       action='store',      default='fwlite_signals_fastSim_Stops2l_200k',choices=['fwlite_signals_DisplacedStops_250_0p001','fwlite_signals_DisplacedStops_250_0p01','fwlite_signals_DisplacedStops_250_0p1','fwlite_signals_DisplacedStops_250_0p2','fwlite_signals_DisplacedStops_250_200'], help='generated signal samples we get plots for')
 
 args = argParser.parse_args()
 
@@ -28,15 +28,20 @@ args = argParser.parse_args()
 import RootTools.core.logger as _logger_rt
 logger = _logger_rt.get_logger(args.logLevel, logFile = None)
 
-if args.small: args.signal += "_small"
-plot_directory = os.path.join(plot_directory,'gen', args.targetDir,args.signal)
+from StopsCompressed.samples.signals import *
+
+sample = fwlite_signals_DisplacedStops_250_0p001 #fwlite_signals_DisplacedStops_250_200 #fwlite_signals_fastSim_Stops2l_200k #fwlite_signals_DisplacedStops_500_0p2
+
+#if args.small: sample.name += "_small"
+if args.small:
+    plot_directory = os.path.join(plot_directory,'gen', args.targetDir, sample.name, 'small')
+else:
+    plot_directory = os.path.join(plot_directory,'gen', args.targetDir, sample.name)
 if not os.path.exists( plot_directory ):
     os.makedirs(plot_directory)
     logger.info( "Created plot directory %s", plot_directory )
-from StopsCompressed.samples.signals import *
-
-sample = fwlite_signals_DisplacedStops_250_0p2 # fwlite_signals_DisplacedStops_250_200 #fwlite_signals_fastSim_Stops2l_200k #fwlite_signals_DisplacedStops_500_0p2
 print "loading files"
+print sample.name
 #if args.small:
 #        sample.reduceFiles( to = 1 )
 # example file
@@ -112,7 +117,7 @@ def MET_chi(nl1_px,nl1_py,nl2_px,nl2_py):
     #print "MET for semilep decay", MET_dilep
     return MET_chi, MET_chi_phi
 
-histo   = ROOT.TH1F("histo","Stops Transverse decay length (13 TeV);Lxy[cm];number of events",500,0.00,10.0)
+histo   = ROOT.TH1F("histo","Stops Transverse decay length (13 TeV);Lxy[cm];number of events",500,0.00,100.0)
 histodphi   = ROOT.TH1F("histodphi","delta phi between stops (13 TeV);dphi;number of events",50,0.0,4.00)
 histolepdphi   = ROOT.TH1F("histolepdphi","delta phi between leptons (13 TeV);dphi;number of events",50,0.0,4.00)
 histoMET_dilep_1_dphi   = ROOT.TH1F("histo_dilep_1_dphi","delta phi between 1st lepton and MET(dilep) (13 TeV);dphi;number of events",50,0.0,4.00)
@@ -120,15 +125,17 @@ histoMET_dilep_2_dphi   = ROOT.TH1F("histo_dilep_2_dphi","delta phi between 2nd 
 histoDR   = ROOT.TH1F("histoDR","deltaR between stops (13 TeV);dphi;number of events",50,0.0,4.00)
 histoDRlep   = ROOT.TH1F("histoDRlep","deltaR between leptons (13 TeV);dphi;number of events",50,0.0,4.00)
 histol  = ROOT.TH1F("histol","Leptons Transverse decay length (13 TeV);Lxy[cm];number of events",50,0.0,0.2)
-histot  = ROOT.TH1F("histot","Proper time of stops (13 TeV);proper time[cm];number of events",50,0.0,0.09)
-histotn = ROOT.TH1F("histotn","Proper time of stops with neutralinos (13 TeV);proper time[cm];number of events",1000,0.0,100.0)
+#histot  = ROOT.TH1F("histot","Proper time of stops (13 TeV)%s;proper time[cm];number of events"%sample.name,50,0.0,0.09)
+histotn = ROOT.TH1F("histotn","Proper time of stops with neutralinos (13 TeV)%s;proper time[cm];number of events"%sample.name,1000,0.0,100.0)
 histopt = ROOT.TH1F("histopt","Transverse Momentum of Leptons (13 TeV);pT[GeV];number of events",50,0.0,50.0)
 histostopspt = ROOT.TH1F("histostopspt","Transverse Momentum of Stops (13 TeV);pT[GeV];number of events",100,0.0,700.0)
 histonlpt = ROOT.TH1F("histonlpt","Transverse Momentum of Neutralinos (13 TeV);pT[GeV];number of events",100,0.0,700.0)
 histonpt = ROOT.TH1F("histonpt","Transverse Momentum of Neutrinos (13 TeV);pT[GeV];number of events",50,0.0,100.0)
 histoMET_dilep = ROOT.TH1F("histoMET_dilep","MET dilep (13 TeV);pT[GeV];number of events",50,0.0,700.0)
+#histod0 = ROOT.TH1F("histod0","Impact Parameters of leptons (13 TeV);d0[cm];number of events",50,0.0,200.0)
 histod0 = ROOT.TH1F("histod0","Impact Parameters of leptons (13 TeV);d0[cm];number of events",50,0.0,10.0)
-histod02D = ROOT.TH2F("histod02D","Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]",10,0.0,0.5,10,0.0,0.5)
+histod02D = ROOT.TH2F("histod02D","Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]",20,0.0,10.0,20,0.0,10.0)
+#histod02D = ROOT.TH2F("histod02D","Impact Parameters of leptons in dilepton state (13 TeV); first lepton d0[cm]; 2nd lepton d0[cm]",50,0.0,200.0,50,0.0,200.0)
 #graph = ROOT.TGraph(50)
 canvasl= ROOT.TCanvas("canvasl", "Stops decay length ", 1000, 600)
 #nevents = 1
@@ -175,10 +182,10 @@ while r.run():
                             px = ptl * cos (phil)
                             py = ptl * sin (phil)
                             IP = dxy(x,y,px,py)
-                            #print 'impact parameter is', IP
-                            histod0.Fill(IP)
                             lep = {"pdgId": d.pdgId() ,"phi": d.phi() , "eta":d.eta(), "d0": IP}
                             leptons.append(lep)
+                            #print 'impact parameter is', IP
+                            histod0.Fill(IP)
                         else:
                             npt= d.pt()
                             phin=d.phi()
@@ -263,10 +270,11 @@ while r.run():
   #    #print "neutralino MET:" , MET_nl, "neutralino MET dphi:" , MET_nl_phi
 
   #print len(MET)
-  if i% 1000==0:
-    print "1000 events passed"
-#  if i ==100000:
-#    break  
+#  if i% 1000==0:
+#    print "1000 events passed"
+  if args.small:
+    if i ==1000:
+        break  
 #print  "Found the following run(s): %s", ",".join(str(run) for run in runs)
 #scale = 1 / histol.Integral()
 scales = 1 / histo.Integral()
@@ -285,6 +293,15 @@ scaleMET_dilep = 1/ histoMET_dilep.Integral()
 scaleMET_dilep_1l = 1/histoMET_dilep_1_dphi.Integral()
 scaleMET_dilep_2l = 1/histoMET_dilep_2_dphi.Integral()
 
+histo.Scale(scales)
+histo.Draw()
+myPad=canvasl.GetPad(1)
+canvasl.SetLogy()
+histo.GetMean()
+canvasl.Modified()
+canvasl.Print(os.path.join(plot_directory,'histostops.png'))
+canvasl.SaveAs(os.path.join(plot_directory,'histostops.root'))
+
 canvasd02D= ROOT.TCanvas("canvasd02D", "ImpactParameter ", 1000, 600)
 print len(d0l1)
 print len(d0l2)
@@ -296,15 +313,6 @@ graph.SetMarkerStyle(21)
 graph.Draw("ap")
 canvasd02D.SaveAs(os.path.join(plot_directory,'scatterplot_d0.png'))
 canvasd02D.SaveAs(os.path.join(plot_directory,'scatterplot_d0.root'))
-
-histo.Scale(scales)
-histo.Draw()
-myPad=canvasl.GetPad(1)
-canvasl.SetLogy()
-histo.GetMean()
-canvasl.Modified()
-canvasl.Print(os.path.join(plot_directory,'histostops.png'))
-canvasl.SaveAs(os.path.join(plot_directory,'histostops.root'))
 
 canvast= ROOT.TCanvas("canvast", "Stops proper time ", 1000, 600)
 histotn.Scale(scaletn)

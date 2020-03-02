@@ -17,7 +17,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='eff_v03test_dR_0p5_pt_5_f')
+argParser.add_argument('--targetDir',          action='store',      default='eff_v03test_dR_0p5_pt_5')
 #argParser.add_argument('--signal',       action='store',      default='fwlite_signals_fastSim_Stops2l_200k',choices=['fwlite_signals_DisplacedStops_250_0p001','fwlite_signals_DisplacedStops_250_0p01','fwlite_signals_DisplacedStops_250_0p1','fwlite_signals_DisplacedStops_250_0p2','fwlite_signals_DisplacedStops_250_200'], help='generated signal samples we get plots for')
 
 args = argParser.parse_args()

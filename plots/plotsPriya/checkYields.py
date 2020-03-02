@@ -45,12 +45,14 @@ tex.SetTextAlign(11) # align right
 
 # importing background samples
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import TTLep_pow
+from Samples.nanoAOD.Autumn18_private_legacy_v1 import TTSingleLep_pow
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p01
 from Samples.nanoAOD.Autumn18_private_legacy_v1 import DisplacedStops_mStop_250_ctau_0p1
 
 #define the sample
-sample = [TTLep_pow] + [DisplacedStops_mStop_250_ctau_0p01] + [DisplacedStops_mStop_250_ctau_0p1] 
+sample = [TTLep_pow] + [TTSingleLep_pow] + [DisplacedStops_mStop_250_ctau_0p01] + [DisplacedStops_mStop_250_ctau_0p1] 
 TTLep_pow.style = styles.lineStyle(ROOT.kRed)
+
 DisplacedStops_mStop_250_ctau_0p01.style = styles.lineStyle(ROOT.kBlue)
 DisplacedStops_mStop_250_ctau_0p1.style = styles.lineStyle(ROOT.kGreen)
 if args.small:
@@ -72,23 +74,28 @@ read_variables = [ \
     VectorTreeVariable.fromString('Jet[pt/F,eta/F,phi/F]'),
     TreeVariable.fromString('MET_pt/F'),
 ]
+#364.351680576 30241465243.0 303.358001709
+weight_TTSingle = '((364.351680576*1000) / 30241465243.0) * 303.358001709 * 138.4'
+weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 * 138.4'
+weight_0p01 = '((24.8*1000)/223923)* 138.4'
+weight_0p1  =' ((24.8*1000)/164370)* 138.4'
 
-#weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 * 138.4'
-#weight_0p01 = '((24.8*1000)/223923)* 138.4'
-#weight_0p1  =' ((24.8*1000)/164370)* 138.4'
-weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 '
-weight_0p01 = '((24.8*1000)/223923)'
-weight_0p1  =' ((24.8*1000)/164370)'
+#weight_TTSingle = '((364.351680576*1000) / 30241465243.0) * 303.358001709 '
+#weight_TT   = '((87.315047712*1000)/4635769526.2) * 72.6983032227 '
+#weight_0p01 = '((24.8*1000)/223923)'
+#weight_0p1  =' ((24.8*1000)/164370)'
 #print weight_TT , weight_0p01 , weight_0p1
-#nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)'
-nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2)'
+#nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2)'
+
+nmuon = 'Sum$(Muon_pt>5&&abs(Muon_eta)<2.4&&Muon_miniPFRelIso_all<.2&&abs(Muon_dxy)>0.1)'
 nisr   = 'Sum$(Jet_pt>100)'
-MET    = 'MET_pt>250'
+#MET    = 'MET_pt>250'
 for nLep in [0,1,2]:
     for nisrJet in [0,1]:
         print "nLep", nLep, "nisrJet", nisrJet
         for s in sample:
-            selectionString =  nmuon+">=%i"%nLep+"&&"+nisr+">=%i"%nisrJet+"&&"+MET
+            selectionString =  nmuon+">=%i"%nLep+"&&"+nisr+">=%i"%nisrJet
+            #selectionString =  nmuon+">=%i"%nLep+"&&"+nisr+">=%i"%nisrJet+"&&"+MET
             print "selection: ", selectionString 
             #print "nLep", nLep, "nisrJet", nisrJet
             if "TTLep" in s.name:
@@ -96,6 +103,11 @@ for nLep in [0,1,2]:
                 print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_TT)['val'], "selection and weights"
                 print s.name , s.getYieldFromDraw(selectionString= selectionString)['val'], "no weights"
                 print s.name , s.getYieldFromDraw( weightString = weight_TT)['val'], "only weights"
+            elif s.name == 'TTSingleLep_pow':
+                print s.name , s.getYieldFromDraw()['val'], "0"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_TTSingle)['val'], "selection and weights"
+                print s.name , s.getYieldFromDraw(selectionString= selectionString)['val'], "no weights"
+                print s.name , s.getYieldFromDraw( weightString = weight_TTSingle)['val'], "only weights"
             elif s.name == 'DisplacedStops_mStop_250_ctau_0p01':
                 print s.name , s.getYieldFromDraw()['val'], "0"
                 print s.name , s.getYieldFromDraw(selectionString= selectionString, weightString = weight_0p01)['val'], "selection and weights"
