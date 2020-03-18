@@ -15,6 +15,7 @@ from math   import pi, sqrt, sin, cos, atan2
 from RootTools.core.standard import *
 from StopsCompressed.Tools.user             import plot_directory
 from Analysis.Tools.metFilters              import getFilterCut
+from Analysis.Tools.metFilters              import getFilterCut
 from StopsCompressed.Tools.cutInterpreter   import cutInterpreter
 
 #
@@ -26,8 +27,9 @@ argParser.add_argument('--logLevel',           action='store',      default='INF
 argParser.add_argument('--era',                action='store',      type=str,      default="2018")
 argParser.add_argument('--eos',                action='store_true', help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v12')
-argParser.add_argument('--selection',          action='store',      default='nISRJets1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+argParser.add_argument('--targetDir',          action='store',      default='v19')
+argParser.add_argument('--selection',          action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+#argParser.add_argument('--selection',          action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 argParser.add_argument('--badMuonFilters',     action='store',      default="Summer2016",  help="Which bad muon filters" )
 argParser.add_argument('--noBadPFMuonFilter',           action='store_true', default=False)
 argParser.add_argument('--noBadChargedCandidateFilter', action='store_true', default=False)
@@ -64,8 +66,14 @@ elif "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
     from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import *
-    from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import *
-    signals = [T2tt_375_365,T2tt_500_470 ]
+    #from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import *
+    #signals = [T2tt_375_365,T2tt_500_470 ]
+    signals = []
+elif "2017" in args.era and not args.eos:
+    from StopsCompressed.samples.nanoTuples_Fall17_postProcessed import *
+    samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
+    from StopsCompressed.samples.nanoTuples_Run2017_nanoAODv6_postProcessed import *
+    signals = []
 elif "2018" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
     samples =[Top_pow_1l_18, WJets_18, Top_pow_18]
@@ -77,8 +85,10 @@ except Exception as e:
     raise e
 lumi_scale                 = data_sample.lumi/1000
 data_sample.scale          = 1.
-
-for sample in samples + signals : sample.scale = lumi_scale
+for sample in samples : 
+    sample.scale = lumi_scale
+    sample.setSelectionString(getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter))
+#for sample in samples + signals : sample.scale = lumi_scale
 
 if args.small:
     for sample in samples + [data_sample]:
@@ -94,10 +104,10 @@ tex.SetTextSize(0.04)
 tex.SetTextAlign(11) # align right
 #lumi_scale = 35.9
 
-def drawObjects( plotData, dataMCScale ):
+def drawObjects( plotData, dataMCScale, mcIntegral ):
     lines = [
-      (0.15, 0.95, 'CMS Preliminary' if plotData else 'CMS Simulation'), 
-      (0.45, 0.95, ' L=%3.1f fb{}^{-1} (13 TeV) Scale %3.2f '% ( lumi_scale , dataMCScale) )
+      #(0.15, 0.95, 'CMS Preliminary' if plotData else 'CMS Simulation'), 
+      (0.15, 0.95, ' L=%3.1f fb{}^{-1}(13 TeV) Scale %3.2f Integral %3.2f'% ( lumi_scale , dataMCScale, mcIntegral) )
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
@@ -106,6 +116,9 @@ def drawPlots(plots,dataMCScale):
     plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era , args.selection, ("log" if log else ""))
     for plot in plots:
       if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
+      for l in plot.histos: mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) #mc_integral= l[0].Integral() 
+      #for l in plot.histos: print [ l[x].GetName() for x in range(len(l))] #mc_integral= l[0].Integral() 
+      #for l in plot.histos: mc_integral= l[0].Integral() 
 
       _drawObjects = []
       plotting.draw(plot,
@@ -116,13 +129,13 @@ def drawPlots(plots,dataMCScale):
         yRange = (0.03, "auto") if log else (0.001, "auto"),
         scaling = {},
         legend = ( (0.18,0.88-0.03*sum(map(len, plot.histos)),0.9,0.88), 2),
-        drawObjects = drawObjects( True, dataMCScale ) + _drawObjects,
+        drawObjects = drawObjects( True, dataMCScale, mc_integral ) + _drawObjects,
         copyIndexPHP = True, extensions = ["png","pdf", "root"],
       )
 
 # Read variables and sequences
 read_variables = [
-            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_muIndex/I", 
+            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_pdgId/I", "l1_muIndex/I", 
             "JetGood[pt/F,eta/F,phi/F,genPt/F]", 
             "met_pt/F", "met_phi/F","CT1/F", "HT/F","mt/F", 'l1_dxy/F', 'l1_dz/F', 'dphij0j1/F','ISRJets_pt/F', 'nISRJets/I','nSoftBJets/I','nHardBJets/I', "nBTag/I", "nJetGood/I", "PV_npvsGood/I","event/I","run/I"]
 #read_variables += [
@@ -134,9 +147,17 @@ read_variables = [
 
 
 sequence = []
+def lepton_flavour (event, sample):
+	event.mu_pt = -999
+	event.el_pt = -999
+	if abs(event.l1_pdgId) == 13:
+		event.mu_pt = event.l1_pt
+	elif abs(event.l1_pdgId) == 11:
+		event.el_pt = event.l1_pt
+sequence.append(lepton_flavour)
 
 weight_ = lambda event, sample: event.weight
-
+data_sample.setSelectionString(getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter))
 #for sample in samples:
 #    if args.reweightPU and args.reweightPU not in ["noPUReweighting", "nvtx"]:
 #        sample.read_variables.append('reweightPU/F' if args.reweightPU=='Central' else 'reweightPU%s/F'%args.reweightPU )
@@ -155,24 +176,40 @@ weight_ = lambda event, sample: event.weight
 for sample in samples: sample.style = styles.fillStyle(sample.color)
 data_sample.style          	    = styles.errorStyle(ROOT.kBlack)
 data_sample.name = "data"
-T2tt_500_470.color = ROOT.kPink+6
-T2tt_375_365.color = ROOT.kAzure+1
-for s in signals: s.style = styles.errorStyle( color=s.color, markerSize = 0.6)
+if signals:
+    T2tt_500_470.color = ROOT.kPink+6
+    T2tt_375_365.color = ROOT.kAzure+1
+    for s in signals: s.style = styles.errorStyle( color=s.color, markerSize = 0.6)
 
-stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
+stack_ = Stack( samples, data_sample )
+#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
 
 for sample in samples: print sample.scale 
 
 # Use some defaults
 Plot.setDefaults(stack = stack_, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection), addOverFlowBin='upper', histo_class=ROOT.TH1D)
+#Plot2D.setDefaults(stack = stack_, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection))
 plots = []
+#plots2D = []
 yields = {}
+
 plots.append(Plot(
     texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
     attribute = TreeVariable.fromString( "l1_pt/F" ),
     binning=[40,0,200],
   ))
 
+plots.append(Plot(name= "mu_pt_distribution ",
+    texX = 'p_{T}(mu) (GeV)', texY = 'Number of Events ',
+    attribute = lambda event, sample: event.mu_pt,
+    binning=[40,0,200],
+  ))
+
+plots.append(Plot(name = "electron_pt_distribution",
+    texX = 'p_{T}(el) (GeV)', texY = 'Number of Events ',
+    attribute = lambda event, sample: event.el_pt,
+    binning=[40,0,200],
+  ))
 plots.append(Plot(
     texX = 'ISR Jet p_{T} (GeV)', texY = 'Number of Events ',
     attribute = TreeVariable.fromString( "ISRJets_pt/F" ),
@@ -207,12 +244,12 @@ plots.append(Plot(
 plots.append(Plot(
     texX = 'number of jets', texY = 'Number of Events',
     attribute = TreeVariable.fromString('nJetGood/I'),
-    binning=[14,0,14],
+    binning=[10,0,10],
   ))
 plots.append(Plot(
     texX = 'number of ISR jets', texY = 'Number of Events',
     attribute = TreeVariable.fromString('nISRJets/I'),
-    binning=[14,0,14],
+    binning=[3,0,3],
   ))
 plots.append(Plot(
     name = 'yield', texX = 'yield', texY = 'Number of Events',
@@ -230,7 +267,6 @@ for plot in plots:
           yields[plot.stack[i][j].name] = h.GetBinContent(h.FindBin(0.5))
 yields["MC"] = sum(yields[s.name] for s in samples)
 dataMCScale        = yields["data"]/yields["MC"] if yields["MC"] != 0 else float('nan')
-
 
 drawPlots(plots,dataMCScale)
 
