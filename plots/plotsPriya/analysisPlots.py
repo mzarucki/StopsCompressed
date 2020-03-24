@@ -27,9 +27,9 @@ argParser.add_argument('--logLevel',           action='store',      default='INF
 argParser.add_argument('--era',                action='store',      type=str,      default="2018")
 argParser.add_argument('--eos',                action='store_true', help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              action='store_true', help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          action='store',      default='v19')
+argParser.add_argument('--targetDir',          action='store',      default='vtest')
+#argParser.add_argument('--selection',          action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-mt170')
 argParser.add_argument('--selection',          action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
-#argParser.add_argument('--selection',          action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 argParser.add_argument('--badMuonFilters',     action='store',      default="Summer2016",  help="Which bad muon filters" )
 argParser.add_argument('--noBadPFMuonFilter',           action='store_true', default=False)
 argParser.add_argument('--noBadChargedCandidateFilter', action='store_true', default=False)
@@ -71,8 +71,9 @@ elif "2016" in args.era and not args.eos:
     signals = []
 elif "2017" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Fall17_postProcessed import *
-    samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-    from StopsCompressed.samples.nanoTuples_Run2017_nanoAODv6_postProcessed import *
+    samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_LO_17, QCD_HT_17, VV_17, TTX_17]
+    from StopsCompressed.samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
+    #from StopsCompressed.samples.nanoTuples_Run2017_nanoAODv6_postProcessed import *
     signals = []
 elif "2018" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
@@ -94,8 +95,8 @@ if args.small:
     for sample in samples + [data_sample]:
 	sample.normalization = 1.
         sample.reduceFiles( factor=40 )
+        #sample.reduceFiles( to=5 ) 
 	sample.scale /= sample.normalization
-        #sample.reduceFiles( to=1 ) 
 # Text on the plots
 #
 tex = ROOT.TLatex()
@@ -108,18 +109,21 @@ def drawObjects( plotData, dataMCScale, mcIntegral ):
     lines = [
       #(0.15, 0.95, 'CMS Preliminary' if plotData else 'CMS Simulation'), 
       (0.15, 0.95, ' L=%3.1f fb{}^{-1}(13 TeV) Scale %3.2f Integral %3.2f'% ( lumi_scale , dataMCScale, mcIntegral) )
+      #(0.15, 0.95, 'Scale %3.2f MCIntegral %3.2f DataIntegral %3.2f'% ( dataMCScale, mcIntegral, mcIntegral) )
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
 def drawPlots(plots,dataMCScale):
   for log in [False, True]:
+    
     plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era , args.selection, ("log" if log else ""))
     for plot in plots:
-      if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
-      for l in plot.histos: mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) #mc_integral= l[0].Integral() 
-      #for l in plot.histos: print [ l[x].GetName() for x in range(len(l))] #mc_integral= l[0].Integral() 
-      #for l in plot.histos: mc_integral= l[0].Integral() 
-
+      #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
+      for l in plot.histos:
+	#if len(l)>1: print "yayy", [ l[x].GetName() for x in range(len(l))]
+	if len(l)>1: print [ l[x].GetName() for x in range(len(l))]
+	if len(l)>1: print [ l[x].Integral() for x in range(len(l))]
+	if len(l)>1: mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) 
       _drawObjects = []
       plotting.draw(plot,
         plot_directory = plot_directory_,
@@ -145,8 +149,12 @@ read_variables = [
 #for s in samples:
 #    s.read_variables += ["genWeight/F",'reweightPU/F', 'Pileup_nTrueInt/F','reweightBTag_SF/F', 'GenMET_pt/F', 'GenMET_phi/F', 'Muon[genPartIdx/I,genPartFlav/b]']
 
+#def make_weight (event, sample):
+#	print event.weight
+#sequence.append (make_weight)
 
 sequence = []
+
 def lepton_flavour (event, sample):
 	event.mu_pt = -999
 	event.el_pt = -999
@@ -157,6 +165,7 @@ def lepton_flavour (event, sample):
 sequence.append(lepton_flavour)
 
 weight_ = lambda event, sample: event.weight
+
 data_sample.setSelectionString(getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter))
 #for sample in samples:
 #    if args.reweightPU and args.reweightPU not in ["noPUReweighting", "nvtx"]:
