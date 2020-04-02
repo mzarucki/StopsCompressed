@@ -10,14 +10,21 @@ ISRJet          = "nISRJets"
 mIsoWP = { "VT":5, "T":4, "M":3 , "L":2 , "VL":1, 0:"None" }
 
 special_cuts = {
-    "deltaPhiJets"  :  "dphij0j1<2.5",
-    "lepSel"        :  "Sum$(lep_pt>20)<=1&&l1_pt>0",
-    "lpt"           :  "l1_pt>0",
-    "jet3Veto"      :  "(nJetGood<=2||JetGood_pt[2]<60)",
-    "nHardJetsTo2"  :  "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2",
+    "deltaPhiJets"  	:  "dphij0j1<2.5",
+    "deltaPhiJetsmod"   :  "dphij0j1<2.5&&dphij0j1>0",
+    "lepSel"        	:  "Sum$(lep_pt>20)<=1&&l1_pt>0",
+    "lpt"           	:  "l1_pt>0",
+    "jet3Veto"      	:  "(nJetGood<=2||Alt$(JetGood_pt[2],0)<60)",
+    "jet3VetoOld"   	:  "(nJetGood<=2||JetGood_pt[2]<60)",
+    "jet3Vetobad"   	:  "(nJetGood<=2)",
+    "nHardJetsTo2"  	:  "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2",
+    "HEMJetVetoWide"	:  "Sum$(JetGood_pt>20&&JetGood_eta<-1.0&&JetGood_eta>-3.2&&JetGood_phi<-0.5&&JetGood_phi>-2.0)==0",
+    "mu"		:  "nGoodMuons==1&&nGoodElectrons==0",
+    "e"			:  "nGoodMuons==0&&nGoodElectrons==1",
+    "all"		:  "(1)",
   }
 
-continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood") ]
+continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ]
 discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("Cone", "CT1"), ("Ctwo", "CT2") ]
 
 class cutInterpreter:

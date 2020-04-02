@@ -118,12 +118,13 @@ if options.year == 2016:
     #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2017:
-    from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
+    #from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
+    from Samples.nanoAOD.Fall17_14Dec2018   import allSamples as mcSamples
     from Samples.nanoAOD.Run2017_nanoAODv6  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2018:
-    from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2018_14Dec2018  import allSamples as dataSamples
+    from Samples.nanoAOD.Autumn18_nanoAODv6 import allSamples as mcSamples
+    from Samples.nanoAOD.Run2018_nanoAODv6  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 else:
     raise NotImplementedError
@@ -341,8 +342,8 @@ addSystematicVariations = (not isData)
 
 # B tagging SF
 from Analysis.Tools.BTagEfficiency import BTagEfficiency
-#btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
-btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='CSVv2' )
+btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
+#btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='CSVv2' )
 
 # L1 prefire weight
 L1PW = L1PrefireWeight(options.year)
@@ -394,7 +395,7 @@ if isMC:
     jetVars     += ['pt_jesTotalUp/F', 'pt_jesTotalDown/F', 'pt_jerUp/F', 'pt_jerDown/F', 'corr_JER/F', 'corr_JEC/F']
 jetVarNames     = [x.split('/')[0] for x in jetVars]
 # those are for writing leptons
-lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I']
+lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I', 'looseId/O']
 lepVarNames     = [x.split('/')[0] for x in lepVars]
 
 read_variables = map(TreeVariable.fromString, [ 'MET_pt/F', 'MET_phi/F', 'run/I', 'luminosityBlock/I', 'event/l', 'PV_npvs/I', 'PV_npvsGood/I'] )
@@ -429,7 +430,7 @@ read_variables += [\
     TreeVariable.fromString('nElectron/I'),
     VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dz/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I,looseId/O]'),
     TreeVariable.fromString('nJet/I'),
     VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,genPartFlav/O,genPartIdx/I,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
@@ -462,7 +463,7 @@ if options.susySignal:
 
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
 new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
-
+new_variables += ["reweightHEM/F"]
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep or isMetSingleLep:
@@ -694,11 +695,24 @@ def filler( event ):
     jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
-    bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
-    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
-    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
-    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
+    if options.year == 2016:
+	    bJets        = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4    , jets)
+	    softBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+	    hardBJets    = filter(lambda j:      isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+	    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="CSVv2", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
+	    nHEMJets = len(filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
+    else:
 
+	    bJets        = filter(lambda j:      isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4    , jets)
+	    softBJets    = filter(lambda j:      isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
+	    hardBJets    = filter(lambda j:      isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
+	    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
+	    nHEMJets = len(filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
+
+    if isData:
+	    event.reweightHEM = (r.run>=319077 and nHEMJets==0) or r.run<319077
+    else:
+	    event.reweightHEM = 1 if (nHEMJets==0 or options.year<2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD=(14.00+7.10)/59.97
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
     
     if options.year == 2017:# and not options.fastSim:
@@ -737,9 +751,10 @@ def filler( event ):
     #if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
 
     # dphi between leading(ISR) and subleading jet with pt >60
-    if len (jets) > 1 and jets[1]['pt']>60:
+    if len (jets) > 1 and jets[1]['pt'] > 60 :
       event.dphij0j1= deltaPhi(jets[0]['phi'],jets[1]['phi'])  
-           
+    else:
+      event.dphij0j1= -999.
         
 #    # Filling bjets sorted by pt
 #    maxNBJet = 10
@@ -816,8 +831,6 @@ def filler( event ):
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-        
-            
 #        if isMC:
 #            leptonsForSF   = ( leptons[:1]) if isSingleLep else [] )
 #            leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
