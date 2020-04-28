@@ -6,8 +6,8 @@ from DataFormats.FWLite import Events, Handle
 from PhysicsTools.PythonAnalysis import *
 from math   import sqrt
 small = False
-from RootTools.core.standard import *
-s2 = FWLiteSample.fromDAS("stops2l","/Stops2l/schoef-Stops2l-393b4278a04aeb4c6106d6aae1db462e/USER",instance = 'phys03',prefix='root://hephyse.oeaw.ac.at/', maxN = 1) 
+#from RootTools.core.standard import *
+#s2 = FWLiteSample.fromDAS("stops2l","/Stops2l/schoef-Stops2l-393b4278a04aeb4c6106d6aae1db462e/USER",instance = 'phys03',prefix='root://hephyse.oeaw.ac.at/', maxN = 1) 
 # example file
 #events = Events(['file:/afs/hephy.at/work/r/rschoefbeck/CMS/tmp/CMSSW_10_2_12_patch1/src/SUS-RunIIAutumn18FSPremix-00052.root'])
 #events = Events(['file:/afs/hephy.at/work/p/phussain/backup/CMSSW_10_2_12_patch1/src/StopsCompressed/Generation/cfg/SUS-RunIIAutumn18FSPremix-00052.root'])
@@ -20,14 +20,6 @@ events = Events(['file:/afs/hephy.at/data/cms07/StopsCompressed/fwlite_signals_f
 #vector<reco::PFRecHit>                "particleFlowRecHitHO"      "Cleaned"         "reRECO"   
 #vector<reco::PFRecHit>                "particleFlowRecHitPS"      "Cleaned"         "reRECO" 
 
-# miniAOD
-#products = {
-#    'pfCands':{'type':'vector<pat::PackedCandidate>', 'label':"packedPFCandidates"},
-#    'pfJets':{'type':'vector<pat::Jet>', 'label': ("slimmedJets")},
-#    'pfMet':{'type':'vector<pat::MET>','label':( "slimmedMETs" )},
-#    'electrons':{'type':'vector<pat::Electron>','label':( "slimmedElectrons" )},
-#    'muons':{'type':'vector<pat::Muon>', 'label':("slimmedMuons") },
-#}
 
 # RECO
 edmCollections = { 
@@ -45,9 +37,6 @@ edmCollections = {
    #'ecalBadCalibFilter':{'label':( "ecalBadCalibFilter",  "", "USER"), 'type':'bool'}
  
    }
-r = s2.fwliteReader(products = edmCollections)
-r.start()
-runs = set()
 
 # add handles
 for k, v in edmCollections.iteritems():
@@ -60,18 +49,18 @@ histo.Sumw2()
 histol.Sumw2()
 canvas= ROOT.TCanvas("canvas", "Stops decay length ", 1000, 600)
 mothers = []
-while r.run():
-#for i in range(nevents):
-#  events.to(i)
+#while r.run():
+for i in range(nevents):
+  events.to(i)
   runs.add(r.evt[0])
   eaux  = events.eventAuxiliary()
-  genparticles = r.event.genParticles
-  muons = r.event.muons
+  #genparticles = r.event.genParticles
+  #muons = r.event.muons
   #secondaryVertices = r.event.inclusiveSecondaryVertices
   #primaryVertices = r.event.offlinePrimaryVerticesWithBS
   #incSecondaryVertices = r.event.inclusiveCandidateSecondaryVertices
-  print genparticles.size() 
-  print muons.size() 
+  #print genparticles.size() 
+  #print muons.size() 
   #print secondaryVertices.size() 
   #print primaryVertices.size() 
   #print incSecondaryVertices.size()
