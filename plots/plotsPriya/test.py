@@ -52,7 +52,7 @@ mothers = []
 #while r.run():
 for i in range(nevents):
   events.to(i)
-  runs.add(r.evt[0])
+  #runs.add(r.evt[0])
   eaux  = events.eventAuxiliary()
   #genparticles = r.event.genParticles
   #muons = r.event.muons
