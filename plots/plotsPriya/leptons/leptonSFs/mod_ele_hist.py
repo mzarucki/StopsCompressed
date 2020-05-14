@@ -5,7 +5,7 @@ import os,sys
 #datatag = "2016_80X_v5"
 
 binning = [5., 10., 20., 35., 50., 100., 200., 500]
-etabinning = [0., 0.8, 1.442, 1.566, 2.0, 2.5]
+#etabinning = [0., 0.8, 1.442, 1.566, 2.0, 2.5]
 etabins = {
 "0p8"	 : "el_sc_eta>=0&&el_sc_eta<0.8",
 "0p8_1p4": "el_sc_eta>=0.8&&el_sc_eta<1.442",
@@ -56,17 +56,16 @@ def gethist(t,cut,lowedge,highedge,tag,etabin):
     return hz
 if year == "2016":
 	datatag = "2016_80X_v5"
-	EAval = [0.1752,0.1862,0.1411,0.1534,0.1903,0.2243,0.2687]
-	EAeta = [0.,1.,1.479,2.,2.2,2.3,2.4,2.5]
 elif year == "2017":
 	datatag ="2017_94X"
-	EAval = [0.1440,0.1562,0.1032,0.0859,0.1116,0.1321,0.1654]
-	EAeta = [0.,1.,1.479,2.,2.2,2.3,2.4,2.5]
-
 elif year == "2018":
 	datatag ="2018_94_pre3"
-	EAval = [0.1440,0.1562,0.1032,0.0859,0.1116,0.1321,0.1654]
-	EAeta = [0.,1.,1.479,2.,2.2,2.3,2.4,2.5]
+#old 2016 Effective Area
+#EAval = [0.1752,0.1862,0.1411,0.1534,0.1903,0.2243,0.2687]
+#EAeta = [0.,1.,1.479,2.,2.2,2.3,2.4,2.5]
+
+EAval = [0.1440,0.1562,0.1032,0.0859,0.1116,0.1321,0.1654]
+EAeta = [0.,1.,1.479,2.,2.2,2.3,2.4,2.5]
 EAlist = []
 for i in xrange(len(EAval)):
     EAlist.append("((el_abseta>={0:5.3f}&&el_abseta<{1:5.3f})*{2:6.4f})".format(EAeta[i],EAeta[i+1],EAval[i]))
