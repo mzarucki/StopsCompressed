@@ -19,7 +19,7 @@ process.source= cms.Source("PoolSource",
     ),
              )
 
-process.test = cms.EDAnalyzer("testEvtLoop", 
+process.efficiency = cms.EDAnalyzer("testEvtLoop", 
             genFilterInfoTag = cms.InputTag("genFilterEfficiencyProducer"))
 
-process.p1 = cms.Path( process.test)
+process.p1 = cms.Path( process.efficiency )

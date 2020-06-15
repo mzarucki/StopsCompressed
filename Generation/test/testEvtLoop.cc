@@ -1,5 +1,5 @@
-#ifndef StopsCompressed_Generastion_testEvtLoop_h
-#define StopsCompressed_Generastion_testEvtLoop_h
+#ifndef StopsCompressed_Generation_testEvtLoop_h
+#define StopsCompressed_Generation_testEvtLoop_h
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/Event.h"
