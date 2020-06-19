@@ -56,15 +56,17 @@ def makeDir(path):
     else:
             os.makedirs(path)
 
-makeDir("/scratch/priya.hussain/StopsCompressed/results/%s/fits"%datatag)
+makeDir("/scratch/priya.hussain/StopsCompressed/results/%s/fits/noIso"%datatag)
 
 pout = ["lowedge","pthigh","mean","sigma","alpha","n","sigma2","gaus1f","a","signal","bkg"]
 
-fpout = open("/scratch/priya.hussain/StopsCompressed/results/%s/fits/el_%s_%s.params"%(datatag,mode,stage),"w")
+fpout = open("/scratch/priya.hussain/StopsCompressed/results/%s/fits/noIso/el_%s_%s.params"%(datatag,mode,stage),"w")
 sout = "\t".join(pout)
 fpout.write(sout+"\n")
-
-fin = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/hists/ele_histos_%s_%s.root"%(datatag,mode,stage))
+#2017&2018 noISo hists location
+#fin = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/hists/noIso/ele_histos_%s_%s.root"%(datatag,mode,stage))
+#2016 legacy hists location
+fin = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/legacy/hists/ele_histos_%s_%s.root"%(datatag,mode,stage))
 print fin
 
 def getsigZ(hz,lowedge,pl=False):
@@ -178,15 +180,20 @@ def getsigCB(hz,lowedge,pl=False):
     cbex = RooAddPdf("cbex","",RooArgList(cbgaus,expo),RooArgList(signal,bkg))
 
     lowedgefit = 60
-    if lowedge == 30: lowedgefit = 80
-    #if lowedge == 25: lowedgefit = 70
-    #if lowedge == 20: lowedgefit = 68
-    if lowedge == 25: lowedgefit = 78
-    if lowedge == 20: lowedgefit = 75
-    if lowedge >= 35: lowedgefit = 82
+    #if lowedge == 30: lowedgefit = 80
+    if lowedge == 25: lowedgefit = 70
+    if lowedge == 20: lowedgefit = 68
+    #if lowedge == 25: lowedgefit = 78
+    #if lowedge == 20: lowedgefit = 75
+    #0p8:
+    #if lowedge == 20: lowedgefit = 84
+    if lowedge == 35: lowedgefit = 70
     if lowedge >= 45: lowedgefit = 79
+    if lowedge == 50: lowedgefit = 82
+    #2p02p5:
+    #if lowedge == 50: lowedgefit = 78
     if lowedge >= 60: lowedgefit = 81
-    #if lowedge >= 100: lowedgefit = 85
+    #if lowedge >= 200: lowedgefit = 80
     fitres = cbex.fitTo(rdh,RooFit.Save(),RooFit.Range(lowedgefit,120),RooFit.PrintLevel(-1),RooFit.Extended())
 
     if pl:
@@ -196,7 +203,9 @@ def getsigCB(hz,lowedge,pl=False):
         cbex.plotOn(xframe,RooFit.Components("cbgaus"),RooFit.LineStyle(kDotted))
         cbex.plotOn(xframe,RooFit.Components("expo"),RooFit.LineStyle(kDashed))
         xframe.Draw()
-        
+	#chi2 = xframe.chiSquare(7)
+	#chi2 = xframe.chiSquare()
+        #print "chi square: ", chi2 
     print "mean:", mean.getVal()
     print "sigma:", sigma.getVal()
     print "alpha:", alpha.getVal()
@@ -217,7 +226,7 @@ def getsigCB(hz,lowedge,pl=False):
     return fitres.floatParsFinal().find("signal"),rdh.sumEntries("1","R1")
     
 
-fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/fits/ele_result_%s_%s_%s.root"%(datatag,mode,stage,etabin),"recreate")
+fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/fits/noIso/ele_result_%s_%s_%s.root"%(datatag,mode,stage,etabin),"recreate")
 
 hpassfit = TH1F("hpassfit","",nb,x1)
 hpassfit.Sumw2()
@@ -231,7 +240,7 @@ for ipt in range(len(binning)-1):
     aux_ptlow = binning[ipt]
     pthigh = binning[ipt+1]
     print aux_ptlow,pthigh
-    savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/%s/fits/%s/%s"%(datatag,mode,stage)
+    savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/%s/fits/noIso/%s/%s"%(datatag,mode,stage)
     makeDir(savedir)
     namestring = "{0:.1f}_{1:.1f}_{2}".format(aux_ptlow,pthigh,etabin)
     namestring = namestring.replace(".","p")

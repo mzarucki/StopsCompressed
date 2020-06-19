@@ -28,8 +28,9 @@ argParser.add_argument('--logLevel',           		action='store',      default='I
 argParser.add_argument('--era',                		action='store',      default="2018",  	type=str )
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          		action='store',      default='v0p1')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet2p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
+argParser.add_argument('--targetDir',          		action='store',      default='v0p2')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
 argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-mt170')
 argParser.add_argument('--reweightPU',         		action='store',      default=None, 		  choices=['VDown', 'Down', 'Central', 'Up', 'VUp', 'VVUp'])
@@ -200,7 +201,7 @@ for index, mode in enumerate(allModes):
 	    T2tt_375_365.color = ROOT.kAzure+1
 	    for s in signals: s.style = styles.errorStyle( color=s.color, markerSize = 0.6)
 	
-	weight_ = lambda event, sample: event.weight
+	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
 	for sample in samples :
 		sample.scale = lumi_scale

@@ -19,8 +19,11 @@ special_cuts = {
     "jet3Vetobad"   	:  "(nJetGood<=2)",
     "nHardJetsTo2"  	:  "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2",
     "HEMJetVetoWide"	:  "Sum$(JetGood_pt>20&&JetGood_eta<-1.0&&JetGood_eta>-3.2&&JetGood_phi<-0.5&&JetGood_phi>-2.0)==0",
-    "mu"		:  "nGoodMuons==1&&nGoodElectrons==0",
-    "e"			:  "nGoodMuons==0&&nGoodElectrons==1",
+    "HEMElectronVetoWide"	:  "Sum$(Electron_eta<-1.0&&Electron_eta>-3.2&&Electron_phi<-0.5&&Electron_phi>-2.0)==0",
+    "HEMElVetoWide"	:  "Sum$(Electron_eta<-1.392&&Electron_eta>-3.00&&Electron_phi<-0.87&&Electron_phi>-1.57)==0",
+    "HEMElVetoWidePt"	:  "Sum$(Electron_pt>30&&Electron_eta<-1.392&&Electron_eta>-3.00&&Electron_phi<-0.87&&Electron_phi>-1.57)==0",
+    "mu"		:  "nGoodMuons>=1&&nGoodElectrons==0",
+    "e"			:  "nGoodMuons==0&&nGoodElectrons>=1",
     "all"		:  "(1)",
   }
 

@@ -6,7 +6,11 @@ ROOT.gStyle.SetOptStat(0) #1111 adds histogram statistics box #Name, Entries, Me
 
 inputFileName = "hephy_scale_factors"
 if len(sys.argv)>1: inputFileName = sys.argv[1]
+#inputFile = "/scratch/priya.hussain/StopsCompressed/results/2017_94X/finalplots/noIso/%s.root"%inputFileName
 inputFile = "/scratch/priya.hussain/StopsCompressed/results/2017_94X/finalplots/%s.root"%inputFileName
+#inputFile = "/scratch/priya.hussain/StopsCompressed/results/2018_94_pre3/finalplots/noIso/%s.root"%inputFileName
+#inputFile = "/scratch/priya.hussain/StopsCompressed/results/2016_80X_v5/finalplots/cent/%s.root"%inputFileName
+#inputFile = "/scratch/priya.hussain/StopsCompressed/results/2016_80X_v5/finalplots/legacy/%s.root"%inputFileName
 if not os.path.isfile(inputFile):
     print "input file %s does not exist"%inputFile
     sys.exit()
@@ -49,6 +53,7 @@ if flavor == "muon":
 	ptbins = h['0p9'].GetXaxis().GetXbins().GetArray()
 
 	etabins = array.array("d", [0., 0.9, 1.2, 2.1, 2.4])
+	print len(etabins)
 else:
 	nx = h['0p8'].GetNbinsX()
 	ptbins = h['0p8'].GetXaxis().GetXbins().GetArray()
@@ -79,7 +84,7 @@ if flavor == "muon":
 	SF.GetXaxis().SetTitleOffset(1.2)
 	SF.GetYaxis().SetTitleOffset(1.2)
 	SF.GetZaxis().SetTitleOffset(1.2)
-	SF.GetZaxis().SetRangeUser(0.6,1)
+	SF.GetZaxis().SetRangeUser(0.5,1)
 	SF.SetMarkerSize(0.8)
 	for i in range(nx):
 		i+=1
@@ -107,7 +112,9 @@ else:
 	SF.GetXaxis().SetTitleOffset(1.2)
 	SF.GetYaxis().SetTitleOffset(1.2)
 	SF.GetZaxis().SetTitleOffset(1.2)
-	SF.GetZaxis().SetRangeUser(0.6,1)
+	SF.GetZaxis().SetRangeUser(0.5,1.)
+	#keeping same z scale for comparison
+	#SF.GetZaxis().SetRangeUser(0.75,1.25)
 	SF.SetMarkerSize(0.8)
 
 	for i in range(nx):
@@ -120,9 +127,13 @@ else:
 		print "value for 2nd", h['m1p5_m2p0'].GetBinContent(i)
 		SF.SetBinError(2,   i, h['m1p5_m2p0'].GetBinError(i))
 
-		SF.SetBinContent(3, i, h['m1pm4_m1p5'].GetBinContent(i))
-		print "value for 3rd", h['m1pm4_m1p5'].GetBinContent(i)
-		SF.SetBinError(3,   i, h['m1pm4_m1p5'].GetBinError(i))
+		#SF.SetBinContent(3, i, h['m1pm4_m1p5'].GetBinContent(i))
+		#print "value for 3rd", h['m1pm4_m1p5'].GetBinContent(i)
+		#SF.SetBinError(3,   i, h['m1pm4_m1p5'].GetBinError(i))
+
+		SF.SetBinContent(3, i, 0)
+		print "value for 3rd", 0
+		SF.SetBinError(3,   i, 0)
 
 		SF.SetBinContent(4, i, h['m0p8_m1p4'].GetBinContent(i))
 		print "value for 4th", h['m0p8_m1p4'].GetBinContent(i)
@@ -140,9 +151,13 @@ else:
 		print "value for 7th", h['0p8_1p4'].GetBinContent(i)
 		SF.SetBinError(7,   i, h['0p8_1p4'].GetBinError(i))
 
-		SF.SetBinContent(8, i, h['1p4_1p5'].GetBinContent(i))
-		print "value for 8th", h['1p4_1p5'].GetBinContent(i)
-		SF.SetBinError(8,   i, h['1p4_1p5'].GetBinError(i))
+		#SF.SetBinContent(8, i, h['1p4_1p5'].GetBinContent(i))
+		#print "value for 8th", h['1p4_1p5'].GetBinContent(i)
+		#SF.SetBinError(8,   i, h['1p4_1p5'].GetBinError(i))
+
+		SF.SetBinContent(8, i, 0)
+		print "value for 8th", 0
+		SF.SetBinError(8,   i, 0)
 
 		SF.SetBinContent(9, i, h['1p5_2p0'].GetBinContent(i))
 		print "value for 9th", h['1p5_2p0'].GetBinContent(i)
@@ -163,7 +178,11 @@ c.Modified()
 c.Update()
 
 #Save canvas
-savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/final/2017_94X/2DleptonSF"
+#savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/final/2017_94X/2DleptonSF"
+#savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/final/2018_94_pre3/2DleptonSF/noIso"
+savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/final/2016_80X_v5/2DleptonSF/legacy/comp"
+#savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/final/2016_80X_v5/2DleptonSF/mod"
+
 makeDir(savedir + '/root')
 makeDir(savedir + '/pdf')
 

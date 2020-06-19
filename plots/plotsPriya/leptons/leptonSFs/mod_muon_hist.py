@@ -12,7 +12,7 @@ etabins = {
 "0p9_1p2": "abseta>=0.9&&abseta<1.2",
 "1p2_2p1": "abseta>=1.2&&abseta<2.1",
 "2p1_2p4": "abseta>=2.1&&abseta<2.4",
-"all": "abseta<2.4"
+#"all": "abseta<2.4"
 }
 
 mode = "MC"
@@ -121,7 +121,8 @@ elif year == "2018":
 	    t.Add("/scratch/priya.hussain/StopsCompressed/TnP/Run2018/94_pre3/TnPTreeZ_102XAutumn18_DYJetsToLL_M50_MadgraphMLM.root")
 
 makeDir("/scratch/priya.hussain/StopsCompressed/results/%s/hists"%datatag) 
-fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/hists/mu_hists_%s_%s.root"%(datatag,mode,stage),"recreate")
+#fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/hists/mu_hists_%s_%s.root"%(datatag,mode,stage),"recreate")
+fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/hists/mu_hists_%s_%s.root"%(datatag,mode,stage),"update")
 
 hlist = []
 

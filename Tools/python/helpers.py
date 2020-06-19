@@ -14,6 +14,40 @@ logger = logging.getLogger(__name__)
 ROOT.gROOT.LoadMacro("$CMSSW_BASE/src/StopsCompressed/Tools/scripts/tdrstyle.C")
 ROOT.setTDRStyle()
 
+def get_wPt (MET_pt, MET_phi,lept):
+    ''' Calculates Wpt based on reco quantities. Wpt = lepPt + MET
+    NOTE: No selection on recoLep requiring that it comes from a W (motherId = +-24) applied.
+    '''
+    # Missing Transverse Energy Vector
+    #MET_pt = event.MET_pt
+    #MET_phi = event.MET_phi
+
+    MET_pt = MET_pt
+    MET_phi = MET_phi
+
+    MET_lv = ROOT.TLorentzVector()
+    MET_lv.SetPtEtaPhiM(MET_pt, 0, MET_phi, 0)
+
+
+    #wpt = []
+
+    pt = lept['pt']
+    eta = lept['eta']
+    phi = lept['phi']
+    #print "pt from coll: ", lept['pt']
+
+    w_lv = ROOT.TLorentzVector()
+
+    w_lv.SetPtEtaPhiM(pt, eta, phi, 0)
+    w_lv += MET_lv
+
+    wpt = w_lv.Pt()
+    #print "W pt: ", wpt
+    #wpt.append(wpt_obj)
+    return wpt
+
+
+
 def deltaPhi(phi1, phi2):
     dphi = phi2-phi1
     if  dphi > pi:

@@ -118,6 +118,11 @@ def mergeCollections( a, b ):
 
     return merged
 
+def ECALGap(e):
+    if abs(e['pdgId']) == 11: absEta = abs(e["eta"] + e["deltaEtaSC"])   # eta supercluster
+    else:                     absEta = abs(e["eta"])                     # eta
+    return ( absEta > 1.566 or absEta < 1.4442 )
+
 ## MUONS ##
 #def muonSelector( lepton_selection, year, ptCut = 10):
 def muonSelector( lepton_selection, year):
@@ -223,12 +228,16 @@ def electronVIDSelector( l, idVal, removedCuts=[] ):
 #def eleSelector( lepton_selection, year, ptCut = 10):
 def eleSelector( lepton_selection, year):
     # tighter isolation applied on analysis level. cutBased corresponds to Fall17V2 ID for all 2016-2018.  # (cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight))
+    #ECAL gap masking for 1.422 < abs(eta) < 1.566
+		    #and (abs(l["eta"]) <= 1.442 or abs(l["eta"]) >= 1.566) \
+		    #and ((abs(l["eta"]) < 1.442) or (abs(l["eta"]) > 1.566)) \
     if lepton_selection == 'hybridIso':
         def func(l):
             
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
-                    abs(l["eta"])       < 2.5 \
+		    abs(l["eta"]) < 2.5 \
+		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 5.0 \
                     and abs(l["dxy"])       < 0.02 \
@@ -236,7 +245,8 @@ def eleSelector( lepton_selection, year):
             elif l["pt"] > 25:
                 
                 return \
-                    abs(l["eta"])       < 2.5 \
+		    abs(l["eta"]) < 2.5 \
+		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and l['pfRelIso03_all'] < 0.2 \
                     and abs(l["dxy"])       < 0.02 \
@@ -246,14 +256,16 @@ def eleSelector( lepton_selection, year):
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
-                    abs(l["eta"])       < 2.5 \
+		    and abs(l["eta"]) < 2.5 \
+		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
             elif l["pt"] > 25:
                 return \
-                    abs(l["eta"])       < 2.5 \
+		    and abs(l["eta"]) < 2.5 \
+		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
@@ -267,7 +279,7 @@ leptonVars = leptonVars_data + ['mcMatchId','mcMatchAny']
 electronVars_data = ['pt','eta','phi','pdgId','cutBased','miniPFRelIso_all','pfRelIso03_all','sip3d','lostHits','convVeto','dxy','dz','charge','deltaEtaSC','mvaFall17V2noIso_WP80', 'vidNestedWPBitmap']
 electronVars = electronVars_data + []
 
-muonVars_data = ['pt','eta','phi','pdgId','mediumId','looseId','miniPFRelIso_all','pfRelIso03_all','sip3d','dxy','dz','charge']
+muonVars_data = ['pt','eta','phi','pdgId','mediumId','looseId','miniPFRelIso_all','pfRelIso03_all','sip3d','dxy','dz','charge','Wpt']
 muonVars = muonVars_data + []
 
 def getLeptons(c, collVars=leptonVars):
@@ -292,13 +304,13 @@ tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'i
 def getTaus(c, collVars=tauVars):
     return [getObjDict(c, 'Tau_', collVars, i) for i in range(int(getVarValue(c, 'nTau')))]
 
-def looseTauID( l, ptCut=20, absEtaCut=2.4):
+def looseTauID( l, ptCut=20, absEtaCut=2.3):
 
     #print l["idMVAnewDM2017v2"], ord(l["idMVAnewDM2017v2"])
     return \
     l["pt"]>=ptCut\
     and ord(l["idMVAnewDM2017v2"])>=2\
-    and abs(l["eta"])<absEtaCut\
+    and abs(l["eta"])<absEtaCut
 
 def getGoodTaus(c, leptons, collVars=tauVars):
     #taus       = getGoodTaus(r, tau_selector = tauSelector_ )

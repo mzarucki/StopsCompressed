@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # standard imports
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -24,17 +22,19 @@ import StopsCompressed.Tools.user as user
 
 # Tools for object selection
 from StopsCompressed.Tools.helpers           import nonEmptyFile, fill_vector_collection
-from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
+from StopsCompressed.Tools.helpers           import deltaR, deltaPhi, get_wPt
+from StopsCompressed.Tools.wPtWeight	     import wPtWeight
+from StopsCompressed.Tools.isrWeight         import ISRweight
 from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus #tauSelector,
 from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets
+from StopsCompressed.Tools.leptonSF          import leptonSF as leptonSF_
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
-#from StopsDilepton.Tools.leptonSF            import leptonSF as leptonSF_
 #from StopsDilepton.Tools.leptonFastSimSF     import leptonFastSimSF as leptonFastSimSF_
 
 from Analysis.Tools.puProfileCache           import *
 from Analysis.Tools.L1PrefireWeight          import L1PrefireWeight
-from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
-from Analysis.Tools.isrWeight                import ISRweight
+#from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
+#from Analysis.Tools.isrWeight                import ISRweight
 from Analysis.Tools.helpers                  import checkRootFile, deepCheckRootFile, deepCheckWeight
 #from Analysis.Tools.MetSignificance          import MetSignificance
 
@@ -112,8 +112,8 @@ if options.runOnLxPlus:
     from Samples.Tools.config import redirector_global as redirector
 
 if options.year == 2016:
-    from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    #from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
+    #from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
+    from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
     from Samples.nanoAOD.Run2016_nanoAODv6  import allSamples as dataSamples
     #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
@@ -133,6 +133,7 @@ samples = []
 for selectedSamples in options.samples:
     for sample in allSamples:
         if selectedSamples == sample.name:
+	    print sample.name
             samples.append(sample)
 
 if len(samples)==0:
@@ -158,7 +159,8 @@ else:
 era = None
 if isData:
     era = extractEra(samples[0].name)[-1]
-# Trigger selection
+    print samples[0].name
+## Trigger selection
 if isData and options.triggerSelection:
     from StopsCompressed.Tools.triggerSelector import triggerSelector
     era = extractEra(samples[0].name)[-1]
@@ -171,7 +173,7 @@ if isData and options.triggerSelection:
     skimConds.append( triggerCond )
 elif isData and not options.triggerSelection:
     raise Exception( "Data should have a trigger selection" )
-#
+
 #triggerEff          = triggerEfficiency(options.year)
 
 #Samples: combine if more than one
@@ -240,7 +242,7 @@ if isMC:
 
 ## lepton SFs
 #leptonTrackingSF    = LeptonTrackingEfficiency(options.year)
-#leptonSF            = leptonSF_(options.year)
+leptonSF            = leptonSF_(options.year)
 #
 #if options.fastSim:
 #   leptonFastSimSF  = leptonFastSimSF_(options.year)
@@ -342,13 +344,16 @@ addSystematicVariations = (not isData)
 
 # B tagging SF
 from Analysis.Tools.BTagEfficiency import BTagEfficiency
-btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
-#btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='CSVv2' )
+if options.year == 2016: 
+    btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='CSVv2' )
+else:    
+    btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='DeepCSV' )
 
 # L1 prefire weight
 L1PW = L1PrefireWeight(options.year)
 
 #branches to be kept for data and MC
+
 branchKeepStrings_DATAMC = [\
     "run", "luminosityBlock", "event", "fixedGridRhoFastjetAll", "PV_npvs", "PV_npvsGood",
     "MET_*", "RawMET_phi", "RawMET_pt", "RawMET_sumEt",
@@ -395,7 +400,7 @@ if isMC:
     jetVars     += ['pt_jesTotalUp/F', 'pt_jesTotalDown/F', 'pt_jerUp/F', 'pt_jerDown/F', 'corr_JER/F', 'corr_JEC/F']
 jetVarNames     = [x.split('/')[0] for x in jetVars]
 # those are for writing leptons
-lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I', 'looseId/O']
+lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I','index/I', 'wPt/F'] 
 lepVarNames     = [x.split('/')[0] for x in lepVars]
 
 read_variables = map(TreeVariable.fromString, [ 'MET_pt/F', 'MET_phi/F', 'run/I', 'luminosityBlock/I', 'event/l', 'PV_npvs/I', 'PV_npvsGood/I'] )
@@ -430,9 +435,9 @@ read_variables += [\
     TreeVariable.fromString('nElectron/I'),
     VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dz/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I,looseId/O]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,genPartFlav/O,genPartIdx/I,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
@@ -469,8 +474,8 @@ new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 if isSingleLep or isMetSingleLep:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
-#    if isMC: 
-#        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F'])
+    if isMC: 
+        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F', 'reweightwPt/F'])
 
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jer', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
@@ -669,14 +674,17 @@ def filler( event ):
         m['pdgId']      = int( -13*m['charge'] )
         m['muIndex']    = m['index']
         m['eleIndex']   = -1
-
-    leptons = electrons + muons
+    nHEMElectrons 	= len(filter(lambda e:e['eta']<-1.392 and e['eta']>-3.00 and e['phi']<-0.87 and e['phi']>-1.57, electrons ))
+    leptons 		= electrons + muons
+    
     leptons.sort(key = lambda p:-p['pt'])
 
     for iLep, lep in enumerate(leptons):
         lep['index'] = iLep
-
+	lep['wPt']   = get_wPt(r.MET_pt, r.MET_phi,lep)
     fill_vector_collection( event, "lep", lepVarNames, leptons)
+    #if leptons:
+    #	print "wpt: ", leptons[0]['wPt']
     event.nlep = len(leptons)
 
     # getting clean taus against leptons
@@ -707,12 +715,12 @@ def filler( event ):
 	    softBJets    = filter(lambda j:      isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4  and j['pt']<60   , jets)
 	    hardBJets    = filter(lambda j:      isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4  and j['pt']>60   , jets)
 	    nonBJets     = filter(lambda j:not ( isBJet(j, tagger="DeepCSV", year=options.year) and abs(j['eta'])<=2.4 )  , jets)
-	    nHEMJets = len(filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.0 and j['phi']>-2.0 and j['phi']<-0.5, allJets ))
+	    nHEMJets = len(filter( lambda j:j['pt']>20 and j['eta']>-3.2 and j['eta']<-1.2 and j['phi']>-1.77 and j['phi']<-0.67, allJets ))
 
     if isData:
-	    event.reweightHEM = (r.run>=319077 and nHEMJets==0) or r.run<319077
+	    event.reweightHEM = (r.run>=319077 and nHEMJets==0 and nHEMElectrons==0) or r.run<319077
     else:
-	    event.reweightHEM = 1 if (nHEMJets==0 or options.year<2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD=(14.00+7.10)/59.97
+	    event.reweightHEM = 1 if ((nHEMJets==0 and nHEMElectrons==0) or options.year<2018 ) else 0.3518 # 0.2% of Run2018B are HEM affected. Ignore that piece. Thus, if there is a HEM jet, scale the MC to 35.2% which is AB/ABCD=(14.00+7.10)/59.97
     # store the correct MET (EE Fix for 2017, MET_min as backup in 2017)
     
     if options.year == 2017:# and not options.fastSim:
@@ -794,6 +802,17 @@ def filler( event ):
     jets_sys      = {}
     bjets_sys     = {}
     nonBjets_sys  = {}
+    if isMC:
+	    isr = ISRweight()
+	    wpt = wPtWeight()
+	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
+	    #print "nISR weight: ",event.reweightnISR
+	    if leptons:
+		    for l in leptons: print l['wPt'],l['pt'] 
+		    #print [wpt.wPtWeight(l['wPt']) if sampleName.startswith('WJets') else 1 for l in leptons]
+		    event.reweightwPt  = wpt.wPtWeight(leptons[0]['wPt']) if sampleName.startswith('WJets') else 1   
+		    #print "wpt weight: ", event.reweightwPt
+	    
 
     if addSystematicVariations:
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']: # don't use 'jer' as of now
@@ -831,14 +850,15 @@ def filler( event ):
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-#        if isMC:
-#            leptonsForSF   = ( leptons[:1]) if isSingleLep else [] )
-#            leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
-#            event.reweightLeptonSF     = reduce(mul, [sf[0] for sf in leptonSFValues], 1)
-#            event.reweightLeptonSFDown = reduce(mul, [sf[1] for sf in leptonSFValues], 1)
-#            event.reweightLeptonSFUp   = reduce(mul, [sf[2] for sf in leptonSFValues], 1)  
-#            if event.reweightLeptonSF ==0:
-#                logger.error( "reweightLeptonSF is zero!")
+        if isMC:
+            leptonsForSF   = ( leptons[:1] if isMetSingleLep else [] )
+	    #print "leptonSF: ", len(leptonsForSF) 
+            leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
+            event.reweightLeptonSF     = reduce(mul, [sf[0] for sf in leptonSFValues], 1)
+            event.reweightLeptonSFDown = reduce(mul, [sf[1] for sf in leptonSFValues], 1)
+            event.reweightLeptonSFUp   = reduce(mul, [sf[2] for sf in leptonSFValues], 1)  
+            if event.reweightLeptonSF ==0:
+                logger.error( "reweightLeptonSF is zero!")
 #
 #            if options.fastSim:
 #                leptonFastSimSFValues = [ leptonFastSimSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]

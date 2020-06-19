@@ -3,7 +3,7 @@ from math import *
 import os, sys
 import array
 
-datatag = "2016_80X_v5"
+#datatag = "2016_80X_v5"
 
 #binning = [3.5, 5., 10., 20., 30., 45., 60., 120.]
 binning = [3.5, 5., 10., 20., 25., 30., 40., 50., 60., 120.]
@@ -28,6 +28,11 @@ if len(sys.argv)>3: etabin = sys.argv[3]
 if etabin not in ['all', '0p9', '0p9_1p2', '1p2_2p1', '2p1_2p4']:
 	print "wrong etabin"
 	sys.exit()
+year = "2016"
+if len(sys.argv)>4: year = sys.argv[4]
+if year != "2016" and year != "2017" and year != "2018":
+	print "wrong year"
+	sys.exit()
 
 #etabin = 'all'
 #if len(sys.argv)>3: etabin = sys.argv[3]
@@ -44,11 +49,18 @@ def makeDir(path):
     else:
         os.makedirs(path)
 
+if year == "2016":
+	datatag = "2016_80X_v5"
+elif year == "2017":
+	datatag ="2017_94X"
+elif year == "2018":
+	datatag ="2018_94_pre3"
+
 pout = ["lowedge","pthigh","mean","sigma","sigma2","gaus1f","a","signal","bkg"]
 
-makeDir("/scratch/priya.hussain/StopsCompressed/results/%s/fits/cent"%datatag)
+makeDir("/scratch/priya.hussain/StopsCompressed/results/%s/fits/final"%datatag)
 
-fpout = open("/scratch/priya.hussain/StopsCompressed/results/%s/fits/cent/mu_%s_%s.params"%(datatag,mode,stage),"w")
+fpout = open("/scratch/priya.hussain/StopsCompressed/results/%s/fits/final/mu_%s_%s.params"%(datatag,mode,stage),"w")
 sout = "\t".join(pout)
 fpout.write(sout+"\n")
 
@@ -97,13 +109,15 @@ def getsigZ(hz,lowedge,pl=False):
 
     dgex = RooAddPdf("dgex","dgex",RooArgList(dgaus,expo),RooArgList(signal,bkg))
     
-    lowedgefit = 60
+    lowedgefit = 62
     if lowedge == 30: lowedgefit = 80
     if lowedge == 25: lowedgefit = 78
-    if lowedge == 20: lowedgefit = 75
+    if lowedge == 20: lowedgefit = 70
     #if lowedge == 20: lowedgefit = 75
     if lowedge >= 35: lowedgefit = 82
     if lowedge >= 45: lowedgefit = 85
+    if lowedge >= 50: lowedgefit = 80
+    #if lowedge >= 50: lowedgefit = 82
     fitres = dgex.fitTo(rdh,RooFit.Save(),RooFit.Range(lowedgefit,130),RooFit.Extended())
 
     if pl:
@@ -113,6 +127,8 @@ def getsigZ(hz,lowedge,pl=False):
         dgex.plotOn(xframe,RooFit.Components("dgaus"),RooFit.LineStyle(kDotted))
         dgex.plotOn(xframe,RooFit.Components("expo"),RooFit.LineStyle(kDashed))
         xframe.Draw()
+	#chi2 = xframe.chiSquare("dgex","rdh",3)
+	#print "chi square: ", chi2
     
     soutlist = [lowedge,pthigh,meang.getVal(),sigma1.getVal(),sigma2.getVal(),gaus1f.getVal(),a.getVal(),signal.getVal(),bkg.getVal()]
     sout = "\t".join(str(x) for x in soutlist)
@@ -123,7 +139,7 @@ def getsigZ(hz,lowedge,pl=False):
 
     return fitres.floatParsFinal().find("signal"),rdh.sumEntries("1","R1")
 
-fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/fits/cent/muon_result_%s_%s_%s.root"%(datatag,mode,stage,etabin),"recreate")
+fout = TFile("/scratch/priya.hussain/StopsCompressed/results/%s/fits/final/muon_result_%s_%s_%s.root"%(datatag,mode,stage,etabin),"recreate")
 
 hpassfit = TH1F("hpassfit","",nb,x1)
 hpassfit.Sumw2()
@@ -138,7 +154,7 @@ for ipt in range(len(binning)-1):
     pthigh = binning[ipt+1]
     print aux_ptlow,pthigh
     
-    savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/%s/fits/cent/%s/%s"%(datatag,mode,stage)
+    savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/TnP/%s/fits/final/%s/%s"%(datatag,mode,stage)
     makeDir(savedir)
     namestring = "{0:.1f}_{1:.1f}".format(aux_ptlow,pthigh)
     namestring = namestring.replace(".","p")
