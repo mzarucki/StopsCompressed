@@ -16,7 +16,7 @@ class ISRweight:
     for njet, weight in enumerate(weights):
       op = '=='
       if njet == self.njet_max: op = '>='
-      weightStr += '{}*(nISRJets{}{}) + '.format(weight,op,njet)
+      weightStr += '{}*(nISR{}{}) + '.format(weight,op,njet)
 
     weightStr += ' 0 )'
 
@@ -25,3 +25,7 @@ class ISRweight:
   def getWeight(self, nISRJets, norm=1, sigma=0):
     weights = [ w+(sigma*self.weights_syst[i]) for i, w in enumerate(self.weights)]
     return norm*self.norm*weights[nISRJets] if nISRJets <= self.njet_max else self.norm*weights[self.njet_max]
+
+  def getISRWeight(self, r, norm=1, sigma=0):
+    weights = [ w+(sigma*self.weights_syst[i]) for i, w in enumerate(self.weights)]
+    return norm*self.norm*weights[r.nISR] if r.nISR <= self.njet_max else self.norm*weights[self.njet_max]

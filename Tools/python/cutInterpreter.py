@@ -22,13 +22,13 @@ special_cuts = {
     "HEMElectronVetoWide"	:  "Sum$(Electron_eta<-1.0&&Electron_eta>-3.2&&Electron_phi<-0.5&&Electron_phi>-2.0)==0",
     "HEMElVetoWide"	:  "Sum$(Electron_eta<-1.392&&Electron_eta>-3.00&&Electron_phi<-0.87&&Electron_phi>-1.57)==0",
     "HEMElVetoWidePt"	:  "Sum$(Electron_pt>30&&Electron_eta<-1.392&&Electron_eta>-3.00&&Electron_phi<-0.87&&Electron_phi>-1.57)==0",
-    "mu"		:  "nGoodMuons>=1&&nGoodElectrons==0",
-    "e"			:  "nGoodMuons==0&&nGoodElectrons>=1",
+    "mu"		:  "abs(l1_pdgId)==13",
+    "e"			:  "abs(l1_pdgId)==11",
     "all"		:  "(1)",
   }
 
 continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ]
-discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("Cone", "CT1"), ("Ctwo", "CT2") ]
+discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("Cone", "CT1"), ("Ctwo", "CT2"), ("nISR", "nISR") ]
 
 class cutInterpreter:
     ''' Translate var100to200-var2p etc.

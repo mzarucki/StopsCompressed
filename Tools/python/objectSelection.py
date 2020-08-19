@@ -256,7 +256,7 @@ def eleSelector( lepton_selection, year):
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
-		    and abs(l["eta"]) < 2.5 \
+		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
@@ -264,7 +264,7 @@ def eleSelector( lepton_selection, year):
                     and abs(l["dz"])        < 0.5 
             elif l["pt"] > 25:
                 return \
-		    and abs(l["eta"]) < 2.5 \
+		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
                     and l['pfRelIso03_all'] < 0.8 \

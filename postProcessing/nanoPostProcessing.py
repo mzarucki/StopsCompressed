@@ -112,8 +112,8 @@ if options.runOnLxPlus:
     from Samples.Tools.config import redirector_global as redirector
 
 if options.year == 2016:
-    #from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
+    from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
+    #from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
     from Samples.nanoAOD.Run2016_nanoAODv6  import allSamples as dataSamples
     #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
@@ -133,7 +133,6 @@ samples = []
 for selectedSamples in options.samples:
     for sample in allSamples:
         if selectedSamples == sample.name:
-	    print sample.name
             samples.append(sample)
 
 if len(samples)==0:
@@ -159,7 +158,6 @@ else:
 era = None
 if isData:
     era = extractEra(samples[0].name)[-1]
-    print samples[0].name
 ## Trigger selection
 if isData and options.triggerSelection:
     from StopsCompressed.Tools.triggerSelector import triggerSelector
@@ -211,6 +209,8 @@ if options.reduceSizeBy > 1:
     sample.name += "_redBy%s"%options.reduceSizeBy
     sample.normalization = sample.getYieldFromDraw(weightString="genWeight")['val']
     logger.info("New normalization: %s", sample.normalization)
+
+nameForISR = copy.deepcopy(sample.name)
 
 if isMC:
     from Analysis.Tools.puReweighting import getReweightingFunction
@@ -372,7 +372,7 @@ if options.year == 2017:
     ]
 
 #branches to be kept for MC samples only
-branchKeepStrings_MC = [ "Generator_*", "GenPart_*", "nGenPart", "genWeight", "Pileup_nTrueInt","GenMET_pt","GenMET_phi"] #, "nISR"] keep, if you run the nanoAODTools ISR counter
+branchKeepStrings_MC = [ "Generator_*", "GenPart_*", "nGenPart", "genWeight", "Pileup_nTrueInt","GenMET_pt","GenMET_phi" ,"nISR"] #keep, if you run the nanoAODTools ISR counter
 if not options.fastSim:
     branchKeepStrings_MC.append("LHEScaleWeight")
 
@@ -423,8 +423,9 @@ if isMC:
     read_variables += [ TreeVariable.fromString('Pileup_nTrueInt/F') ]
     # reading gen particles for top pt reweighting
     read_variables.append( TreeVariable.fromString('nGenPart/I') )
-    #read_variables.append( TreeVariable.fromString('nISR/I') ) # keep if you run the ISR counter 
+    read_variables.append( TreeVariable.fromString('nISR/I') ) # keep if you run the ISR counter 
     #new_variables.extend([ 'reweightTopPt/F', 'reweight_nISR/F', 'reweight_nISRUp/F', 'reweight_nISRDown/F'] )
+    new_variables.extend([ 'reweight_nISR/F', 'reweight_nISRUp/F', 'reweight_nISRDown/F'] )
     read_variables.append( VectorTreeVariable.fromString('GenPart[pt/F,mass/F,phi/F,eta/F,pdgId/I,genPartIdxMother/I,status/I,statusFlags/I]', nMax=200 )) # default nMax is 100, which would lead to corrupt values in this case
     read_variables.append( TreeVariable.fromString('genWeight/F') )
     read_variables.append( TreeVariable.fromString('nGenJet/I') )
@@ -453,9 +454,10 @@ new_variables += [\
 # Add weight branches for susy signal samples from friend tree
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
-cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/2016"
+cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
+renormISR = False
 if options.susySignal:
-    from StopsCompressed.samples.helpers import getT2ttSignalWeight #, getT2ttISRNorm
+    from StopsCompressed.samples.helpers import getT2ttSignalWeight , getT2ttISRNorm
     logger.info( "SUSY signal samples to be processed: %s", ",".join(s.name for s in samples) )
     assert len(samples)==1, "Can only process one SUSY sample at a time."
     logger.info( "Signal weights will be drawn from %s files. If that's not the whole sample, stuff will be wrong.", len(samples[0].files))
@@ -465,7 +467,13 @@ if options.susySignal:
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
-
+    if getT2ttISRNorm(samples[0], masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
+    #if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
+		    renormISR = True
+		    logger.info("Successfully loaded ISR normalzations.")
+    else:
+    		    logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
+		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
 new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
 new_variables += ["reweightHEM/F"]
@@ -475,7 +483,7 @@ if isSingleLep or isMetSingleLep:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
     if isMC: 
-        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F', 'reweightwPt/F'])
+        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F'])
 
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jer', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
@@ -515,7 +523,7 @@ if not options.skipNanoTools:
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
     ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
-    #from PhysicsTools.NanoAODTools.postprocessing.modules.common.ISRcounter        import ISRcounter
+    from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
     logger.info("Will put files into directory %s", output_directory)
@@ -539,8 +547,8 @@ if not options.skipNanoTools:
             JMECorrector()
         ]
         
-       # if not sample.isData:
-       #     modules.append( ISRcounter() )
+        if not sample.isData:
+            modules.append( ISRcounter() )
 
        ##  need a hash to avoid data loss
         file_hash = str(hash(f))
@@ -644,12 +652,13 @@ def filler( event ):
         event.reweightPUVVUp = nTrueInt_puRWVVUp   ( r.Pileup_nTrueInt )
 
     # top pt reweighting
-    #if isMC:
+    if isMC:
         #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
-        #ISRnorm = getT2ttISRNorm(samples[0], r.GenSusyMStop, r.GenSusyMNeutralino, masspoints, options.year, signal=sample.name, cacheDir='/afs/hephy.at/data/cms01/stopsDilepton/signals/caches/%s/'%(options.year)) if renormISR else 1
-        #event.reweight_nISR     = isr.getWeight(r, norm=ISRnorm )             if options.susySignal else 1
-        #event.reweight_nISRUp   = isr.getWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
-        #event.reweight_nISRDown = isr.getWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
+        ISRnorm = getT2ttISRNorm(samples[0], r.GenSusyMStop, r.GenSusyMNeutralino, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+	isr = ISRweight()
+        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
+        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
+        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
 
     if options.keepAllJets:
         jetAbsEtaCut = 99.
@@ -683,13 +692,10 @@ def filler( event ):
         lep['index'] = iLep
 	lep['wPt']   = get_wPt(r.MET_pt, r.MET_phi,lep)
     fill_vector_collection( event, "lep", lepVarNames, leptons)
-    #if leptons:
-    #	print "wpt: ", leptons[0]['wPt']
     event.nlep = len(leptons)
 
     # getting clean taus against leptons
     
-    #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
     taus       = getGoodTaus(r, leptons)
 
     # now get jets, cleaned against good leptons
@@ -806,13 +812,12 @@ def filler( event ):
 	    isr = ISRweight()
 	    wpt = wPtWeight()
 	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
-	    #print "nISR weight: ",event.reweightnISR
+	    event.reweightnISRUp = isr.getWeight(nISRJets=event.nISRJets,sigma=1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
+	    event.reweightnISRDown = isr.getWeight(nISRJets=event.nISRJets,sigma=-1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
 	    if leptons:
-		    for l in leptons: print l['wPt'],l['pt'] 
-		    #print [wpt.wPtWeight(l['wPt']) if sampleName.startswith('WJets') else 1 for l in leptons]
 		    event.reweightwPt  = wpt.wPtWeight(leptons[0]['wPt']) if sampleName.startswith('WJets') else 1   
-		    #print "wpt weight: ", event.reweightwPt
-	    
+	    else:
+		    event.reweightwPt = 1 
 
     if addSystematicVariations:
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']: # don't use 'jer' as of now
@@ -852,7 +857,6 @@ def filler( event ):
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
         if isMC:
             leptonsForSF   = ( leptons[:1] if isMetSingleLep else [] )
-	    #print "leptonSF: ", len(leptonsForSF) 
             leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
             event.reweightLeptonSF     = reduce(mul, [sf[0] for sf in leptonSFValues], 1)
             event.reweightLeptonSFDown = reduce(mul, [sf[1] for sf in leptonSFValues], 1)

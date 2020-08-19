@@ -46,4 +46,4 @@
 #python signalLHEWeightProcessing.py --targetDir /afs/hephy.at/data/cms05/nanoTuples/ --year 2018 --sample SMS_T8bbstausnu_XCha0p5_mStop_200to1800_XStau0p25 #SPLIT40
 #python signalLHEWeightProcessing.py --targetDir /afs/hephy.at/data/cms05/nanoTuples/ --year 2018 --sample SMS_T8bbstausnu_mStop_200to1800_XCha0p5_XStau0p5 #SPLIT40
 #python signalLHEWeightProcessing.py --targetDir /afs/hephy.at/data/cms05/nanoTuples/ --year 2018 --sample SMS_T8bbstausnu_mStop_200to1800_XCha0p5_XStau0p75 #SPLIT40
-python signalLHEWeightProcessing.py --targetDir /afs/hephy.at/data/cms05/StopsCompressed/nanoTuples/ --year 2016 --sample SMS_T2tt_dM_10to80 #SPLIT40
+python signalLHEWeightProcessing.py  --year 2016 --sample SMS_T2tt_dM_10to80 #SPLIT40

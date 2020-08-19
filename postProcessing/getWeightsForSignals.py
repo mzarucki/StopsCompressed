@@ -29,7 +29,8 @@ import StopsCompressed.Tools.user as user
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
 
 # use a cacheDir that's read/writable for all of us
-cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
+cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
+#cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
 
 def get_parser():
     ''' Argument parser for post-processing module.
@@ -62,7 +63,7 @@ cacheDir += "%s/"%options.year
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as bkgSamples
-    from Samples.nanoAOD.Summer16_private_legacy_v1 import SUSY as signalSamples
+    from Samples.nanoAOD.Summer16_private_legacy_v1 import compSUSY as signalSamples
     from Samples.nanoAOD.Run2016_17Jul2018_private  import allSamples as dataSamples
     allSamples = bkgSamples + dataSamples + signalSamples
 elif options.year == 2017:
