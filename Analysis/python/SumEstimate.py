@@ -1,6 +1,6 @@
-from TTGammaEFT.Analysis.SystematicEstimator import SystematicEstimator
-from TTGammaEFT.Analysis.Region              import Region
-from TTGammaEFT.Analysis.SetupHelpers        import dilepChannels, lepChannels
+from StopsCompressed.Analysis.SystematicEstimator import SystematicEstimator
+from StopsCompressed.Analysis.Region              import Region
+from StopsCompressed.Analysis.SetupHelpers        import allChannels, lepChannels
 from Analysis.Tools.u_float                  import u_float
 
 # Logging
@@ -21,7 +21,7 @@ class SumEstimate(SystematicEstimator):
         if channel=='all':
             # 'all' is the total of all contributions
             return sum([self.cachedEstimate(region, c, setup, signalAddon=signalAddon) for c in lepChannels])
-        if channel=='SFtight':
-            return sum([self.cachedEstimate(region, c, setup, signalAddon=signalAddon) for c in dilepChannels])
+        #if channel=='SFtight':
+        #    return sum([self.cachedEstimate(region, c, setup, signalAddon=signalAddon) for c in dilepChannels])
         else:
             raise NotImplementedError("Run sum_estimates.py first")

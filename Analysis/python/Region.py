@@ -34,10 +34,14 @@ class Region:
         res=[]
         for var in self.variables():
             svar = var
-            s1=svar+">="+str(self.vals[var][0])
-            if self.vals[var][1]>-999: s1+="&&"+svar+"<"+str(self.vals[var][1])
-            res.append(s1)
-        return "&&".join(res)
+	    if self.vals[var][0]==self.vals[var][1]: 
+		    res.append(svar+"=="+str(self.vals[var][0]))
+	    else:
+		    s1=svar+">="+str(self.vals[var][0])
+		    if self.vals[var][1]>-999: s1+="&&"+svar+"<"+str(self.vals[var][1])
+		    res.append(s1)
+        #return "&&".join(res)
+	return "&&".join(sorted(res)) # apparently need sorting
 
     def texStringForVar(self, var = None, useRootLatex = True):
         if var not in self.variables(): return None
@@ -64,8 +68,8 @@ class Region:
         for var in allowedVars: #Always keep the sequence in allowedVars
             if var in self.variables():
                 res.append(self.simpleStringForVar(var))
-        return "_".join(res)
-        #return self.cutString()
+        #return "_".join(res)
+        return self.cutString()
 
     def __repr__(self):
         ''' Sorry.'''

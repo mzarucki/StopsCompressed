@@ -23,14 +23,15 @@ else:
     import logging
     logger = logging.getLogger(__name__)
 
-default_HT          = (300,-1)
-default_nISRJet     = (1,1)
+default_HT          = (300,-999)
+default_nISRJet     = (1,-999)
 default_dphiJets    = True
 default_tauVeto     = True
 default_hardJets    = True
 default_lepVeto     = True
 default_jetVeto     = True
-default_MET         = (300, -1)
+default_MET         = (300, -999)
+
 class Setup:
     def __init__(self, year=2016):
 
@@ -50,33 +51,36 @@ class Setup:
             "lepVeto":      default_lepVeto,
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
+
         }
 
 
-#        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
+        self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
 #        self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
-        self.sys = {"weight":"weight", "reweight":["reweightL1Prefire", "reweightPU", "reweightBTag_SF"], "selectionModifier":None} 
+        self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
 
         #if runOnLxPlus:
         #    # Set the redirector in the samples repository to the global redirector
         #    from Samples.Tools.config import redirector_global as redirector
         if year == 2016 :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Summer16_postProcessed  import DY_HT_LO_16, TTLep_pow_16 ,TTSingleLep_pow_16 , singleTop_16, singleTop_tch_16, TTX_16, WJetsToLNu_HT_16,VV_16
-            #from StopsCompressed.samples.nanoTuples_Run2016_14Dec2018_postProcessed import Run2016
+            from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import DY_HT_LO_16, Top_pow_16 , singleTop_16, ZInv_16, TTX_16, WJetsToLNu_HT_16,VV_16, QCD_HT_16
+
+            from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import Run2016
             DY           = DY_HT_LO_16
-            WJets       = WJetsToLNu_HT_16
-            TTLep        = TTLep_pow_16
-            TTSingleLep  = TTSingleLep_pow_16
+            WJets        = WJetsToLNu_HT_16
+            Top          = Top_pow_16
             singleTop    = singleTop_16 
             VV           = VV_16 
+	    QCD		 = QCD_HT_16
             TTX          = TTX_16
-            #data        = Run2016
+	    ZInv	 = ZInv_16
+            data         = Run2016
 
         elif year == 2017 :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Fall17_postProcessed  import DY_HT_LO_17, TTLep_pow_17 ,TTSingleLep_pow_17 , singleTop_17, singleTop_tch_17, TTX_17, WJetsToLNu_HT_17,VV_17
-            #from StopsCompressed.samples.nanoTuples_Run2017_14Dec2018_postProcessed import Run2017
+            from StopsCompressed.samples.nanoTuples_Fall17_postProcessed  	    import DY_HT_LO_17, TTLep_pow_17 ,TTSingleLep_pow_17 , singleTop_17, singleTop_tch_17, TTX_17, WJetsToLNu_HT_17,VV_17
+            from StopsCompressed.samples.nanoTuples_Run2017_nanoAODv6_postProcessed import Run2017
             DY           = DY_HT_LO_17
             WJets       = WJetsToLNu_HT_17
             TTLep        = TTLep_pow_17
@@ -84,7 +88,7 @@ class Setup:
             singleTop    = singleTop_17 
             VV           = VV_17 
             TTX          = TTX_17
-            #data        = Run2017
+            data        = Run2017
 
         elif year == 2018 :
             #define samples
@@ -111,21 +115,22 @@ class Setup:
             self.lumi     = 59.74*1000
             self.dataLumi = 59.74*1000
 
-        mc           = [DY, WJets,TTLep, TTSingleLep, singleTop, VV, TTX ]
+        mc           = [DY, WJets, Top, singleTop, VV, TTX, ZInv, QCD ]
         self.processes = {
 
             'DY':           DY,
             'WJets':        WJets,
-            'TTLep':        TTLep,
-            'TTSingleLep':  TTSingleLep,
+            'Top':          Top,
             'singleTop':    singleTop,
             'VV':           VV,
-            'TTX':          TTX        
+            'TTX':          TTX,        
+	    'ZInv':	    ZInv,
+	    'QCD':	    QCD
              }
-        #self.processes["Data"] = data
+        self.processes["Data"] = data
 
-        #self.lumi     = data.lumi
-        #self.dataLumi = data.lumi # get from data samples later
+        self.lumi     = data.lumi
+        self.dataLumi = data.lumi # get from data samples later
         
 
     def prefix(self, channel="all"):
@@ -159,6 +164,8 @@ class Setup:
                         if 'reweightBTag_SF_l_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
                         if 'reweightBTag_SF_FS_'+upOrDown         in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
                         if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
+                        if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
+                        if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
                         
                 else:
                     res.sys[k] = sys[k]
@@ -166,6 +173,7 @@ class Setup:
         if parameters:
             for k in parameters.keys():
                 res.parameters[k] = parameters[k]
+        return res
 
     def defaultParameters(self, update={} ):
         assert type(update)==type({}), "Update arguments with key arg dictionary. Got this: %r"%update
@@ -188,12 +196,10 @@ class Setup:
            channel: "all", "e" or "mu"
            isFastSim: adjust filter cut etc. for fastsim
         """
-        #if not ht:   ht   = self.parameters["ht"]
-        #if not nSoftBJet: nSoftBJet = self.parameters["nSoftBJet"]
-        #if not nHardBJet:   nHardBJet   = self.parameters["nHardBJet"]
-        #if not ISRJets_pt:         ISRJets_pt         = self.parameters["ISRJets_pt"]
-        #if not l1_pdgId:        l1_pdgId        = self.parameters["l1_pdgId"]
-        #if not l1_eta:      l1_eta      = self.parameters["l1_eta"]
+        #if not HT:   		HT   	  	= self.parameters["ht"]
+        #if not mt:   		mt   	  	= self.parameters["mt"]
+        #if not CT1:   		CT1   	  	= self.parameters["CT1"]
+        #if not CT2:   		CT2   	  	= self.parameters["CT2"]
 
         #Consistency checks
         assert dataMC in ["Data","MC","DataMC"], "dataMC = Data or MC or DataMC, got %r."%dataMC
@@ -222,18 +228,21 @@ class Setup:
             res['prefixes'].append('lepSel')
             res['cuts'].append('Sum$(lep_pt>20)<=1&&l1_pt>0')
 
-        if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
-            assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
-            njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
-            prefix   = "nISRJet"+str(nISRJet[0])
-            if nISRJet[1]>=0:
-                njetsstr+= "&&"+"nISRJets"+sysStr+"<="+str(nISRJet[1])
-                if nISRJet[1]!=nISRJet[0]: prefix+=str(nISRJet[1])
-#                if nJet[1]!=nJet[0]: prefix+="To"+str(nJet[1])
-            else:
-                prefix+="p"
-            res["cuts"].append(njetsstr)
-            res["prefixes"].append(prefix)
+        if nISRJet:
+            res['prefixes'].append('nISRJets')
+            res['cuts'].append('nISRJets>=1')
+       # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
+       #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
+       #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
+       #     prefix   = "nISRJet"+str(nISRJet[0])
+       #     if nISRJet[1]>=0:
+       #         njetsstr+= "&&"+"nISRJets"+sysStr+"<="+str(nISRJet[1])
+       #         if nISRJet[1]!=nISRJet[0]: prefix+=str(nISRJet[1])
+#      #          if nJet[1]!=nJet[0]: prefix+="To"+str(nJet[1])
+       #     else:
+       #         prefix+="p"
+       #     res["cuts"].append(njetsstr)
+       #     res["prefixes"].append(prefix)
 
 
         #MET cut
@@ -253,19 +262,21 @@ class Setup:
         #HT cut
         if HT and not (HT[0]==0 and HT[1]<0):
             assert HT[0]>=0 and (HT[1]>=HT[0] or HT[1]<0), "Not a good HT selection: %r"%HT
-            metsstr = "HT"+sysStr+">="+str(HT[0])
+            metsstr = "HT>="+str(HT[0])
             prefix   = "ht"+str(HT[0])
             if HT[1]>=0:
-                metsstr+= "&&"+"HT_pt"+sysStr+"<"+str(HT[1])
+                metsstr+= "&&"+"HT<"+str(HT[1])
                 if HT[1]!=HT[0]: prefix+=str(HT[1])
             else:
                 prefix+="p"
             res["cuts"].append(metsstr)
             res["prefixes"].append(prefix)
 
-        if   channel=="e"  :  chStr = "nGoodMuons==0&&nGoodElectrons==1"
-        elif channel=="mu" :  chStr = "nGoodMuons==1&&nGoodElectrons==0"
-        elif channel=="all":  chStr = "(nGoodMuons==1||nGoodElectrons==1)"
+
+
+        if   channel=="e"  :  chStr = "abs(l1_pdgId)==11"
+        elif channel=="mu" :  chStr = "abs(l1_pdgId)==13"
+        elif channel=="all":  chStr = "(abs(l1_pdgId)==11||abs(l1_pdgId)==13)"
         res["cuts"].append(chStr)
 
         #badEEVeto
@@ -279,7 +290,7 @@ class Setup:
 #            res["cuts"].append("reweightHEM>0")
 
         if dataMC != "DataMC":
-            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year) )
+            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year , skipVertexFilter = True) )
             res["cuts"].extend(self.externalCuts)
 
         return {'cut':"&&".join(res['cuts']), 'prefix':'-'.join(res['prefixes']), 'weightStr': self.weightString()}
@@ -306,4 +317,4 @@ if __name__ == "__main__":
 #            print res["prefix"]
 #            print res["weightStr"]
 #
-#
+##

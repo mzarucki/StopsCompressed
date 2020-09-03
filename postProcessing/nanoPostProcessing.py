@@ -483,7 +483,7 @@ if isSingleLep or isMetSingleLep:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
     if isMC: 
-        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F'])
+        new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F', 'reweightwPtUp/F', 'reweightwPtDown/F'])
 
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jer', 'jerDown', 'unclustEnUp', 'unclustEnDown']:
@@ -814,10 +814,22 @@ def filler( event ):
 	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
 	    event.reweightnISRUp = isr.getWeight(nISRJets=event.nISRJets,sigma=1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
 	    event.reweightnISRDown = isr.getWeight(nISRJets=event.nISRJets,sigma=-1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
-	    if leptons:
-		    event.reweightwPt  = wpt.wPtWeight(leptons[0]['wPt']) if sampleName.startswith('WJets') else 1   
+	#    if leptons:
+	#    	    event.reweightwPt  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=0) if sampleName.startswith('WJets') else 1   
+	#    	    event.reweightwPtUp  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=1) if sampleName.startswith('WJets') else 1   
+	#    	    event.reweightwPtDown  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=-1) if sampleName.startswith('WJets') else 1   
+	#	    print "wpt weight: " , event.reweightwPt, "length of leptons: ", len(leptons)
+	    if leptons and sampleName.startswith('WJets'):
+		    
+		    event.reweightwPt  = wpt.wPtWeight(leptons[0]['wPt']) 
+		    event.reweightwPtUp  = wpt.wPtWeight(leptons[0]['wPt'], sigma=1) 
+		    event.reweightwPtDown  = wpt.wPtWeight(leptons[0]['wPt'], sigma=-1) 
+		    #print "wpt weight: " , event.reweightwPt, "length of leptons: ", len(leptons) 
 	    else:
 		    event.reweightwPt = 1 
+		    event.reweightwPtUp = 1 
+		    event.reweightwPtDown = 1 
+		    #print "wpt weight: " , event.reweightwPt, "lenth of leptons: ", len(leptons)
 
     if addSystematicVariations:
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']: # don't use 'jer' as of now

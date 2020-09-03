@@ -222,11 +222,11 @@ class SystematicEstimator:
             (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Up']})),
             (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Down']})),
 
-            (region, channel, setup.sysClone({'reweight':['reweightLeptonSFDown']})),
-            (region, channel, setup.sysClone({'reweight':['reweightLeptonSFUp']})),
+            #(region, channel, setup.sysClone({'reweight':['reweightLeptonSFDown']})),
+            #(region, channel, setup.sysClone({'reweight':['reweightLeptonSFUp']})),
 
-            (region, channel, setup.sysClone({'reweight':['reweightDilepTriggerDown']})),
-            (region, channel, setup.sysClone({'reweight':['reweightDilepTriggerUp']})),
+            #(region, channel, setup.sysClone({'reweight':['reweightDilepTriggerDown']})),
+            #(region, channel, setup.sysClone({'reweight':['reweightDilepTriggerUp']})),
         ]
         return l
 
