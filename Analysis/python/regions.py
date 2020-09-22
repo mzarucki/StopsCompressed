@@ -21,32 +21,32 @@ from StopsCompressed.Analysis.Region      import Region
 SR1 = Region("HT", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) 
 signalRegions  = []
 controlRegions = []
-SR1vlaX = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (300,400))    
-SR1laX  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (5,12))  + Region ("CT1", (300,400)) 
-SR1maX  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
-SR1haX  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
+SR1vlaX = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (300,400))    
+SR1laX  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (5,12))  + Region ("CT1", (300,400)) 
+SR1maX  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
+SR1haX  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
 
-SR1vlaY = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (400,-999))    
-SR1laY  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999))   
-SR1maY  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999))  
-SR1haY  = SR1 + Region("mt", (0,60)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999))  
+SR1vlaY = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (400,-999))    
+SR1laY  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999))   
+SR1maY  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999))  
+SR1haY  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999))  
 
-CR1aX   = SR1 + Region("mt", (0,60))  + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
-CR1aY   = SR1 + Region("mt", (0,60))  + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
+CR1aX   = SR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
+CR1aY   = SR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
 
 
-SR1vlbX = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (300,400))   
-SR1lbX  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (5,12))  + Region ("CT1", (300,400)) 
-SR1mbX  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
-SR1hbX  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
+SR1vlbX = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (300,400))   
+SR1lbX  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (5,12))  + Region ("CT1", (300,400)) 
+SR1mbX  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
+SR1hbX  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
 
-SR1vlbY = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (400,-999)) 
-SR1lbY  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999)) 
-SR1mbY  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999)) 
-SR1hbY  = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
+SR1vlbY = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (400,-999)) 
+SR1lbY  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999)) 
+SR1mbY  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999)) 
+SR1hbY  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
 
-CR1bX   = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
-CR1bY   = SR1 + Region("mt", (60,95)) + Region("l1_pdgId", (-14,0))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
+CR1bX   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
+CR1bY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
 
 SR1lcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region ("CT1", (300,400))   
 SR1mcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 

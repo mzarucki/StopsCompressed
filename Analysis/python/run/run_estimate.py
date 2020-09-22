@@ -57,7 +57,7 @@ if not options.selectEstimator == 'Data':
     estimate = next((e for e in allEstimators if e.name == options.selectEstimator), None)
     estimate.isData = False
 else:
-    estimate = DataObservation(name='Data', sample=setup.samples['Data'], cacheDir=setup.defaultCacheDir())
+    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir())
     estimate.isSignal = False
     estimate.isData   = True
 

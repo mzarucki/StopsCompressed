@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-''' Analysis script for standard plots
+'''
+Analysis script for standard plots
 '''
 #
 # Standard imports and batch mode
@@ -15,10 +15,10 @@ from math   import pi, sqrt, sin, cos, atan2, log
 from RootTools.core.standard import *
 from StopsCompressed.Tools.user             import plot_directory
 from Analysis.Tools.metFilters              import getFilterCut
-from Analysis.Tools.metFilters              import getFilterCut
+#from Analysis.Tools.metFilters              import getFilterCut
 from StopsCompressed.Tools.cutInterpreter   import cutInterpreter
 from Analysis.Tools.puProfileCache import *
-from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
+from StopsCompressed.Tools.helpers           import deltaR, deltaPhi,ptRatio
 from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus, getAllJets
 #
 # Arguments
@@ -26,10 +26,10 @@ from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           		action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
-argParser.add_argument('--era',                		action='store',      default="2018",  	type=str )
+argParser.add_argument('--era',                		action='store',      default="Run2018",  	type=str )
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          		action='store',      default='v17')
+argParser.add_argument('--targetDir',          		action='store',      default='v_32')
 argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
@@ -174,7 +174,10 @@ def mtwithdphi(event, sample):
 	event.mtmod = float('nan')
 	if deltaPhi(event.l1_phi ,event.met_phi) < 1.7: 
 		event.mtmod            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-
+def delR(event,sample):
+	event.dR = float("nan")
+	event.dR = sqrt(((deltaPhi(event.l1_phi,event.JetGood_phi[0])**2) + ((event.l1_eta - event.JetGood_eta[0])**2)))
+sequence.append(delR)
 def jetToLeptonRatio (event, sample):
 	event.cleanJets_pt  = float ('nan')
 	event.cleanJets_eta = float ('nan')
@@ -208,7 +211,7 @@ allPlots = {}
 allModes = ['mu','e']
 for index, mode in enumerate(allModes):
 	yields[mode] = {}
-	data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter), getLeptonSelection(mode)])
+	data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 	if args.preHEM:
 		data_sample.addSelectionString("run<319077")
 	if args.postHEM:
@@ -222,25 +225,23 @@ for index, mode in enumerate(allModes):
 	if signals:
 	    T2tt_500_470.color = ROOT.kPink+6
 	    T2tt_375_365.color = ROOT.kAzure+1
-	    for s in signals: s.style = styles.errorStyle( color=s.color, markerSize = 0.6)
 	
 	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
 	for sample in samples :
-		sample.scale = lumi_scale
-		sample.style = styles.fillStyle(sample.color)
 		sample.read_variables  = ['reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',]
 		sample.read_variables += ['reweightPU%s/F'%args.reweightPU if args.reweightPU != "Central" else "reweightPU/F"]
 		pu_getter = operator.attrgetter('reweightPU' if args.reweightPU=='Central' else "reweightPU%s"%args.reweightPU)
 		sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
-		#sample.weight         = lambda event, sample: pu_getter(event) * event.reweightLeptonSF*event.reweightBTag_SF*event.reweightL1Prefire*event.reweightnISR*event.reweightwPt
-		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter), getLeptonSelection(mode)])
+		sample.scale = lumi_scale 
+		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+		sample.style = styles.fillStyle(sample.color)
 	#stack_ = Stack( samples )
-	stack_ = Stack( samples, data_sample )
+	stack_ = Stack( samples, data_sample ) 
 	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
 
 	if args.small:
-		for sample in samples + [data_sample]:
+		for sample in samples + [data_sample] + signals:
 			sample.normalization = 1.
 			sample.reduceFiles( factor = 40 )
 			sample.scale /= sample.normalization
@@ -294,7 +295,7 @@ for index, mode in enumerate(allModes):
 	plots.append(Plot(
 	    texX = 'MET (GeV)', texY = 'Number of Events ',
 	    attribute = TreeVariable.fromString( "met_pt/F" ),
-	    binning=[50,0,1000],
+	    binning=[40,200,1000],
 	  ))
 	plots.append(Plot(
 	    texX = '#phi MET (GeV)', texY = 'Number of Events ',
@@ -309,7 +310,7 @@ for index, mode in enumerate(allModes):
 	plots.append(Plot(
 	    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
 	    attribute = TreeVariable.fromString( "mt/F" ),
-	    binning=[40,0,300],
+	    binning=[40,0,200],
 	  ))
 	#plots.append(Plot(
 	#    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
@@ -351,6 +352,16 @@ for index, mode in enumerate(allModes):
 	    texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
 	    name = 'hybridIsolation', attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
 	    binning=[20,0,4],
+	  ))
+	plots.append(Plot(
+	    texX = 'dR between l1 and leading JetGood', texY = 'Number of Events ',
+	    name = 'deltaR', attribute = lambda event, sample: event.dR,
+	    binning=[10,-1,1],
+	  ))
+	plots.append(Plot(
+	    texX = 'pt Ratio between l1 and leading JetGood', texY = 'Number of Events ',
+	    name = 'ptRatio', attribute = lambda event, sample: (event.JetGood_pt[0] / event.l1_pt),
+	    binning=[10,0,10],
 	  ))
 	#plots.append(Plot(
 	#    texX = 'p_{T}(clean-leading jet) (GeV)', texY = 'Number of Events / 30 GeV',

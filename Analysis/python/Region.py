@@ -1,5 +1,5 @@
-allowedVars = [ "HT", "mt", "l1_pdgId", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt"]
-texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{miss}^{miss})","l1_pdgId":"pdgId(l)", "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}"  }
+allowedVars = [ "HT", "mt", "l1_pdgId", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt", "l1_charge"]
+texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{miss}^{miss})","l1_pdgId":"pdgId(l)", "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}", "l1_charge":"charge(l)"}
 
 aliases     = { }
 

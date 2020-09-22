@@ -58,6 +58,6 @@ class wPtWeight:
 		sys_fact  = self.sys[b]
 		#print "weights: wPt %s , correction factor: %s"%(wPt,corr_fact)
 		w = (norm*corr_fact)+(sys_fact*sigma)
-		print "weight calculated in function: ", w 
+		#print "weight calculated in function: ", w 
 		return (norm*corr_fact)+(sys_fact*sigma) 
 				

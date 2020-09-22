@@ -27,8 +27,8 @@ special_cuts = {
     "all"		:  "(1)",
   }
 
-continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ]
-discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("Cone", "CT1"), ("Ctwo", "CT2"), ("nISR", "nISR") ]
+continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ,("leta","abs(l1_eta)"), ("Cone", "CT1"), ("Ctwo", "CT2")]
+discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("nISR", "nISR")]
 
 class cutInterpreter:
     ''' Translate var100to200-var2p etc.

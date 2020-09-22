@@ -400,7 +400,7 @@ if isMC:
     jetVars     += ['pt_jesTotalUp/F', 'pt_jesTotalDown/F', 'pt_jerUp/F', 'pt_jerDown/F', 'corr_JER/F', 'corr_JEC/F']
 jetVarNames     = [x.split('/')[0] for x in jetVars]
 # those are for writing leptons
-lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I','index/I', 'wPt/F'] 
+lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I','index/I', 'wPt/F', 'charge/I'] 
 lepVarNames     = [x.split('/')[0] for x in lepVars]
 
 read_variables = map(TreeVariable.fromString, [ 'MET_pt/F', 'MET_phi/F', 'run/I', 'luminosityBlock/I', 'event/l', 'PV_npvs/I', 'PV_npvsGood/I'] )
@@ -481,7 +481,7 @@ new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep or isMetSingleLep:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
-    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F'] )
+    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I'] )
     if isMC: 
         new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F', 'reweightwPtUp/F', 'reweightwPtDown/F'])
 
@@ -803,7 +803,7 @@ def filler( event ):
         event.ISRJets_pt  = ISRJets[0]['pt'] 
         
     event.CT1         = min(event.met_pt, event.HT-100) 
-    event.CT2         = min(event.met_pt, event.ISRJets_pt)
+    event.CT2         = min(event.met_pt, event.ISRJets_pt-25)
     alljets_sys   = {}
     jets_sys      = {}
     bjets_sys     = {}
@@ -859,6 +859,7 @@ def filler( event ):
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
             event.l1_pdgId      = leptons[0]['pdgId']
+            event.l1_charge     = leptons[0]['charge']
             event.l1_index      = leptons[0]['index']
             event.l1_miniRelIso = leptons[0]['miniPFRelIso_all']
             event.l1_relIso03   = leptons[0]['pfRelIso03_all']
