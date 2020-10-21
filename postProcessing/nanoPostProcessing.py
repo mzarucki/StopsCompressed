@@ -113,7 +113,7 @@ if options.runOnLxPlus:
 
 if options.year == 2016:
     from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as mcSamples
-    #from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
+    # from Samples.nanoAOD.Summer16_14Dec2018 import allSamples as mcSamples
     from Samples.nanoAOD.Run2016_nanoAODv6  import allSamples as dataSamples
     #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
@@ -261,7 +261,7 @@ sampleName = sample.name
 from StopsCompressed.Tools.user import postProcessing_output_directory as user_directory
 directory        = os.path.join( options.targetDir, options.processingEra ) 
 output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) ) 
-targetPath       = os.path.join( directory, options.skim, sampleName )
+targetPath       = os.path.join( directory, options.skim, "fake", sampleName )
 if not os.path.exists( targetPath ):
     try:    os.makedirs( targetPath ) 
     except: pass
@@ -523,7 +523,7 @@ if not options.skipNanoTools:
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
     ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
-    from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
+    # from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
     logger.info("Will put files into directory %s", output_directory)
@@ -547,8 +547,8 @@ if not options.skipNanoTools:
             JMECorrector()
         ]
         
-        if not sample.isData:
-            modules.append( ISRcounter() )
+        # if not sample.isData:
+        #     modules.append( ISRcounter() )
 
        ##  need a hash to avoid data loss
         file_hash = str(hash(f))
@@ -567,8 +567,8 @@ reader = sample.treeReader( \
     selectionString = "&&".join(skimConds)
     )
 # using hybridIsolation as defined in 2016 AN 
-eleSelector_ = eleSelector( "hybridIso", year = options.year )
-muSelector_  = muonSelector("hybridIso", year = options.year )
+eleSelector_ = eleSelector( "noHybridIso", year = options.year )
+muSelector_  = muonSelector("noHybridIso", year = options.year )
 #tauSelector_ = tauSelector("loose")
 def filler( event ):
     # shortcut

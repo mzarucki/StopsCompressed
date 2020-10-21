@@ -160,6 +160,16 @@ def muonSelector( lepton_selection, year):
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 \
                     and l["looseId"] 
+    
+    elif lepton_selection == 'noHybridIso':
+        def func(l):
+            if l["pt"] >3.5:
+                return \
+                    abs(l["eta"])       < 2.4 \
+                    and abs(l["dxy"])       < 0.1 \
+                    and abs(l["dz"])        < 0.5 \
+                    and l["looseId"] 
+            
     return func
 
 
@@ -270,6 +280,17 @@ def eleSelector( lepton_selection, year):
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
+    elif lepton_selection == 'noHybridIso':
+        def func(l):
+            if l["pt"] >5:
+                return \
+		    abs(l["eta"]) < 2.5 \
+		    and ECALGap(l) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
+                    and abs(l["dxy"])       < 0.1 \
+                    and abs(l["dz"])        < 0.5 
+             
     return func
 
 

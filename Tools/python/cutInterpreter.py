@@ -10,11 +10,14 @@ ISRJet          = "nISRJets"
 mIsoWP = { "VT":5, "T":4, "M":3 , "L":2 , "VL":1, 0:"None" }
 
 special_cuts = {
-    "deltaPhiJets"  	:  "dphij0j1<2.5",
-    "deltaPhiJetsmod"   :  "dphij0j1<2.5&&dphij0j1>0",
-    "lepSel"        	:  "Sum$(lep_pt>20)<=1&&l1_pt>0",
-    "lpt"           	:  "l1_pt>0",
-    "jet3Veto"      	:  "(nJetGood<=2||Alt$(JetGood_pt[2],0)<60)",
+    "deltaPhiJetsInverted"  	:  "dphij0j1>=2.5",
+    "deltaPhiJets"  	        :  "dphij0j1<2.5",
+    "deltaPhiJetsmod"           :  "dphij0j1<2.5&&dphij0j1>0",
+    "lepSel"        	        :  "Sum$(lep_pt>20)<=1&&l1_pt>0",
+    "lpt"           	        :  "l1_pt>0",
+    "jet3Veto"      	        :  "(nJetGood<=2||Alt$(JetGood_pt[2],0)<60)",
+    "jet3VetoInverted"      	:  "(nJetGood>2&&Alt$(JetGood_pt[2],0)>=60)",
+    
     "jet3VetoOld"   	:  "(nJetGood<=2||JetGood_pt[2]<60)",
     "jet3Vetobad"   	:  "(nJetGood<=2)",
     "nHardJetsTo2"  	:  "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2",
