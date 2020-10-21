@@ -249,6 +249,7 @@ def eleSelector( lepton_selection, year):
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 5.0 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -258,6 +259,7 @@ def eleSelector( lepton_selection, year):
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.2 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -269,6 +271,7 @@ def eleSelector( lepton_selection, year):
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
@@ -277,6 +280,7 @@ def eleSelector( lepton_selection, year):
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
