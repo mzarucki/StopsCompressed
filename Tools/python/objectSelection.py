@@ -30,16 +30,15 @@ def getAllJets(c, leptons, ptCut=30, absEtaCut=2.4, jetVars=jetVars, jetCollecti
     for jet in jets:
         clean = True
         for lepton in leptons:
-            if deltaR(lepton, jet) < 0.4 and ptRatio(jet, lepton) < 2: # remove jet with jet_pt/lep_pt < 50% 
-                clean = False
-                break
+		if deltaR(jet, lepton) < 0.4:
+			if ptRatio(jet, lepton) < 2:
+				clean = False
+				break
         if clean:
             res.append(jet)
-
     res.sort( key = lambda j:-j['pt'] )
 
     return res
-
 
 def isBJet(j, tagger = 'DeepCSV', year = 2016):
     if tagger == 'CSVv2':
@@ -238,7 +237,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 5.0 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -247,7 +246,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.2 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -258,7 +257,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
@@ -266,7 +265,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 

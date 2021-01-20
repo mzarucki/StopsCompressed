@@ -108,12 +108,15 @@ class SystematicEstimator:
         ref  = self.cachedEstimate(region, channel, setup)
         up   = self.cachedEstimate(region, channel, setup.sysClone({'selectionModifier':'jerUp'}))
         down = self.cachedEstimate(region, channel, setup.sysClone({'selectionModifier':'jerDown'}))
-        return min(abs(0.5*(up+down)/ref-1.),u_float(0.95)) if ref > 0 else max(up, down)
+	#print "jer up: ", up.val, "jer down: ", down.val, "ref: ", ref.val
+        return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
+        #return min(abs(0.5*(up+down)/ref-1.),u_float(0.95)) if ref > 0 else max(up, down)
 
     def JECSystematic(self, region, channel, setup):
         ref  = self.cachedEstimate(region, channel, setup)
         up   = self.cachedEstimate(region, channel, setup.sysClone({'selectionModifier':'jesTotalUp'}))
         down = self.cachedEstimate(region, channel, setup.sysClone({'selectionModifier':'jesTotalDown'}))
+	#print "jer up: ", up.val, "jer down: ", down.val, "ref: ", ref.val
         return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
 
     def unclusteredSystematic(self, region, channel, setup):
