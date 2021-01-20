@@ -8,7 +8,8 @@ parser.add_option("--selectRegion",          dest="selectRegion",          defau
 parser.add_option("--year",                  dest="year",                  default=2016, type="int",    action="store",      help="Which year?")
 parser.add_option("--nThreads",              dest="nThreads",              default=8, type="int",       action="store",      help="How many threads?")
 parser.add_option('--logLevel',              dest="logLevel",              default='INFO',              action='store',      help="log level?", choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'])
-parser.add_option("--control",               dest="control",               default=None,                action='store',      choices=[None, "DY", "VV", "DYVV", "TTZ1", "TTZ2", "TTZ3", "TTZ4", "TTZ5", "CR1aX","CR1aY", "CR1bX", "CR1bY"], help="For CR region?")
+#parser.add_option("--control",               dest="control",               default=None,                action='store',      choices=[None, "DY", "VV", "DYVV", "TTZ1", "TTZ2", "TTZ3", "TTZ4", "TTZ5", "CR1aX","CR1aY", "CR1bX", "CR1bY"], help="For CR region?")
+parser.add_option("--control",               dest="control",               default=False,                action='store_true', help="For CR region?")
 parser.add_option("--useGenMet",             dest="useGenMet",             default=False,               action='store_true', help="use genMET instead of recoMET, used for signal studies")
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true', help="overwrite existing results?")
 parser.add_option("--all",                   dest="all",                   default=False,               action='store_true', help="Run over all SR and CR?")
@@ -16,6 +17,8 @@ parser.add_option("--all",                   dest="all",                   defau
 (options, args) = parser.parse_args()
 from StopsCompressed.Analysis.estimators   import *
 from StopsCompressed.Analysis.regions      import signalRegions, controlRegions
+#from StopsCompressed.Analysis.regions_splitCR      import signalRegions, controlRegions
+#from StopsCompressed.Analysis.regions_splitCR_v2      import signalRegions, controlRegions
 from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed   import signals_T2tt
 
 
@@ -33,12 +36,18 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
-channels = lepChannels
-for c in channels: print c
+channels = allChannels
+#channels = lepChannels
+#for c in channels: print c
 setup = Setup(year=options.year)
 
-allRegions = controlRegions  #if (options.control ) else signalRegions
-
+if options.control:
+	allRegions= controlRegions
+elif options.all:
+	allRegions = controlRegions + signalRegions
+	#print len(allRegions)
+#allRegions = controlRegions + signalRegions  #if (options.control ) else signalRegions
+#for s in allRegions: print s
 from StopsCompressed.Analysis.MCBasedEstimate import MCBasedEstimate
 from StopsCompressed.Analysis.DataObservation import DataObservation
 
@@ -94,9 +103,10 @@ for channel in channels:
             else:                 jobs.extend(estimate.getBkgSysJobs(r,channel,  setup))
 
 results = map(wrapper, jobs)
-print results
+#print results
 for channel in (['all']):
     for (i, r) in enumerate(allRegions):
+	#print r
         if options.selectRegion is not None and options.selectRegion != i: continue
         if options.useGenMet: estimate.cachedEstimate(r, setup.sysClone({'selectionModifier':'genMet'}), save=True)
         else: estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
@@ -104,7 +114,7 @@ for channel in (['all']):
             if estimate.isSignal: map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getSigSysJobs(r, channel,  setup, isFastSim))
             else: 
 	    	map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getBkgSysJobs(r,  channel, setup))
-		print estimate.getBkgSysJobs(r,  channel, setup) 
+		#print estimate.getBkgSysJobs(r,  channel, setup) 
 
         logger.info('Done with region: %s', r)
     logger.info('Done with channel: %s', channel)

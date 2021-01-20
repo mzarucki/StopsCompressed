@@ -137,7 +137,9 @@ class Setup:
         return "_".join(self.prefixes+[self.preselection("MC", channel=channel)["prefix"]])
 
     def defaultCacheDir(self):
-        cacheDir = os.path.join(cache_directory, str(self.year), "estimates")
+        cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_splitCR")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_split_erCR")
         logger.info("Default cache dir is: %s", cacheDir)
         return cacheDir
 
@@ -205,7 +207,7 @@ class Setup:
         assert dataMC in ["Data","MC","DataMC"], "dataMC = Data or MC or DataMC, got %r."%dataMC
         if self.sys['selectionModifier']:
             assert self.sys['selectionModifier'] in jmeVariations+metVariations, "Don't know about systematic variation %r, take one of %s"%(self.sys['selectionModifier'], ",".join(jmeVariations+metVariations))
-        assert channel in allChannels, "channel must be one of "+",".join(allChannels)+". Got %r."%channel
+        #assert channel in allChannels, "channel must be one of "+",".join(allChannels)+". Got %r."%channel
         #Postfix for variables (only for MC and if we have a jme variation)
         sysStr = ""
         if dataMC == "MC" and self.sys['selectionModifier'] in jmeVariations + metVariations:
