@@ -15,6 +15,7 @@ if os.environ['USER'] in ['priya.hussain']:
     private_results_directory           = "/mnt/hephy/cms/priya.hussain/"
 if os.environ['USER'] in ['janik.andrejkovic']:
     results_directory                   = "/mnt/hephy/cms/janik.andrejkovic/StopsCompressed/"
+    analysis_results                    = "/mnt/hephy/cms/janik.andrejkovic/StopsCompressed/"
     cache_directory                     = "/mnt/hephy/cms/janik.andrejkovic/StopsCompressed/"
     postProcessing_output_directory     = "/mnt/hephy/cms/janik.andrejkovic/StopsCompressed/nanoTuples/"
     plot_directory                      = "/mnt/hephy/cms/janik.andrejkovic/www/StopsCompressed/"
