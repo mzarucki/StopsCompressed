@@ -1,3 +1,10 @@
+python analysisPlots.py --era Run2016 --reweightPU Central --targetDir v21MC_v21Data --selection nISRJets1p-ntau0-lepSel-deltaPhiJetsInverted-jet3Veto-met200-ht300-lpt3p5To5 --small |& tee debug_small.out
+
+
+
+
+
+
 
 #analysis plot with QCD rejection, i.e. deltaphi && 3jetVeto
 python analysisPlots.py --era Run2016 --reweightPU Central --targetDir v19MC_v20Data --selection nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300 --small |& tee debug_small.out

@@ -73,13 +73,13 @@ if args.eos and "2016" in args.era:
 elif "2016" in args.era and not args.eos:
     # bkg MC
 	from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
-    # samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-	samples = [QCD_HT_16]
-	prediction = [copy.deepcopy(QCD_HT_16)]
-	prediction[0].texName = "QCD-predcited" 
-	prediction[0].color = ROOT.kCyan 
-	prediction[0].SetFillColorAlpha = (ROOT.kCyan,0.3) 
-	prediction[0].name = "QCD_HTcopy"
+	samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
+	# samples = [QCD_HT_16]
+	# prediction = [copy.deepcopy(QCD_HT_16)]
+	# prediction[0].texName = "QCD-predcited" 
+	# prediction[0].color = ROOT.kCyan 
+	# prediction[0].SetFillColorAlpha = (ROOT.kCyan,0.3) 
+	# prediction[0].name = "QCD_HTcopy"
 	# data
 	from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import *
     
@@ -164,8 +164,8 @@ read_variables += [
 
 sequence = []
 
-FR_file = ROOT.TFile("/users/janik.andrejkovic/public/HEPHY_Analysis/CMSSW_10_2_18/src/tWZ/plots/plotsJanik/fakes/FR.root")
-TightToLoose = FR_file.Get("TightToLoose")
+FR_file = ROOT.TFile("/users/janik.andrejkovic/public/HEPHY_Analysis/CMSSW_10_2_18/src/tWZ/plots/plotsJanik/fakes/TL_metTo50-mTTo40.root")
+TightToLoose = FR_file.Get("TL")
 def mtwithdphi(event, sample):
 	event.mtmod = float('nan')
 	if deltaPhi(event.l1_phi ,event.met_phi) < 1.7: 
@@ -200,7 +200,7 @@ def frHybridIso(event,sample) :
 		event.tight = 1.
 	elif event.HI > 5 :
 		event.loose = 1.
-		event.TLratio = TightToLoose.GetBinContent(TightToLoose.GetXaxis().FindBin(event.l1_pt),TightToLoose.GetYaxis().FindBin(event.l1_eta))
+		event.TLratio = TightToLoose.GetBinContent(TightToLoose.GetXaxis().FindBin(event.l1_pt),TightToLoose.GetYaxis().FindBin(abs(event.l1_eta)))
 		
 def getLeptonSelection( mode ):
 	if   mode == 'mu': return "abs(l1_pdgId)==13"
@@ -214,6 +214,7 @@ def IsoCutWeight (Tight=True, inclusive=False, TL=False) :
                 return event.weight
             elif event.HI > 5 and Tight == False:
 				if TL :
+					print(event.TLratio)
 					return event.weight * event.TLratio
 				else :
 					return event.weight        
@@ -258,25 +259,25 @@ for index, mode in enumerate(allModes):
 		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 		sample.style = styles.fillStyle(sample.color)
 	
-	for sample in prediction :
-		sample.read_variables  = ['reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',]
-		sample.read_variables += ['reweightPU%s/F'%args.reweightPU if args.reweightPU != "Central" else "reweightPU/F"]
-		pu_getter = operator.attrgetter('reweightPU' if args.reweightPU=='Central' else "reweightPU%s"%args.reweightPU)
-		sample.weight         = lambda event, sample: event.loose * event.TLratio * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
-		sample.scale = lumi_scale 
-		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-		sample.style = styles.fillStyle(sample.color,alpha=0.3)
+	# for sample in prediction :
+	# 	sample.read_variables  = ['reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',]
+	# 	sample.read_variables += ['reweightPU%s/F'%args.reweightPU if args.reweightPU != "Central" else "reweightPU/F"]
+	# 	pu_getter = operator.attrgetter('reweightPU' if args.reweightPU=='Central' else "reweightPU%s"%args.reweightPU)
+	# 	sample.weight         = lambda event, sample: event.loose * event.TLratio * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
+	# 	sample.scale = lumi_scale 
+	# 	sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+	# 	sample.style = styles.fillStyle(sample.color,alpha=0.3)
 	
 	
 	#stack_ = Stack( samples )
-	# stack_ = Stack( samples, data_sample ) 
-	stack_ = Stack( samples, data_sample, prediction ) 
+	stack_ = Stack( samples, data_sample ) 
+	# stack_ = Stack( samples, data_sample, prediction ) 
 	# stack_ = Stack( samples, data_sample, prediction ) 
 	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
 
 	
 	if args.small:
-		for sample in samples + [data_sample] + signals + prediction:
+		for sample in samples + [data_sample] + signals : # + prediction:
 			sample.normalization = 1.
 			sample.reduceFiles( factor = 40 )
 			sample.scale /= sample.normalization
@@ -294,7 +295,7 @@ for index, mode in enumerate(allModes):
 		# weight = lambda event, sample: event.tight * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF,
 		# weight=IsoCutWeight(Tight=True, inclusive=False),
 
-		binning=[10,0,50],
+		binning=[100,0,50],
 	  ))
 	plots.append(Plot(
 		name = "looseHI_l1pt",
@@ -302,14 +303,14 @@ for index, mode in enumerate(allModes):
 	    attribute = TreeVariable.fromString( "l1_pt/F" ),
 		# weight = lambda event, sample: event.loose,
 		# weight=IsoCutWeight(Tight=False, inclusive=False),
-	    binning=[10,0,50],
+	    binning=[100,0,50],
 	  ))
 	plots.append(Plot(
 		name = "pred_l1pt",
 	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
 	    attribute = TreeVariable.fromString( "l1_pt/F" ),
-		# weight=IsoCutWeight(Tight=False, inclusive=False,TL=True),
-	    binning=[10,0,50],
+		weight=IsoCutWeight(Tight=False, inclusive=False,TL=True),
+	    binning=[100,0,50],
 	  ))
 	plots.append(Plot(
 	    texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
@@ -373,13 +374,13 @@ for index, mode in enumerate(allModes):
 		  h.GetXaxis().SetBinLabel(1, "#mu")
 		  h.GetXaxis().SetBinLabel(2, "e")
 	yields[mode]["MC"] = sum(yields[mode][s.name] for s in samples)
-	yields[mode]["QCD-predcited"] = sum(yields[mode][s.name] for s in prediction)
+	# yields[mode]["QCD-predcited"] = sum(yields[mode][s.name] for s in prediction)
 	# dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
-	QCDScale        = yields[mode]["QCD-predcited"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+	# QCDScale        = yields[mode]["QCD-predcited"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
 	dataMCScale = 1
 	# drawPlots(plots, mode, dataMCScale)
-	print "QCD scale {}".format(QCDScale)
-	drawPlots(plots, mode, QCDScale)
+	# print "QCD scale {}".format(QCDScale)
+	drawPlots(plots, mode, dataMCScale)
 	
 	for plot in plots2D:
 		plotting.draw2D(
