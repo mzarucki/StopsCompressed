@@ -56,10 +56,10 @@ dirs['TTSingleLep_pow']  = ["TTSingleLep_pow"]
 dirs['Top_pow']          = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
 #
 ##dirs['TTbar']            	     = ["TTbar"]
-##dirs['TTJets_DiLept']                = ["TTJets_DiLept"]
-##dirs['TTJets_SingleLeptonFromT']     = ["TTJets_SingleLeptonFromT"]
-##dirs['TTJets_SingleLeptonFromTbar']  = ["TTJets_SingleLeptonFromTbar"]
-##dirs['TTJets_SingleLepton']	     = dirs['TTJets_SingleLeptonFromT'] + dirs['TTJets_SingleLeptonFromTbar']
+###dirs['TTJets_DiLept']                = ["TTJets_DiLept"]
+#dirs['TTJets_SingleLeptonFromT']     = ["TTJets_SingleLeptonFromT"]
+#dirs['TTJets_SingleLeptonFromTbar']  = ["TTJets_SingleLeptonFromTbar"]
+#dirs['TTJets_SingleLepton']	     = dirs['TTJets_SingleLeptonFromT'] + dirs['TTJets_SingleLeptonFromTbar']
 ##
 ##dirs['Top_pow']          = dirs['TTLep_pow']  
 ##
@@ -72,21 +72,24 @@ dirs['TTZ_LO']         = ['TTZ_LO']
 dirs['TTG']             = ["TTGJets_comb"]
 ##
 dirs['TTW']             = ['TTWToLNu_ext2', 'TTWToQQ']
+#use TTWJets from 14Dec, LO samples
+#dirs['TTW']             = ['TTW_LO']
+
 dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
-dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"]
+dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200_comb", "WJetsToLNu_HT200to400_comb", "WJetsToLNu_HT400to600_comb", "WJetsToLNu_HT600to800_comb", "WJetsToLNu_HT800to1200_comb", "WJetsToLNu_HT1200to2500_comb", "WJetsToLNu_HT2500toInf_comb"]
 
 dirs['WW']              = ["WWToLNuQQ", "WWTo2L2Nu"]
-dirs['WZ']              = ["WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q", "WZTo3LNu"]
-dirs['ZZ']              = ["ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" , "ZZTo2L2Nu"]
-dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
+dirs['WZ']              = ["WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q", "WZTo3LNu_comb"]
+dirs['ZZ']              = ["ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" , "ZZTo2L2Nu_comb"]
+#dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
 dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
-dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
+#dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
 #dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 
-dirs['QCD_HT'] 		= ["QCD_HT50to100", "QCD_HT100to200", "QCD_HT200to300", "QCD_HT300to500", "QCD_HT500to700", "QCD_HT700to1000", "QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf" ]
-dirs['ZInv']		= ["ZJetsToNuNu_HT100to200","ZJetsToNuNu_HT200to400","ZJetsToNuNu_HT400to600","ZJetsToNuNu_HT600to800","ZJetsToNuNu_HT800to1200","ZJetsToNuNu_HT1200to2500","ZJetsToNuNu_HT2500toInf"]	
+dirs['QCD_HT'] 		= ["QCD_HT50to100", "QCD_HT100to200", "QCD_HT200to300_comb", "QCD_HT300to500_comb", "QCD_HT500to700_comb", "QCD_HT700to1000_comb", "QCD_HT1000to1500_comb", "QCD_HT1500to2000_comb", "QCD_HT2000toInf_comb" ]
+dirs['ZInv']		= ["ZJetsToNuNu_HT100to200_comb","ZJetsToNuNu_HT200to400_comb","ZJetsToNuNu_HT400to600_comb","ZJetsToNuNu_HT600to800","ZJetsToNuNu_HT800to1200","ZJetsToNuNu_HT1200to2500_comb","ZJetsToNuNu_HT2500toInf"]	
 
 
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
