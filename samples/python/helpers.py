@@ -112,6 +112,8 @@ def getT2ttSignalWeight(sample, lumi, cacheDir):
     '''Get a dictionary for T2tt signal weights
     '''
     from StopsCompressed.Tools.xSecSusy import xSecSusy
+    #from StopsCompressed.Tools.genFilter import genFilter
+    #genFilter = genFilter(year=2016)
     xSecSusy_ = xSecSusy()
     channel='stop13TeV'
     signalWeight={}
@@ -137,10 +139,18 @@ def getT2ttSignalWeight(sample, lumi, cacheDir):
             n = hNEvents.GetBinContent(hNEvents.FindBin(i,j))
             if n>0:
                 signalWeight[(i,j)] = {'weight':lumi*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
-                #logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'] )
+		logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'])
+#		genEff = genFilter.getEff(i,j)
+#                signalWeight[(i,j)] = {'weight':lumi*genEff*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
+#		logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f), genEff: %6.6f", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'], genEff)
     del hNEvents
     return signalWeight
 
+def GetFilterEff(deltaM) :
+    if deltaM == 30 :
+        return 0.327
+    else :
+        return 1.
 
 def getT2ttISRNorm(sample, mStop, mLSP, massPoints, year, signal="T2tt", fillCache=False, cacheDir='/tmp/ISR/', overwrite=False):
     '''
@@ -148,10 +158,13 @@ def getT2ttISRNorm(sample, mStop, mLSP, massPoints, year, signal="T2tt", fillCac
     '''
     from StopsCompressed.Tools.user import analysis_results
     from StopsCompressed.Analysis.Cache import Cache
+    #from StopsCompressed.Tools.genFilter import genFilter
+    #genFilter = genFilter(year=year)
     signalWeight={}
     mMax = 2000
     bStr = str(mMax)+','+str(mMax)
-
+    #print bStr
+    
     cache = Cache(cacheDir, verbosity=2)
 
     key = (mStop, mLSP, signal, year)
@@ -161,19 +174,24 @@ def getT2ttISRNorm(sample, mStop, mLSP, massPoints, year, signal="T2tt", fillCac
         from StopsCompressed.Tools.isrWeight import ISRweight
         isr = ISRweight()
         isrWeightString = isr.getWeightString()
-
+        #sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022)):Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))>>hReweighted("+','.join([bStr, bStr])+")", isrWeightString+"*{}".format(GetFilterEff(deltaM=mStop-mLSP))+'*(1)',"goff")
         sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022)):Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))>>hReweighted("+','.join([bStr, bStr])+")", isrWeightString+'*(1)',"goff")
         hReweighted = ROOT.gDirectory.Get("hReweighted")
 
         sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022)):Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))>>hCentral("+','.join([bStr, bStr])+")", '(1)',"goff")
         hCentral = ROOT.gDirectory.Get("hCentral")
+        #sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022)):Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))>>hReweighted("+','.join([bStr, bStr])+")", isrWeightString+"*{}".format(GetEff(mStop,mLSP)),"goff")
+        #hReweighted = ROOT.gDirectory.Get("hReweighted")
+
+        #sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022)):Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))>>hCentral("+','.join([bStr, bStr])+")", "{}".format(GetEff(mStop,mLSP)),"goff")
+        #hCentral = ROOT.gDirectory.Get("hCentral")
 
         for mSt, mNeu in massPoints:
             key = (mSt, mNeu, signal, year)
             norm = hCentral.GetBinContent(hCentral.GetXaxis().FindBin(mSt), hCentral.GetYaxis().FindBin(mNeu)) / hReweighted.GetBinContent(hReweighted.GetXaxis().FindBin(mSt), hReweighted.GetYaxis().FindBin(mNeu))
-            print mSt, mNeu
-            print key
-            print norm
+            #print mSt, mNeu
+            #print key
+            #print norm
             cache.add( key , norm)
 
     if not cache.contains(key):

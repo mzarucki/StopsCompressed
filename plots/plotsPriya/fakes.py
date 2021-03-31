@@ -31,9 +31,9 @@ argParser.add_argument('--logLevel',           		action='store',      default='I
 argParser.add_argument('--era',                		action='store',      default="Run2018",  	type=str )
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          		action='store',      default='v_44_noData')
-argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-isFake')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+argParser.add_argument('--targetDir',          		action='store',      default='v5_Data')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-isPrompt')
+argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
@@ -80,10 +80,8 @@ if args.eos and "2016" in args.era:
     
 elif "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
-    #samples = [WJetsToLNu_HT_16, TTJets_1l_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-    #samples = [WJetsToLNu_HT_16]
-    samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, VV_16, TTX_16]
+    samples = [WJetsToLNu_HT_16, Top_pow_16 , Fakes_16, singleTop_16, DY_HT_LO_16,VV_16, TTX_16]
+    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, VV_16, TTX_16]
     from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import *
     from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import *
     #signals = [T2tt_375_365,T2tt_500_470]
@@ -138,7 +136,7 @@ def drawObjects( plotData, dataMCScale):
 def drawPlots(plots,mode, dataMCScale):
   for log in [False, True]:
     
-    plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
+    plot_directory_ = os.path.join(plot_directory, 'fakeStudies',args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
     for plot in plots:
       #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
       #for l in plot.histos:
@@ -147,8 +145,8 @@ def drawPlots(plots,mode, dataMCScale):
       _drawObjects = []
       plotting.draw(plot,
         plot_directory = plot_directory_,
-        #ratio = {'yRange':(0.1,1.9)},
-        ratio = None,
+        ratio = {'yRange':(0.1,1.9)},
+        #ratio = None,
         logX = False, logY = log, sorting = False,
         yRange = (0.03, "auto") if log else (0.001, "auto"),
         scaling = {},
@@ -159,7 +157,7 @@ def drawPlots(plots,mode, dataMCScale):
 
 # Read variables and sequences
 read_variables = [
-            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_pdgId/I", "l1_muIndex/I", "reweightHEM/F","l1_miniRelIso/F", "l1_relIso03/F", "nlep/I",
+            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_pdgId/I", "l1_muIndex/I", "reweightHEM/F","l1_miniRelIso/F", "l1_relIso03/F", "nlep/I","l1_isPrompt/O","l1_dRgen/F", 
 	    "lep[pt/F, eta/F, phi/F]",
             "JetGood[pt/F, eta/F, phi/F, genPt/F]", 
             "Jet[pt/F, eta/F, phi/F, jetId/I]", 
@@ -270,9 +268,17 @@ for index, mode in enumerate(allModes):
 			sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightwPt * event.reweightLeptonSF
 			sample.scale = lumi_scale 
 			sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+	for sample in samples:
+		if sample.name == "fakes":
+			print sample.name, "better be fake"
+			sample.addSelectionString("l1_isPrompt==0")
 			sample.style = styles.fillStyle(sample.color)
-	stack_ = Stack( samples )
-	#stack_ = Stack( samples, data_sample ) 
+		else:
+			print sample.name, "no fakes"
+			sample.addSelectionString("l1_isPrompt>0")
+			sample.style = styles.fillStyle(sample.color)
+
+	stack_ = Stack( samples, data_sample ) 
 	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470, T2tt_500_420 )
 	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
 
@@ -471,16 +477,16 @@ for index, mode in enumerate(allModes):
 	    binning=[3, 0, 3],
 	  ))
 
-#	plots2D.append(Plot2D(
-#		name = "Data_Jet_eta_vs_phi",
-#		texX  = '#eta', texY = "#phi",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			lambda event, sample: event.JetGood_eta[0],
-#			lambda event, sample: event.JetGood_phi[0],
-#			),
-#		binning = [10,-3,3, 10,-pi,pi],
-#	  ))
+	plots2D.append(Plot2D(
+		name = "Data_Jet_eta_vs_phi",
+		texX  = '#eta', texY = "#phi",
+		stack = Stack ([data_sample]),
+		attribute = (
+			lambda event, sample: event.JetGood_eta[0],
+			lambda event, sample: event.JetGood_phi[0],
+			),
+		binning = [10,-3,3, 10,-pi,pi],
+	  ))
 	plots2D.append(Plot2D(
 		name = "MC_Jet_eta_vs_phi",
 		texX  = '#eta', texY = "#phi",
@@ -491,16 +497,16 @@ for index, mode in enumerate(allModes):
 			),
 		binning = [10,-3,3, 10,-pi,pi],
 	  ))
-#	plots2D.append(Plot2D(
-#		name = "Data_l1_eta_vs_phi",
-#		texX  = '#eta', texY = "#phi",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			TreeVariable.fromString( "l1_eta/F" ),
-#			TreeVariable.fromString( "l1_phi/F" ),
-#			),
-#		binning = [10,-3,3, 10,-pi,pi],
-#	  ))
+	plots2D.append(Plot2D(
+		name = "Data_l1_eta_vs_phi",
+		texX  = '#eta', texY = "#phi",
+		stack = Stack ([data_sample]),
+		attribute = (
+			TreeVariable.fromString( "l1_eta/F" ),
+			TreeVariable.fromString( "l1_phi/F" ),
+			),
+		binning = [10,-3,3, 10,-pi,pi],
+	  ))
 	plots2D.append(Plot2D(
 		name = "MC_l1_eta_vs_phi",
 		texX  = '#eta', texY = "#phi",
@@ -531,16 +537,16 @@ for index, mode in enumerate(allModes):
 #			),
 #		binning = [10,-3,3, 10,-pi,pi],
 #	  ))
-#	plots2D.append(Plot2D(
-#		name = "Data_cosdphi_vs_Mt",
-#		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			lambda event, sample: cos(event.l1_phi - event.met_phi),
-#			TreeVariable.fromString( "mt/F" ),
-#			),
-#		binning = [20,-1,1, 40,0,300],
-#	  ))
+	plots2D.append(Plot2D(
+		name = "Data_cosdphi_vs_Mt",
+		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
+		stack = Stack ([data_sample]),
+		attribute = (
+			lambda event, sample: cos(event.l1_phi - event.met_phi),
+			TreeVariable.fromString( "mt/F" ),
+			),
+		binning = [20,-1,1, 40,0,300],
+	  ))
 	plots2D.append(Plot2D(
 		name = "MC_cosdphi_vs_Mt",
 		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
@@ -564,9 +570,9 @@ for index, mode in enumerate(allModes):
 		  h.GetXaxis().SetBinLabel(1, "#mu")
 		  h.GetXaxis().SetBinLabel(2, "e")
 	yields[mode]["MC"] = sum(yields[mode][s.name] for s in samples)
-	#dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+	dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
 	## if plotting only MC
-	dataMCScale = 1
+	#dataMCScale = 1
 
 	drawPlots(plots, mode, dataMCScale)
 	
@@ -585,9 +591,9 @@ yields['all'] = {}
 for y in yields[allModes[0]]:
 	try:	yields['all'][y] = sum(yields[c][y] for c in (['mu','e']))
 	except: yields['all'][y] = 0
-#dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
+dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
 ## if only plotting MC and data
-dataMCScale = 1
+#dataMCScale = 1
 for plot in allPlots['mu']:
 	for plot2 in (p for p in allPlots['e'] if p.name == plot.name): 
 		for i, j in enumerate(list(itertools.chain.from_iterable(plot.histos))):
