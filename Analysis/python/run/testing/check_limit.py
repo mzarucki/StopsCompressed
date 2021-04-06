@@ -72,7 +72,7 @@ from math                           import sqrt
 from StopsCompressed.Tools.genFilter import genFilter
 genFilter = genFilter(year=year)
 ##https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSYSignalSystematicsRun2
-from Analysis.Tools.cardFileWriter import testCardFileWriter
+from Analysis.Tools.cardFileWriter import cardFileWriter
 
 setup = Setup(year=year)
 
@@ -155,7 +155,7 @@ def wrapper(s):
   if genEff ==0 :
     print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
     genEff = 0.48
-  c = testCardFileWriter.cardFileWriter()
+  c = cardFileWriter.cardFileWriter()
   c.releaseLocation = os.path.abspath('.') # now run directly in the run directory
 
   logger.info("Running over signal: %s", s.name)
@@ -167,9 +167,37 @@ def wrapper(s):
     c.setPrecision(3)
     shapeString = 'lnN' if args.useTxt else 'shape'
     
+    SFb     = 'SFb_%s'%year
+    SFl     = 'SFl_%s'%year
+    nISR    = 'nISR_%s'%year
+    wPt     = 'wPt_%s'%year
+    JEC     = 'JEC_%s'%year
+    JER     = 'JER_%s'%year
+    leptonSF= 'leptonSF_%s'%year
+    PU      = 'PU_%s'%year
+
     Lumi    = 'Lumi_%s'%year
-    c.addUncertainty(Lumi,          "lnN")
     
+    c.addUncertainty(Lumi,          "lnN")
+
+    c.addUncertainty(SFb,          shapeString)
+    c.addUncertainty(SFl,          shapeString)
+    c.addUncertainty(nISR,           shapeString)
+    c.addUncertainty(wPt,           shapeString)
+    c.addUncertainty(JEC,          shapeString)
+    c.addUncertainty(JER,          shapeString)
+    c.addUncertainty(leptonSF,   shapeString)
+    c.addUncertainty(PU,           shapeString)
+
+    if year == 2016:
+      lumiUncertainty = 1.025
+    elif year == 2017:
+      lumiUncertainty = 1.023
+    elif year == 2018:
+      lumiUncertainty = 1.025
+
+
+
     c.addCR(controlRegions)
     c.addSR(signalRegions)
     for setup in setups:
@@ -190,6 +218,11 @@ def wrapper(s):
 
           for e in setup.estimators :
             name = e.name.split('-')[0]
+
+            if "signal" in name :
+              print name 
+              exit(0)
+            
   
             expected = e.cachedEstimate(r, channel, setup)
 
@@ -207,9 +240,18 @@ def wrapper(s):
               
             logger.info("Expectation for process %s: %s", e.name, expected.val)                                                                                                                       
               
-              expected = expected * args.scale
-              logger.info("Expectation for process %s: %s", e.name, expected.val)
+            expected = expected * args.scale
+            logger.info("Expectation for process %s: %s", e.name, expected.val)
             
+
+
+            # if e.name.count("WJets"):
+            #   pass
+            # elif e.name.count("Top") :
+            #   pass
+            # else :
+            #   c.specifyFlatUncertainty(Lumi, lumiUncertainty)
+
             
             if e.name.count('WJets'):
               c.specifyExpectation(binname, 'WJets',  expected.val)
@@ -237,15 +279,37 @@ def wrapper(s):
               c.specifyExpectation(binname, name, expected.val)               
             if expected.val>0 or True:
               names = [name]
+              
+              
               for name in names : 
                 sysChannel = 'all' # could be channel as well
                 uncScale = 1
-  
+                
                 #MC bkg stat (some condition to neglect the smaller ones?)
                 uname = 'Stat_'+binname+'_'+name
                 c.addUncertainty(uname, 'lnN')
                 c.specifyUncertainty(uname, binname, name, 1 + (expected.sigma/expected.val) * uncScale if expected.val>0 else 1)
-          
+
+                
+                c.specifyUncertainty(SFb,        binname, name, 1 + e.btaggingSFbSystematic(r, channel, setup).val * uncScale )
+                c.specifyUncertainty(SFl,        binname, name, 1 + e.btaggingSFlSystematic(r, channel, setup).val * uncScale )
+                c.specifyUncertainty(JEC,        binname, name, 1 + e.JECSystematic(r, sysChannel, setup).val )
+                c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(r, sysChannel, setup).val)
+                c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
+                c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
+
+
+                if name == "WJets":
+                  c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
+                  #pass #c.specifyUncertainty(Lumi, binname, name, 1)
+                elif name == "Top" :
+                  c.specifyUncertainty(nISR,       binname, name, 1 + e.nISRSystematic(         r, sysChannel, setup).val * uncScale )
+                  #pass #c.specifyUncertainty(Lumi, binname, name, 1)
+                else :
+                  c.specifyUncertainty(Lumi, binname, name, lumiUncertainty)
+
+
+
           c.addMap(regionMapping)	
           #signal
           eSignal.isSignal = True
@@ -271,8 +335,17 @@ def wrapper(s):
           c.specifyExpectation(binname, 'signal', signal.val*xSecScale*genEff )
           logger.info("Signal expectation: %s", signal.val*xSecScale*genEff)
 
-
+          c.specifyUncertainty(Lumi, binname, 'signal', lumiUncertainty)
+          logger.info("adding lumi uncertainty for signal")
           if signal.val>0.001:
+
+            c.specifyUncertainty(SFb,             binname, 'signal', 1 + e.btaggingSFbSystematic(r, channel, signalSetup).val )
+            c.specifyUncertainty(SFl,             binname, 'signal', 1 + e.btaggingSFlSystematic(r, channel, signalSetup).val )
+            c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
+            c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
+            c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
+            c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
+
             if not fastSim:
               c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
               logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
@@ -308,16 +381,16 @@ def wrapper(s):
       c.addRateParameter('WJets',1,'[0.,10.]')
       c.addRateParameter('Top',1,'[0.,10.]')
 
-      if year == 2016:
-          lumiUncertainty = 1.025
-      elif year == 2017:
-          lumiUncertainty = 1.023
-      elif year == 2018:
-          lumiUncertainty = 1.025
+      # if year == 2016:
+      #     lumiUncertainty = 1.025
+      # elif year == 2017:
+      #     lumiUncertainty = 1.023
+      # elif year == 2018:
+      #     lumiUncertainty = 1.025
       
-      c.specifyFlatUncertainty(Lumi, lumiUncertainty)
-      cardFileNameTxt     = c.writeToFile(cardFileName,noMCStat=True)
-      cardFileNameShape   = c.writeToShapeFile(cardFileName.replace('.txt', '_shape.root'), noMCStat=True)
+      # c.specifyFlatUncertainty(Lumi, lumiUncertainty)
+      cardFileNameTxt     = c.writeToFile(cardFileName,noMCStat=False)
+      cardFileNameShape   = c.writeToShapeFile(cardFileName.replace('.txt', '_shape.root'), noMCStat=False)
       cardFileName = cardFileNameTxt if args.useTxt else cardFileNameShape
   else:
     print "File %s found. Reusing."%cardFileName
@@ -540,7 +613,7 @@ if not args.signal == 'ttHinv':
   for r in results:
     s, res = r
     mStop, mNeu = s
-	  dm = mStop - mNeu
+    dm = mStop - mNeu
     mStop_list.append(mStop)
     mLSP_list.append(mNeu)
     dm_list.append(dm)
