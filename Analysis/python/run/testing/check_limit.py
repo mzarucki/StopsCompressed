@@ -56,7 +56,8 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from RootTools.core.standard import *
 from StopsCompressed.Tools.user            import cache_directory 
-from StopsCompressed.Analysis.test_Setup import Setup
+from StopsCompressed.Analysis.Setup import Setup
+# from StopsCompressed.Analysis.test_Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
 from StopsCompressed.Analysis.estimators   import *
 from StopsCompressed.Analysis.backup_regions      import regionMapping,signalRegions, controlRegions, region
@@ -107,7 +108,8 @@ setups = [setup]
 
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
-elif args.fitAll:	        subDir = 'fitAllregion_test3'
+#TODO new name here for all mass points needed!
+elif args.fitAll:	        subDir = 'fitAllregion_2016_v30Sig'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -174,6 +176,8 @@ def wrapper(s):
     JEC     = 'JEC_%s'%year
     JER     = 'JER_%s'%year
     leptonSF= 'leptonSF_%s'%year
+    leptonSFsignal= 'leptonSFsignal_%s'%year
+    
     PU      = 'PU_%s'%year
 
     Lumi    = 'Lumi_%s'%year
@@ -187,6 +191,7 @@ def wrapper(s):
     c.addUncertainty(JEC,          shapeString)
     c.addUncertainty(JER,          shapeString)
     c.addUncertainty(leptonSF,   shapeString)
+    c.addUncertainty(leptonSFsignal,          "lnN")
     c.addUncertainty(PU,           shapeString)
 
     if year == 2016:
@@ -318,6 +323,7 @@ def wrapper(s):
           if fastSim :
             signalSetup = setup.sysClone()
             if year == 2016:
+              signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]}) 
               signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup))
             else:
               signal = e.cachedEstimate(r, channel, signalSetup)
@@ -328,7 +334,7 @@ def wrapper(s):
           
           signal = signal * args.scale
 
-          if signal.val<0.01 and niceName.count("control")==0:
+          if signal.val<0.01 :#and niceName.count("control")==0:
               signal.val = 0.001
               signal.sigma = 0.001
           
@@ -336,6 +342,7 @@ def wrapper(s):
           logger.info("Signal expectation: %s", signal.val*xSecScale*genEff)
 
           c.specifyUncertainty(Lumi, binname, 'signal', lumiUncertainty)
+          c.specifyUncertainty(leptonSFsignal, binname, 'signal', 1.01)
           logger.info("adding lumi uncertainty for signal")
           if signal.val>0.001:
 
@@ -343,7 +350,8 @@ def wrapper(s):
             c.specifyUncertainty(SFl,             binname, 'signal', 1 + e.btaggingSFlSystematic(r, channel, signalSetup).val )
             c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
             c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
-            c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
+            # c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
+            
             c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
 
             if not fastSim:
@@ -378,8 +386,8 @@ def wrapper(s):
             logger.info("Observation: %s", int(args.scale*observation.cachedObservation(r, channel, setup).val))
 
 
-      c.addRateParameter('WJets',1,'[0.,10.]')
-      c.addRateParameter('Top',1,'[0.,10.]')
+      c.addRateParameter('WJets',1,'[0.,3.]')
+      c.addRateParameter('Top',1,'[0.,3.]')
 
       # if year == 2016:
       #     lumiUncertainty = 1.025
@@ -538,8 +546,9 @@ if args.signal == "T2tt":
     if args.fullSim:
       from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
-      data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
-      postProcessing_directory    = 'compstops_2016_nano_v21/MetSingleLep/'
+      # data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
+      data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
+      postProcessing_directory    = 'compstops_2016_nano_v30/Met/'
       from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
   
   elif year == 2017:
@@ -568,6 +577,13 @@ if args.only is not None:
     jobNames = [ x.name for x in jobs ]
     wrapper(jobs[jobNames.index(args.only)])
   exit(0)
+
+for i, j in enumerate(jobs):
+    if "T2tt_1024_1006" in j.name :
+        print "~removing ", j.name
+        del jobs[i]
+
+
 results = map(wrapper, jobs)
 results = [r for r in results if r]
 
