@@ -31,6 +31,7 @@ default_hardJets    = True
 default_lepVeto     = True
 default_jetVeto     = True
 default_MET         = (300, -999)
+default_prompt      = False
 
 class Setup:
     def __init__(self, year=2016):
@@ -51,6 +52,7 @@ class Setup:
             "lepVeto":      default_lepVeto,
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
+            "l1_prompt":    default_prompt,
 
         }
 
@@ -137,7 +139,11 @@ class Setup:
         return "_".join(self.prefixes+[self.preselection("MC", channel=channel)["prefix"]])
 
     def defaultCacheDir(self):
-        cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_est")
+        cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_prompt")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_v22_ID_comb")
+        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_testregion_comb")
         #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_splitCR")
         #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_split_erCR")
         logger.info("Default cache dir is: %s", cacheDir)
@@ -164,17 +170,19 @@ class Setup:
                         if "reweightPU"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightPU")
                         if 'reweightBTag_SF_b_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
                         if 'reweightBTag_SF_l_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
-                        if 'reweightBTag_SF_FS_'+upOrDown         in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
-                        if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
-                        if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
-                        if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
+                        if 'reweightBTag_SF_FS_'+upOrDown           in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
+                        if 'reweightLeptonFastSimSF'+upOrDown       in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
+                        if "reweightnISR"+upOrDown                  in res.sys[k]: res.sys[k].remove("reweightnISR")
+                        if "reweightwPt"+upOrDown                   in res.sys[k]: res.sys[k].remove("reweightwPt")
+                        if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
                         
                 else:
                     res.sys[k] = sys[k]
 
         if parameters:
             for k in parameters.keys():
-                res.parameters[k] = parameters[k]
+		print "key: ", k
+		res.parameters[k] = parameters[k]
         return res
 
     def defaultParameters(self, update={} ):
@@ -192,7 +200,7 @@ class Setup:
         logger.debug("Using cut-string: %s", cut)
         return cut
 
-    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto,channel='all', isFastSim =False):
+    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto,l1_prompt,channel='all', isFastSim =False):
         """Define full selection
            dataMC: "Data" or "MC"
            channel: "all", "e" or "mu"
@@ -233,6 +241,10 @@ class Setup:
         if nISRJet:
             res['prefixes'].append('nISRJets')
             res['cuts'].append('nISRJets>=1')
+
+        if l1_prompt:
+            res['prefixes'].append('l1_prompt')
+            res['cuts'].append('l1_isPrompt>=1')
        # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
        #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
        #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
