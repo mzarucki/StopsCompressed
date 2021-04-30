@@ -63,10 +63,15 @@ class cutInterpreter:
                 lower = None
                 if len(num_str)==2:
                     lower, upper = num_str
+                    lower = lower.replace("p",".")
+                    upper = upper.replace("p",".")
                 elif len(num_str)==1:
                     lower = num_str[0]
+                    lower = lower.replace("p",".")
                 else:
                     raise ValueError( "Can't interpret string %s" % string )
+                
+               
                 res_string = []
                 if lower: res_string.append( tree_var+">="+lower )
                 if upper: res_string.append( tree_var+"<"+upper )
