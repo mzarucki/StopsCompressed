@@ -70,7 +70,8 @@ signalString = options.signal
 #analysis_results = '/afs/hephy.at/user/p/phussain/www/'
 #forsplit CR bins
 #analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_MC_AN/limits/T2tt/T2tt'
-analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_gen_AN_v3/limits/T2tt/T2tt'
+#analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_v22_ID_comb/limits/T2tt/T2tt'
+analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_2016_v30SigPromptNewSyst/limits/T2tt/T2tt/'
 #analysis_results = '/afs/hephy.at/user/p/phussain/www/splitCR_sv2/'
 #for split AN bins
 #analysis_results = '/afs/hephy.at/user/p/phussain/www/fitAll_sv2/'
@@ -90,7 +91,7 @@ else:
 print signalString, yearString
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
 #sppit CR
-plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAll_gen_AN_v3','FR_limitAll_2016')
+plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_2016_v30SigPromptNewSyst','FR_limitAll_2016')
 #AN based binning
 #plotDir = os.path.join(plot_directory,'AN_sv2','FR_limitAll_2016')
 

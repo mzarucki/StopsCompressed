@@ -103,4 +103,5 @@ CR2cY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region
 
 signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX, SR1vlaY,SR1laY, SR1maY, SR1haY, SR1vlbX,SR1lbX, SR1mbX, SR1hbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, SR1lcX, SR1mcX, SR1hcX,SR1lcY, SR1mcY, SR1hcY, SR2vlaX,SR2laX, SR2maX, SR2haX, SR2vlaY,SR2laY, SR2maY, SR2haY, SR2vlbX,SR2lbX, SR2mbX, SR2hbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY,SR2lcX, SR2mcX, SR2hcX,SR2lcY, SR2mcY, SR2hcY]
 controlRegions= [ CR1aX, CR1aY, CR1bX, CR1bY, CR1cX, CR1cY, CR2aX, CR2aY, CR2bX, CR2bY, CR2cX, CR2cY]
-#controlRegions= [ CR1aX]
+
+# controlRegions= [ CR1aX]

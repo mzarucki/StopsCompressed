@@ -1,2 +1,2 @@
-python plot_SMS_limit.py --signal T2tt --year 2016
+python plot_SMS_limit_v2.py --signal T2tt --year 2016
 

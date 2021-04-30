@@ -28,6 +28,7 @@ argParser.add_argument("--noSignal",       default = False, action = "store_true
 argParser.add_argument("--useTxt",         default = False, action = "store_true", help="Use txt based cardFiles instead of root/shape based ones?")
 argParser.add_argument("--fullSim",        default = False, action = "store_true", help="Use FullSim signals")
 argParser.add_argument("--signalInjection",default = False, action = "store_true", help="Inject signal?")
+argParser.add_argument("--usePromptSignalOnly",default = False, action = "store_true", help="use only prompt singal events")
 argParser.add_argument("--significanceScan",         default = False, action = "store_true", help="Calculate significance instead?")
 argParser.add_argument("--removeSR",       default = [], nargs='*', action = "store", help="Remove signal region(s)?")
 argParser.add_argument("--skipFitDiagnostics", default = False, action = "store_true", help="Don't do the fitDiagnostics (this is necessary for pre/postfit plots, but not 2D scans)?")
@@ -109,7 +110,7 @@ setups = [setup]
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = 'fitAllregion_2016_v30Sig'
+elif args.fitAll:	        subDir = 'fitAllregion_2016_v30SigNewSyst'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -323,8 +324,13 @@ def wrapper(s):
           if fastSim :
             signalSetup = setup.sysClone()
             if year == 2016:
-              signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]}) 
-              signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup))
+              extra_pars = {} # use default parameters
+              if (args.usePromptSignalOnly) :
+                extra_pars = {'l1_prompt':True}
+              
+              signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]},parameters=extra_pars) 
+
+              signal = e.cachedEstimate(r, channel, signalSetup)
             else:
               signal = e.cachedEstimate(r, channel, signalSetup)
           else:

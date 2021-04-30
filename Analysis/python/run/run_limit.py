@@ -80,32 +80,28 @@ setup.channels = allChannels
 
 # Define regions for CR
 if args.control2016:
-	setup.regions   = controlRegions
+    setup.regions   = controlRegions
 elif args.signal2016:
-	setup.regions   = signalRegions
+    setup.regions   = signalRegions
 elif args.fitAll:
-	setup.regions   = controlRegions + signalRegions
+    setup.regions   = controlRegions + signalRegions
+
 
 # Define estimators for CR
 estimators           = estimatorList(setup)
 setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
 setups = [setup]
 
-if args.control2016:       subDir = 'controlRegions_gen_AN_v3'
-#if args.control2016:       subDir = 'controlRegions_MC_AN'
-#if args.control2016:       subDir = 'controlRegions_AN_sv3'
-elif args.signal2016:       subDir = 'signalRegions_gen_AN_v3'
-#if args.control2016:       subDir = 'controlRegions_AN_test'
-#elif args.fitAll:	subDir = 'fitAll_v3'
-#elif args.fitAll:	subDir = 'fitAll_gen_AN_v3'
-elif args.fitAll:	subDir = 'fitAll_AN_v4'
-#else:                       subDir += 'signalOnly'
+if args.control2016:    subDir = 'controlRegions_AN_comb_v1'
+elif args.signal2016:   subDir = 'signalRegions_AN_comb_v1'
+elif args.fitAll:	    subDir = 'fitAll_AN_comb_v1_test'
+else:                   subDir += 'signalOnly'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
 sSubDir = 'expected' if args.expected else 'observed'
-#if args.signalInjection: sSubDir += '_signalInjected'
-#
+if args.signalInjection: sSubDir += '_signalInjected'
+
 limitDir    = os.path.join(baseDir, 'cardFiles', args.signal + args.extension, sSubDir)
 overWrite   = (args.only is not None) or args.overwrite
 if args.keepCard:
@@ -182,6 +178,7 @@ def wrapper(s):
         leptonSF    = 'leptonSF_%s'%year
         nISR    = 'nISR_%s'%year
         wPt    = 'wPt_%s'%year
+        
         c.addUncertainty(PU,           shapeString)
         c.addUncertainty(nISR,           shapeString)
         c.addUncertainty(wPt,           shapeString)
