@@ -20,6 +20,10 @@ from StopsCompressed.Tools.cutInterpreter   import cutInterpreter
 from Analysis.Tools.puProfileCache import *
 from StopsCompressed.Tools.helpers           import deltaR, deltaPhi,ptRatio
 from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus, getAllJets
+
+from Analysis.Tools.DirDB                import DirDB
+
+
 #
 # Arguments
 #
@@ -74,12 +78,7 @@ elif "2016" in args.era and not args.eos:
     # bkg MC
 	from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
 	samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-	# samples = [QCD_HT_16]
-	# prediction = [copy.deepcopy(QCD_HT_16)]
-	# prediction[0].texName = "QCD-predcited" 
-	# prediction[0].color = ROOT.kCyan 
-	# prediction[0].SetFillColorAlpha = (ROOT.kCyan,0.3) 
-	# prediction[0].name = "QCD_HTcopy"
+	
 	# data
 	from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import *
     
@@ -136,6 +135,10 @@ def drawPlots(plots,mode, dataMCScale):
   	for log in [False, True]:
 		plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
 		for plot in plots:
+			for h in plot.histos :
+				
+				print [ h[x].GetName() for x in range(len(h))]
+				
 			_drawObjects = []
 			plotting.draw(
 				plot,
@@ -160,6 +163,7 @@ read_variables = [
 read_variables += [
             "nMuon/I","nElectron/I","nJet/I",
             "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O]"
+            "Electron[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O]"
             ]
 
 sequence = []
@@ -198,7 +202,7 @@ def frHybridIso(event,sample) :
 	event.TLratio = 1.
 	if event.HI <= 5 :
 		event.tight = 1.
-	elif event.HI > 5 :
+	elif event.HI > 5 and event.HI <= 20 :
 		event.loose = 1.
 		event.TLratio = TightToLoose.GetBinContent(TightToLoose.GetXaxis().FindBin(event.l1_pt),TightToLoose.GetYaxis().FindBin(abs(event.l1_eta)))
 		
@@ -212,7 +216,7 @@ def IsoCutWeight (Tight=True, inclusive=False, TL=False) :
         else :
             if event.HI <= 5 and Tight == True:
                 return event.weight
-            elif event.HI > 5 and Tight == False:
+            elif event.HI > 5 and event.HI <= 20 and Tight == False:
 				if TL :
 					print(event.TLratio)
 					return event.weight * event.TLratio
@@ -244,9 +248,6 @@ for index, mode in enumerate(allModes):
 	data_sample.scale          = 1.
 	data_sample.style          = styles.errorStyle(ROOT.kBlack)
 	data_sample.name 	   = "data"
-	# if signals:
-	#     T2tt_500_470.color = ROOT.kPink+6
-	#     T2tt_375_365.color = ROOT.kAzure+1
 	
 	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
@@ -254,32 +255,19 @@ for index, mode in enumerate(allModes):
 		sample.read_variables  = ['reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',]
 		sample.read_variables += ['reweightPU%s/F'%args.reweightPU if args.reweightPU != "Central" else "reweightPU/F"]
 		pu_getter = operator.attrgetter('reweightPU' if args.reweightPU=='Central' else "reweightPU%s"%args.reweightPU)
-		sample.weight         = lambda event, sample: event.tight * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
+		# sample.weight         = lambda event, sample: event.tight * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
+		sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
 		sample.scale = lumi_scale 
 		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 		sample.style = styles.fillStyle(sample.color)
 	
-	# for sample in prediction :
-	# 	sample.read_variables  = ['reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',]
-	# 	sample.read_variables += ['reweightPU%s/F'%args.reweightPU if args.reweightPU != "Central" else "reweightPU/F"]
-	# 	pu_getter = operator.attrgetter('reweightPU' if args.reweightPU=='Central' else "reweightPU%s"%args.reweightPU)
-	# 	sample.weight         = lambda event, sample: event.loose * event.TLratio * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF
-	# 	sample.scale = lumi_scale 
-	# 	sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-	# 	sample.style = styles.fillStyle(sample.color,alpha=0.3)
-	
-	
-	#stack_ = Stack( samples )
 	stack_ = Stack( samples, data_sample ) 
-	# stack_ = Stack( samples, data_sample, prediction ) 
-	# stack_ = Stack( samples, data_sample, prediction ) 
-	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
-
+	
 	
 	if args.small:
 		for sample in samples + [data_sample] + signals : # + prediction:
 			sample.normalization = 1.
-			sample.reduceFiles( factor = 40 )
+			sample.reduceFiles( factor = 30 )
 			sample.scale /= sample.normalization
 
 	# Use some defaults
@@ -288,46 +276,81 @@ for index, mode in enumerate(allModes):
 	plots   = []
 	plots2D = []
 
-	plots.append(Plot(
-		name = "tightHI_l1pt",
-	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
-	    attribute = TreeVariable.fromString( "l1_pt/F" ),
-		# weight = lambda event, sample: event.tight * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF,
-		# weight=IsoCutWeight(Tight=True, inclusive=False),
+	def returnAddName (is_inclusive,is_tight) :
+		if is_inclusive :
+			return "incl"
+		elif is_tight :
+			return "tight"
+		else :
+			return "loose"
 
-		binning=[100,0,50],
-	  ))
-	plots.append(Plot(
-		name = "looseHI_l1pt",
-	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
-	    attribute = TreeVariable.fromString( "l1_pt/F" ),
-		# weight = lambda event, sample: event.loose,
-		# weight=IsoCutWeight(Tight=False, inclusive=False),
-	    binning=[100,0,50],
-	  ))
-	plots.append(Plot(
-		name = "pred_l1pt",
-	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
-	    attribute = TreeVariable.fromString( "l1_pt/F" ),
-		weight=IsoCutWeight(Tight=False, inclusive=False,TL=True),
-	    binning=[100,0,50],
-	  ))
-	plots.append(Plot(
-	    texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
-	    name = 'hybridIsolation', attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
-	    binning=[20,0,4],
-	  ))
-	plots.append(Plot(
-	    texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
-	    name = 'hybridIsolationOwn', attribute = lambda event, sample: log(1+event.HI) / log(6),
-	    binning=[20,0,4],
-	  ))
+	for is_inclusive, is_tight in [[True,False],[False,True],[False,False]] :
+	
+		use_TL = False
+		
+		
+		plots.append(Plot(
+			name = "l1eta_{}".format(returnAddName(is_inclusive,is_tight)),
+			texX = '|#eta(l_{1})| (GeV)', texY = 'Number of Events',
+			attribute = lambda event, sample : abs(event.l1_eta),
+			binning=Binning.fromThresholds([0.,1.5,3]),
+			weight = IsoCutWeight(Tight=is_tight, inclusive=is_inclusive,TL=use_TL)
+			))
+
+		
+		plots.append(Plot(
+			name = "l1pt_{}".format(returnAddName(is_inclusive,is_tight)),
+			texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
+			attribute = TreeVariable.fromString( "l1_pt/F" ),
+			weight = IsoCutWeight(Tight=is_tight, inclusive=is_inclusive,TL=use_TL),
+			# weight = lambda event, sample: event.tight * pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF,
+			# weight=IsoCutWeight(Tight=True, inclusive=False),
+
+			binning=Binning.fromThresholds([0.,3.5,5.,10.]),
+		))
+		
+	# plots.append(Plot(
+	# 	name = "looseHI_l1pt",
+	#     texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
+	#     attribute = TreeVariable.fromString( "l1_pt/F" ),
+	# 	# weight = lambda event, sample: event.loose,
+	# 	# weight=IsoCutWeight(Tight=False, inclusive=False),
+	#     binning=[100,0,50],
+	#   ))
+	# plots.append(Plot(
+	# 	name = "pred_l1pt",
+	#     texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
+	#     attribute = TreeVariable.fromString( "l1_pt/F" ),
+	# 	weight=IsoCutWeight(Tight=False, inclusive=False,TL=True),
+	#     binning=[100,0,50],
+	#   ))
+		plots.append(Plot(
+			texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
+			name = 'hybridIsolation_{}'.format(returnAddName(is_inclusive,is_tight)), 
+			attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
+			binning=[20,0,4],
+			weight = IsoCutWeight(Tight=is_tight, inclusive=is_inclusive,TL=use_TL)
+		))
+	# plots.append(Plot(
+	#     texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
+	#     name = 'hybridIsolationOwn', attribute = lambda event, sample: log(1+event.HI) / log(6),
+	#     binning=[20,0,4],
+	#   ))
 	  
+		plots.append(Plot(
+			name = 'MyYield_{}'.format(returnAddName(is_inclusive,is_tight)), 
+			texX = 'yield', texY = 'Number of Events',
+			attribute = lambda event, sample: 0.5 + index ,
+			binning=[3, 0, 3],
+			weight = IsoCutWeight(Tight=is_tight, inclusive=is_inclusive,TL=use_TL)
+		))
+
 	plots.append(Plot(
-	    name = 'yield', texX = 'yield', texY = 'Number of Events',
-	    attribute = lambda event, sample: 0.5 + index ,
-	    binning=[3, 0, 3],
-	  ))
+		name = 'yield', 
+		texX = 'yield', texY = 'Number of Events',
+		attribute = lambda event, sample: 0.5 + index ,
+		binning=[3, 0, 3]
+	))
 
 	# plots2D.append(Plot2D(
 	# 	name = "All_Pt_Eta",
@@ -362,6 +385,7 @@ for index, mode in enumerate(allModes):
 	# 	binning = [10,0,50,6,-3,3],
 	# 	weight=IsoCutWeight(Tight=False, inclusive=False)
 	#   ))
+	
 	
 	plotting.fill(plots+plots2D, read_variables = read_variables, sequence = sequence)
 

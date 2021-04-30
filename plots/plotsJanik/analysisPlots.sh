@@ -1,4 +1,4 @@
-python analysisPlots.py --era Run2016 --reweightPU Central --targetDir v21MC_v21Data --selection nISRJets1p-ntau0-lepSel-deltaPhiJetsInverted-jet3Veto-met200-ht300-lpt3p5To5 --small |& tee debug_small.out
+python analysisPlots.py --era Run2016 --reweightPU Central --targetDir v22MC_v22DataDeltaPhiInv --selection nISRJets1p-ntau0-lepSel-deltaPhiJetsInverted-jet3Veto-met200-ht300-lpt3p5To6 --small |& tee debug_small.out
 
 
 
