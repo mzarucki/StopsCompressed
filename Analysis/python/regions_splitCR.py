@@ -120,6 +120,9 @@ CR2mcY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,50)) + Region 
 CR2hcX    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (300,400)) 
 CR2hcY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (400, -999)) 
 
-signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX, SR1vlaY,SR1laY, SR1maY, SR1haY, SR1vlbX,SR1lbX, SR1mbX, SR1hbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, SR1lcX, SR1mcX, SR1hcX,SR1lcY, SR1mcY, SR1hcY, SR2vlaX,SR2laX, SR2maX, SR2haX, SR2vlaY,SR2laY, SR2maY, SR2haY, SR2vlbX,SR2lbX, SR2mbX, SR2hbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY,SR2lcX, SR2mcX, SR2hcX,SR2lcY, SR2mcY, SR2hcY]
-controlRegions= [ CR1maX,CR1haX, CR1maY,CR1haY, CR1mbX,CR1hbX, CR1mbY,CR1hbY, CR1mcX,CR1hcX, CR1mcY,CR1hcY, CR2maX,CR2haX, CR2maY,CR2haY, CR2mbX,CR2hbX ,CR2mbY,CR2hbY, CR2mcX,CR2hcX, CR2mcY, CR2hcY]
+signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX,CR1maX, SR1vlaY,SR1laY, SR1maY, SR1haY, CR1maY,SR1vlbX,SR1lbX, SR1mbX, SR1hbX, CR1mbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, CR1mbY, SR1lcX, SR1mcX, SR1hcX, CR1mcX, SR1lcY, SR1mcY, SR1hcY, CR1mcY, SR2vlaX, SR2laX, SR2maX, SR2haX, CR2maX, SR2vlaY,SR2laY, SR2maY, SR2haY, CR2maY, SR2vlbX,SR2lbX, SR2mbX, SR2hbX, CR2mbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY,CR2mbY, SR2lcX, SR2mcX, SR2hcX, CR2mcX, SR2lcY, SR2mcY, SR2hcY, CR2mcY]
+controlRegions= [ CR1haX, CR1haY, CR1hbX, CR1hbY, CR1hcX, CR1hcY,CR2haX, CR2haY ,CR2hbX ,CR2hbY, CR2hcX, CR2hcY]
+regionMapping = { 0 : 5, 1 : 5, 2 : 5, 3 : 5, 4 : 4, 5 : 4, 6 : 5, 7 : 5, 8 : 5, 9 : 5, 10 : 4, 11 : 4,}
+#regionMapping = {0:4, 1:4, 2:4, 3:4, 4:4, 5:4, 6:4, 7:4, 8:3, 9:3, 10:3, 11:3, 12:4, 13:4, 14:4, 15:4, 16:4, 17:4, 18:4, 19:4, 20:3, 21:3, 22:3, 23:3}
+
 #controlRegions= [ CR1aX]
