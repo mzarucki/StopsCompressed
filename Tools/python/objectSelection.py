@@ -80,8 +80,6 @@ def matchLep (recoLep):
 	if (ord(recoLep['genPartFlav']) == 1) or (ord(recoLep['genPartFlav']) == 15):
 		return True
 	else: return False
-	#elif (ord(recoLep['genPartFlav']) == 0) :
-	#	return False
 
 def categorizeLep(recoPart, genParts, cone=0.1):
 	''' get matched reco lepton with gen lepton
@@ -103,30 +101,6 @@ def categorizeLep(recoPart, genParts, cone=0.1):
 	else:	
 		return False, dR
 		
-
-
-
-#	# nanoAOD genMatch found, just take that, do standard categorization
-#	if recoPart['genPartIdx'] >= 0:
-#		if 
-#
-#
-#		#gen = filter( lambda g: g['index']==recoPart['genPartIdx'], genParts )[0]
-#		print filter( lambda g: g['index']==recoPart['genPartIdx'], genParts )
-#		#print len(gen), gen['index'][0]
-#		#print [g for g in gen]
-#		#print ["match found for gen index: {}".format(g['index']) for g in gen]
-#		return True
-#	genAll  = [ (g, deltaR( recoPart, g )) for g in gParts ]
-#	
-#	# filter gen particle collection to only those in the delta R cone
-#	genCone = filter( lambda (gen, dr): dr < coneSize, genAll ) if coneSize > 0 else genAll
-#	if genCone:
-#		#print [ g['index'] for g in genCone]
-#		#print [" gen particle in the cone: {}".format(g['index']) for g in genCone] 
-#		print len(genCone)
-#		return True
-#	return False
 def genLepFromZ( genParts ):
     ''' get all gen leptons (e,m,tau) from Z
     '''
@@ -202,14 +176,14 @@ def muonSelector( lepton_selection, year):
                     and (l['pfRelIso03_all']*l['pt']) < 5.0 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 \
-                    and l["mediumId"] 
+                    and l["looseId"] 
             elif l["pt"] > 25:
                 return \
                     abs(l["eta"])       < 2.4 \
                     and l['pfRelIso03_all'] < 0.2 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 \
-                    and l["mediumId"] 
+                    and l["looseId"] 
                     
     elif lepton_selection == 'looseHybridIso':
         def func(l):
@@ -219,14 +193,14 @@ def muonSelector( lepton_selection, year):
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 \
-                    and l["mediumId"] 
+                    and l["looseId"] 
             elif l["pt"] > 25:
                 return \
                     abs(l["eta"])       < 2.4 \
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 \
-                    and l["mediumId"] 
+                    and l["looseId"] 
     return func
 
 
@@ -297,6 +271,9 @@ def eleSelector( lepton_selection, year):
     # tighter isolation applied on analysis level. cutBased corresponds to Fall17V2 ID for all 2016-2018.  # (cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight))
     # using loose Id for electrons for sensitivity studies (2:loose)
     #ECAL gap masking for 1.422 < abs(eta) < 1.566
+		    #change it back, this is to verify the change in signal yields
+                    ###and electronVIDSelector( l, idVal= 1, removedCuts=['pt'] ) \
+                    ###and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
     if lepton_selection == 'hybridIso':
         def func(l):
             
@@ -304,7 +281,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 2 , removedCuts=['pfRelIso03_all'] ) \
+                    and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 5.0 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -313,7 +290,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 2 , removedCuts=['pfRelIso03_all'] ) \
+                    and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.2 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
@@ -324,7 +301,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 2 , removedCuts=['pfRelIso03_all'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
@@ -332,7 +309,7 @@ def eleSelector( lepton_selection, year):
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 2 , removedCuts=['pfRelIso03_all'] ) \
+                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
@@ -366,17 +343,20 @@ idCutBased={'loose':0 ,'medium':1, 'tight':2}
 photonVars=['eta','pt','phi','mass','cutBased']
 photonVarsMC = photonVars + ['mcPt']
 
-tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'idAntiMu','idAntiE', 'idMVAnewDM2017v2'] #idMVAnewDM2017v2 :2 =VLose
+tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'idAntiMu','idAntiE', 'idMVAnewDM2017v2','idMVAoldDM2017v2'] #idMVAnewDM2017v2 :2 =VLose
 def getTaus(c, collVars=tauVars):
     return [getObjDict(c, 'Tau_', collVars, i) for i in range(int(getVarValue(c, 'nTau')))]
 
 def looseTauID( l, ptCut=20, absEtaCut=2.3):
 
     #print l["idMVAnewDM2017v2"], ord(l["idMVAnewDM2017v2"])
+    # use Tau_idMVAnewDM2017v2 corresponding to AN-2017 newMVA ID, VLoose
+    ##and ord(l["idMVAnewDM2017v2"])>=2\
+    ##and ord(l["idMVAoldDM2017v2"])>=2\
     return \
     l["pt"]>=ptCut\
     and ord(l["idMVAnewDM2017v2"])>=2\
-    and abs(l["eta"])<absEtaCut
+    and abs(l["eta"])<absEtaCut\
 
 def getGoodTaus(c, leptons, collVars=tauVars):
     #taus       = getGoodTaus(r, tau_selector = tauSelector_ )
