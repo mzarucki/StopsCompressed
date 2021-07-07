@@ -4,15 +4,15 @@
 #include "TMath.h"
 
 double reweightLeptonSF_newDown(double pt, double eta, int pdg_id){ 
-	double lepton_SF = 0.0;
+	double lepton_SF = 1.0;
 	double lepton_SF_err = 0.0;
-	double sf_muon_SF_IpIsoSpec_2D_merged = 0.0;
+	double sf_muon_SF_IpIsoSpec_2D_merged = 1.0;
 	double sf_err_muon_SF_IpIsoSpec_2D_merged = 0.0;
-	double sf_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 0.0;
+	double sf_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 1.0;
 	double sf_err_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 0.0;
-	double sf_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 0.0;
+	double sf_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 1.0;
 	double sf_err_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 0.0;
-	double sf_ele_SF_IpIso_2D_merged = 0.0;
+	double sf_ele_SF_IpIso_2D_merged = 1.0;
 	double sf_err_ele_SF_IpIso_2D_merged = 0.0;
 	if (abs(pdg_id) == 13 ) {
 	if (pt >= 3.5 && pt < 5.0) {
@@ -948,5 +948,10 @@ lepton_SF -= lepton_SF_err;
 		lepton_SF_err = lepton_SF * sqrt(pow(sf_err_ele_SF_IpIso_2D_merged/sf_ele_SF_IpIso_2D_merged,2) + pow(sf_err_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged/sf_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged,2) );
 		lepton_SF -= lepton_SF_err;
 	 }
-	return lepton_SF;
+	if (isnan(lepton_SF)) {
+ 		return 0.0; 
+}
+	else {
+ 		return lepton_SF;
+}
 }

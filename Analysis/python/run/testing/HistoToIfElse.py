@@ -1,4 +1,5 @@
 import ROOT 
+import os
 
 
 
@@ -24,15 +25,15 @@ for shift in ["", "Up", "Down"] :
 
     code += "double reweightLeptonSF_new{}(double pt, double eta, int pdg_id){{ \n".format(shift)
         
-    code += "\tdouble lepton_SF = 0.0;\n"
+    code += "\tdouble lepton_SF = 1.0;\n"
     code += "\tdouble lepton_SF_err = 0.0;\n"
-    code += "\tdouble sf_muon_SF_IpIsoSpec_2D_merged = 0.0;\n"
+    code += "\tdouble sf_muon_SF_IpIsoSpec_2D_merged = 1.0;\n"
     code += "\tdouble sf_err_muon_SF_IpIsoSpec_2D_merged = 0.0;\n"
-    code += "\tdouble sf_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 0.0;\n"
+    code += "\tdouble sf_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 1.0;\n"
     code += "\tdouble sf_err_mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5_10_merged = 0.0;\n"
-    code += "\tdouble sf_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 0.0;\n"
+    code += "\tdouble sf_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 1.0;\n"
     code += "\tdouble sf_err_el_SF_2D_VetoWP_cent_VetoWP_priv_5_10_2016_merged = 0.0;\n"
-    code += "\tdouble sf_ele_SF_IpIso_2D_merged = 0.0;\n"
+    code += "\tdouble sf_ele_SF_IpIso_2D_merged = 1.0;\n"
     code += "\tdouble sf_err_ele_SF_IpIso_2D_merged = 0.0;\n"
 
 
@@ -111,11 +112,12 @@ for shift in ["", "Up", "Down"] :
         
 
         _file.Close()
-        
-    code += "\treturn lepton_SF;\n"
+    
+    code += "\tif (isnan(lepton_SF)) {\n \t\treturn 0.0; \n}\n"
+    code += "\telse {\n \t\treturn lepton_SF;\n}\n"
     code+= "}"
 
-    text_file = open("reweightLeptonSF_new{}.C".format(shift), "w")
+    text_file = open("{}/{}/reweightLeptonSF_new{}.C".format(os.environ["CMSSW_BASE"],"src/StopsCompressed/Analysis/macros",shift), "w")
 
     text_file.write(code)
 
