@@ -6,17 +6,48 @@ parser.add_option("--noSystematics",         dest="noSystematics",         defau
 parser.add_option("--selectEstimator",       dest="selectEstimator",       default=None,                action="store",      help="select estimator?")
 parser.add_option("--selectRegion",          dest="selectRegion",          default=None, type="int",    action="store",      help="select region?")
 parser.add_option("--year",                  dest="year",                  default=2016, type="int",    action="store",      help="Which year?")
-parser.add_option("--nThreads",              dest="nThreads",              default=8, type="int",       action="store",      help="How many threads?")
+parser.add_option("--nThreads",              dest="nThreads",              default=1, type="int",       action="store",      help="How many threads?")
 parser.add_option('--logLevel',              dest="logLevel",              default='INFO',              action='store',      help="log level?", choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'])
 #parser.add_option("--control",               dest="control",               default=None,                action='store',      choices=[None, "DY", "VV", "DYVV", "TTZ1", "TTZ2", "TTZ3", "TTZ4", "TTZ5", "CR1aX","CR1aY", "CR1bX", "CR1bY"], help="For CR region?")
 parser.add_option("--control",               dest="control",               default=False,                action='store_true', help="For CR region?")
 parser.add_option("--useGenMet",             dest="useGenMet",             default=False,               action='store_true', help="use genMET instead of recoMET, used for signal studies")
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true', help="overwrite existing results?")
 parser.add_option("--all",                   dest="all",                   default=False,               action='store_true', help="Run over all SR and CR?")
+parser.add_option("--l1pT_CR_split",       action='store_true',           default=False,   help="plot region plot background substracted")
+parser.add_option("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
+parser.add_option("--mT_cut_value",       action='store',            default=95, choices=[95,100,105],   help="plot region plot background substracted")
+parser.add_option("--CT_cut_value",       action='store',            default=400, type="int", help="plot region plot background substracted")
+
+
 
 (options, args) = parser.parse_args()
 from StopsCompressed.Analysis.estimators   import *
-from StopsCompressed.Analysis.regions      import signalRegions, controlRegions
+if (options.l1pT_CR_split) :
+    _NBINS = 68
+    if (options.mT_cut_value == 95) :
+        if (options.extra_mT_cut) :
+            _NBINS = 88
+            if (options.CT_cut_value == 450 ) :
+                from StopsCompressed.Analysis.regions_splitCR_4mTregions_CT450 import controlRegions, signalRegions, regionMapping
+            else :     
+                from StopsCompressed.Analysis.regions_splitCR_4mTregions       import controlRegions, signalRegions, regionMapping
+        else :    
+            from StopsCompressed.Analysis.regions_splitCR	                   import controlRegions, signalRegions, regionMapping
+    elif (options.mT_cut_value == 100) :
+        from StopsCompressed.Analysis.regions_splitCR_mT100	                   import controlRegions, signalRegions, regionMapping
+    elif (options.mT_cut_value == 105) :
+        from StopsCompressed.Analysis.regions_mt105_splitCR	                   import controlRegions, signalRegions, regionMapping
+else :
+    _NBINS = 56
+    if (options.mT_cut_value == 95) :
+        from StopsCompressed.Analysis.regions	                 import controlRegions, signalRegions, regionMapping
+    elif (options.mT_cut_value == 100) :
+        from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
+    elif (options.mT_cut_value == 105) :
+        from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
+
+# from StopsCompressed.Analysis.regions_splitCR_mT100      import signalRegions, controlRegions
+# from StopsCompressed.Analysis.regions_mT100      import signalRegions, controlRegions
 #from StopsCompressed.Analysis.regions_splitCR      import signalRegions, controlRegions
 #from StopsCompressed.Analysis.regions_splitCR_v2      import signalRegions, controlRegions
 from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed   import signals_T2tt
@@ -66,7 +97,7 @@ if not options.selectEstimator == 'Data':
     estimate = next((e for e in allEstimators if e.name == options.selectEstimator), None)
     estimate.isData = False
 else:
-    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir())
+    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value)))
     estimate.isSignal = False
     estimate.isData   = True
 
@@ -91,7 +122,7 @@ def wrapper(args):
         res = estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
         return (estimate.uniqueKey(r,channel, setup), res )
 
-estimate.initCache(setup.defaultCacheDir())
+estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value)))
 
 jobs=[]
 for channel in channels:
@@ -114,7 +145,7 @@ for channel in (['all']):
             if estimate.isSignal: map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getSigSysJobs(r, channel,  setup, isFastSim))
             else: 
 	    	map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getBkgSysJobs(r,  channel, setup))
-		#print estimate.getBkgSysJobs(r,  channel, setup) 
+		# print estimate.getBkgSysJobs(r,  channel, setup) 
 
         logger.info('Done with region: %s', r)
     logger.info('Done with channel: %s', channel)

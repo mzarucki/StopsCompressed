@@ -1,7 +1,8 @@
 #Standard import
 import copy
 import os
-
+import ROOT as R
+import glob 
 # RootTools
 from RootTools.core.standard          import *
 
@@ -57,9 +58,13 @@ class Setup:
 
 
         self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
-#        self.sys = {"weight":"weight", "reweight":["reweightHEM", "reweightL1Prefire", "reweightPU", "reweightLeptonTightSF", "reweightLeptonTrackingTightSF", "reweightPhotonSF", "reweightPhotonElectronVetoSF", "reweightBTag_SF"], "selectionModifier":None} 
-        self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
-
+        
+        for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/macros/*.C')) :
+            if R.gROOT.LoadMacro(macro): #compile it
+                raise OSError("Unable to load: {}".format(macro))
+        
+        self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)", "reweightHEM"], "selectionModifier":None} 
+        
         #if runOnLxPlus:
         #    # Set the redirector in the samples repository to the global redirector
         #    from Samples.Tools.config import redirector_global as redirector
@@ -73,9 +78,9 @@ class Setup:
             Top          = Top_pow_16
             singleTop    = singleTop_16 
             VV           = VV_16 
-	        QCD		     = QCD_HT_16
+            QCD		     = QCD_HT_16
             TTX          = TTX_16
-	        ZInv    	 = ZInv_16
+            ZInv    	 = ZInv_16
             data         = Run2016
 
         elif year == 2017 :
@@ -137,14 +142,22 @@ class Setup:
     def prefix(self, channel="all"):
         return "_".join(self.prefixes+[self.preselection("MC", channel=channel)["prefix"]])
 
-    def defaultCacheDir(self):
+    def defaultCacheDir(self,specificNameForSensitivityStudy=''):
         
-        cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_prompt") #switch of MCs (->v26)
+        if (specificNameForSensitivityStudy) :
+            cacheDir = os.path.join(cache_directory, str(self.year), "estimates_{}".format(specificNameForSensitivityStudy))
+        else :
+            cacheDir = os.path.join(cache_directory, str(self.year), "estimates") #switch of MCs (->v26)
+        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_mt100") #switch of MCs (->v26)
+        # cacheDir = os.path.join(cache_directory, str(self.year), "check_wPt_syst") #switch of MCs (->v26)
+        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_promptNewWpt") #switch of MCs (->v26)
+        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_NewWpt") #switch of MCs (->v26)
         # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30") #switch of MCs (->v26)
         # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb")
         #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_splitCR")
         #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_split_erCR")
         logger.info("Default cache dir is: %s", cacheDir)
+
         return cacheDir
 
     #Clone the setup and optinally modify the systematic variation
@@ -172,7 +185,7 @@ class Setup:
                         if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
                         if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
                         if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
-                        if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
+                        if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
 
 
                 else:

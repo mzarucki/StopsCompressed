@@ -58,28 +58,16 @@ def toGraph(name,title,length,x,y):
     result.Draw()
     del c
     return result
+
+
 dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
 signalString = options.signal
 
-# input
-#analysis_results = '/afs/hephy.at/data/cms05/StopsDileptonLegacy/results/'+options.version
-##
-#for degstop1l
-#for AN binned:
-#analysis_results = '/afs/hephy.at/user/p/phussain/www/'
-#forsplit CR bins
-#analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_MC_AN/limits/T2tt/T2tt'
-#analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_v22_ID_comb/limits/T2tt/T2tt'
-analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_2016_v30SigPromptNewSyst/limits/T2tt/T2tt/'
-#analysis_results = '/afs/hephy.at/user/p/phussain/www/splitCR_sv2/'
-#for split AN bins
-#analysis_results = '/afs/hephy.at/user/p/phussain/www/fitAll_sv2/'
+analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400/limits/T2tt/T2tt/'
 
-#defFile = os.path.join(analysis_results, "%s/fitAll/limits/%s/%s/limitResults.root"%(yearString,signalString,signalString))
 defFile =  os.path.join(analysis_results,"limitResults.root")
 
-print defFile
 if options.year == 2016:
     lumi    = 35.9
 elif options.year == 2017:
@@ -91,7 +79,7 @@ else:
 print signalString, yearString
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
 #sppit CR
-plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_2016_v30SigPromptNewSyst','FR_limitAll_2016')
+plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400','FR_limitAll_2016')
 #AN based binning
 #plotDir = os.path.join(plot_directory,'AN_sv2','FR_limitAll_2016')
 
@@ -114,6 +102,8 @@ hists   = {}
 if options.signal == 'T2tt':
     #nbins = 105 # bin size 10 GeV
     nbins = 55 # bin size 10 GeV for dm plots
+    nbinsx = 55#23+1 
+    nbinsy = 55#15+1
 if options.signal.startswith('T8'):
     nbins = 64 # bin size 25 GeV
 if options.signal == 'T2bW':
@@ -124,9 +114,7 @@ import pandas as pd
 import numpy as np
 results = pickle.load(file(defFile.replace('root','pkl'), 'r'))
 
-#results_df = results
 results_df = pd.DataFrame(results)
-#results_df = results_df[(results_df['stop']-results_df['lsp'])<=174]
 
 #if options.signal == 'T2tt':
 #    limit_top = float(results_df[results_df['stop']==175][results_df['lsp']==0]['-1.000'])
@@ -179,9 +167,40 @@ graphs["obs_dm"]       = obs_dm_graph
 #for i in ["exp","exp_up","exp_down","obs", "obs_bulk", "obs_comp"]:
 for i in ["exp_dm","exp_dm_up","exp_dm_down", "obs_dm"]:
     #graphs[i] = getObjFromFile(defFile, i)
-    graphs[i].SetNpx(nbins)
-    graphs[i].SetNpy(nbins)
+    
+    graphs[i].SetNpx(nbinsx)
+    graphs[i].SetNpy(nbinsy)
+
+    print graphs[i]
+    print graphs[i].GetXmin()
+    print graphs[i].GetYmin()
+    
+
+    # hists[i] = ROOT.TH2F(i,i,23,250,800,15,10,80)
+    # x = 0
+    # y = 0 
+    # z = 0
+    # graphs[i].GetPoint(0,x,y,z)
+    
+    # print x,y,z
+
+    
+    # for i_i in range(graphs[i].GetN()) :
+    #     print i_i
+    #     graphs[i].GetPoint(i_i,x,y,z)
+    #     print x,y,z
+
     hists[i] = graphs[i].GetHistogram().Clone()
+
+
+    # print hists[i]
+    # print "nxbins: {}".format(nbinsx)
+    # print hists[i].GetNbinsX()
+    # print hists[i].GetXaxis().GetBinCenter(1) - hists[i].GetXaxis().GetBinCenter(0)
+    # print hists[i].GetYaxis().GetBinCenter(1) - hists[i].GetYaxis().GetBinCenter(0)
+
+
+
 
 #  fix the corridor
 #if options.signal == 'T2tt':

@@ -53,21 +53,37 @@ CR1mbY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region(
 
 CR1hbX   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (50,-999)) + Region ("CT1", (300,400))   
 CR1hbY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (50,-999)) + Region ("CT1", (400, -999)) 
+# c- mT region 
+SR1lcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region ("CT1", (300,400))   
+SR1mcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
+SR1hcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
 
-SR1lcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region ("CT1", (300,400))   
-SR1mcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
-SR1hcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
-
-SR1lcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999)) 
-SR1mcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999)) 
-SR1hcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
+SR1lcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999)) 
+SR1mcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999)) 
+SR1hcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
 
 
-CR1mcX   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,50)) + Region ("CT1", (300,400))   
-CR1mcY   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,50)) + Region ("CT1", (400, -999)) 
+CR1mcX   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,50)) + Region ("CT1", (300,400))   
+CR1mcY   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,50)) + Region ("CT1", (400, -999)) 
 
-CR1hcX   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (50,-999)) + Region ("CT1", (300,400))   
-CR1hcY   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (50,-999)) + Region ("CT1", (400, -999)) 
+CR1hcX   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (50,-999)) + Region ("CT1", (300,400))   
+CR1hcY   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (50,-999)) + Region ("CT1", (400, -999)) 
+
+SR1ldX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region ("CT1", (300,400))   
+SR1mdX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
+SR1hdX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region ("CT1", (300,400)) 
+
+SR1ldY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region ("CT1", (400,-999)) 
+SR1mdY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region ("CT1", (400,-999)) 
+SR1hdY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
+
+
+CR1mdX   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,50)) + Region ("CT1", (300,400))   
+CR1mdY   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,50)) + Region ("CT1", (400, -999)) 
+
+CR1hdX   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (50,-999)) + Region ("CT1", (300,400))   
+CR1hdY   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (50,-999)) + Region ("CT1", (400, -999)) 
+
 
 
 SR2 = Region("HT", (300,-999)) + Region("ISRJets_pt", (325,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-2.4, 2.4))
@@ -106,23 +122,62 @@ CR2hbX    = SR2 + Region("mt", (60,95))   + Region("l1_pt", (50,-999)) + Region 
 CR2hbY    = SR2 + Region("mt", (60,95))   + Region("l1_pt", (50,-999)) + Region ("CT2", (400, -999)) 
 
 
-SR2lcX  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (5,12))  + Region ("CT2", (300,400)) 
-SR2mcX  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (12,20)) + Region ("CT2", (300,400)) 
-SR2hcX  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (20,30)) + Region ("CT2", (300,400)) 
+SR2lcX  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (5,12))  + Region ("CT2", (300,400)) 
+SR2mcX  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (12,20)) + Region ("CT2", (300,400)) 
+SR2hcX  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (20,30)) + Region ("CT2", (300,400)) 
 
-SR2lcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (5,12))  + Region ("CT2", (400,-999)) 
-SR2mcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (12,20)) + Region ("CT2", (400,-999)) 
-SR2hcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
+SR2lcY  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (5,12))  + Region ("CT2", (400,-999)) 
+SR2mcY  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (12,20)) + Region ("CT2", (400,-999)) 
+SR2hcY  = SR2 + Region("mt", (95,130))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
 
-CR2mcX    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,50)) + Region ("CT2", (300,400)) 
-CR2mcY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,50)) + Region ("CT2", (400, -999)) 
+CR2mcX    = SR2 + Region("mt", (95,130))   + Region("l1_pt", (30,50)) + Region ("CT2", (300,400)) 
+CR2mcY    = SR2 + Region("mt", (95,130))   + Region("l1_pt", (30,50)) + Region ("CT2", (400, -999)) 
 
-CR2hcX    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (300,400)) 
-CR2hcY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (400, -999)) 
+CR2hcX    = SR2 + Region("mt", (95,130))   + Region("l1_pt", (50,-999)) + Region ("CT2", (300,400)) 
+CR2hcY    = SR2 + Region("mt", (95,130))   + Region("l1_pt", (50,-999)) + Region ("CT2", (400, -999)) 
 
-signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX,CR1maX, SR1vlaY,SR1laY, SR1maY, SR1haY, CR1maY,SR1vlbX,SR1lbX, SR1mbX, SR1hbX, CR1mbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, CR1mbY, SR1lcX, SR1mcX, SR1hcX, CR1mcX, SR1lcY, SR1mcY, SR1hcY, CR1mcY, SR2vlaX, SR2laX, SR2maX, SR2haX, CR2maX, SR2vlaY,SR2laY, SR2maY, SR2haY, CR2maY, SR2vlbX,SR2lbX, SR2mbX, SR2hbX, CR2mbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY,CR2mbY, SR2lcX, SR2mcX, SR2hcX, CR2mcX, SR2lcY, SR2mcY, SR2hcY, CR2mcY]
-controlRegions= [ CR1haX, CR1haY, CR1hbX, CR1hbY, CR1hcX, CR1hcY,CR2haX, CR2haY ,CR2hbX ,CR2hbY, CR2hcX, CR2hcY]
-regionMapping = { 0 : 5, 1 : 5, 2 : 5, 3 : 5, 4 : 4, 5 : 4, 6 : 5, 7 : 5, 8 : 5, 9 : 5, 10 : 4, 11 : 4,}
+SR2ldX  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (5,12))  + Region ("CT2", (300,400)) 
+SR2mdX  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (12,20)) + Region ("CT2", (300,400)) 
+SR2hdX  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (20,30)) + Region ("CT2", (300,400)) 
+
+SR2ldY  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (5,12))  + Region ("CT2", (400,-999)) 
+SR2mdY  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (12,20)) + Region ("CT2", (400,-999)) 
+SR2hdY  = SR2 + Region("mt", (130,-999))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
+
+CR2mdX    = SR2 + Region("mt", (130,-999))   + Region("l1_pt", (30,50)) + Region ("CT2", (300,400)) 
+CR2mdY    = SR2 + Region("mt", (130,-999))   + Region("l1_pt", (30,50)) + Region ("CT2", (400, -999)) 
+
+CR2hdX    = SR2 + Region("mt", (130,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (300,400)) 
+CR2hdY    = SR2 + Region("mt", (130,-999))   + Region("l1_pt", (50,-999)) + Region ("CT2", (400, -999)) 
+
+
+signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX, CR1maX, SR1vlaY,SR1laY, SR1maY, SR1haY, CR1maY,
+                 SR1vlbX,SR1lbX, SR1mbX, SR1hbX, CR1mbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, CR1mbY, 
+                 SR1lcX, SR1mcX, SR1hcX, CR1mcX, SR1lcY, SR1mcY, SR1hcY, CR1mcY, 
+                 SR1ldX, SR1mdX, SR1hdX, CR1mdX, SR1ldY, SR1mdY, SR1hdY, CR1mdY, 
+                 SR2vlaX, SR2laX, SR2maX, SR2haX, CR2maX, SR2vlaY,SR2laY, SR2maY, SR2haY, CR2maY, 
+                 SR2vlbX, SR2lbX, SR2mbX, SR2hbX, CR2mbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY, CR2mbY, 
+                 SR2lcX, SR2mcX, SR2hcX, CR2mcX, SR2lcY, SR2mcY, SR2hcY, CR2mcY,
+                 SR2ldX, SR2mdX, SR2hdX, CR2mdX, SR2ldY, SR2mdY, SR2hdY, CR2mdY
+                 ]
+controlRegions= [ CR1haX, CR1haY, CR1hbX, CR1hbY, CR1hcX, CR1hcY, CR1hdX, CR1hdY, CR2haX, CR2haY ,CR2hbX ,CR2hbY, CR2hcX, CR2hcY, CR2hdX, CR2hdY]
+regionMapping = { 0 : 5, 
+                1 : 5, 
+                2 : 5, 
+                3 : 5, 
+                4 : 4, 
+                5 : 4, 
+                6 : 4, 
+                7 : 4, 
+                8 : 5, 
+                9 : 5, 
+                10 : 5, 
+                11 : 5,
+                12 : 4,
+                13 : 4,
+                14 : 4,
+                15 : 4,
+                }
 #regionMapping = {0:4, 1:4, 2:4, 3:4, 4:4, 5:4, 6:4, 7:4, 8:3, 9:3, 10:3, 11:3, 12:4, 13:4, 14:4, 15:4, 16:4, 17:4, 18:4, 19:4, 20:3, 21:3, 22:3, 23:3}
 
 #controlRegions= [ CR1aX]

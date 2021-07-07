@@ -1,1 +1,5 @@
-python check_limit.py --fitAll --expected --only=T2tt_500_440
+python check_limit.py --fitAll --expected --only=T2tt_550_540 --l1pT_CR_split --extra_mT_cut --mT_cut_value 95 --CT_cut_value 400 --skipFitDiagnostics
+python check_limit.py --fitAll --expected --only=T2tt_550_470 --l1pT_CR_split --extra_mT_cut --mT_cut_value 95 --CT_cut_value 400 --skipFitDiagnostics
+# --scale 3.8997
+# python check_limit.py --fitAll --expected --only=T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --extra_mT_cut --CT_cut_value 400 --skipFitDiagnostics 
+# python check_limit.py --fitAll --signalInjection --only=T2tt_550_510 --l1pT_CR_split --mT_cut_value 100

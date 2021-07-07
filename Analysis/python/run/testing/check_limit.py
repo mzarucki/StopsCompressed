@@ -5,6 +5,7 @@ import os
 import math
 import pickle
 import argparse
+import glob
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',       action='store', default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'],             help="Log level for logging")
 argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv"], help="which signal?")
@@ -37,8 +38,18 @@ argParser.add_argument("--year",           default=2016,     action="store",    
 argParser.add_argument("--dpm",            default= False,   action="store_true",help="Use dpm?",)
 argParser.add_argument("--scaleWjets",     default=0.0, choices=[0.0,-0.1,0.1], type=float,  action="store",help="scaling Wjets for testing",)
 argParser.add_argument("--scaleTTbar",     default=0.0, choices=[0.0,-0.1,0.1], type=float,   action="store",help="scaling TTbar for testing",)
+argParser.add_argument("--l1pT_CR_split",       action='store_true',           default=False,   help="plot region plot background substracted")
+argParser.add_argument("--mT_cut_value",       action='store',            default=95, choices=[95,100,105], type=int,   help="plot region plot background substracted")
+argParser.add_argument("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
+argParser.add_argument("--CT_cut_value",       action='store',            default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
+
 
 args = argParser.parse_args()
+
+for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/python/run/testing/*.C')) :
+  if ROOT.gROOT.LoadMacro(macro): #compile it
+      raise OSError("Unable to load: {}".format(macro))
+
 
 removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False
 
@@ -61,9 +72,30 @@ from StopsCompressed.Analysis.Setup import Setup
 # from StopsCompressed.Analysis.test_Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
 from StopsCompressed.Analysis.estimators   import *
-from StopsCompressed.Analysis.backup_regions      import regionMapping,signalRegions, controlRegions, region
-#from StopsCompressed.Analysis.regions_splitCR      import signalRegions, controlRegions
-#from StopsCompressed.Analysis.regions_splitCR_v2      import signalRegions, controlRegions
+if (args.l1pT_CR_split) :
+    _NBINS = 68
+    if (args.mT_cut_value == 95) :
+        if (args.extra_mT_cut) :
+          _NBINS = 88
+          if (args.CT_cut_value == 450 ) :
+            from StopsCompressed.Analysis.regions_splitCR_4mTregions_CT450 import controlRegions, signalRegions, regionMapping
+          else :  
+            from StopsCompressed.Analysis.regions_splitCR_4mTregions import controlRegions, signalRegions, regionMapping
+        else :    
+          from StopsCompressed.Analysis.regions_splitCR	         import controlRegions, signalRegions, regionMapping
+    elif (args.mT_cut_value == 100) :
+        from StopsCompressed.Analysis.regions_splitCR_mT100	   import controlRegions, signalRegions, regionMapping
+    elif (args.mT_cut_value == 105) :
+        from StopsCompressed.Analysis.regions_mt105_splitCR	   import controlRegions, signalRegions, regionMapping
+else :
+    _NBINS = 56
+    if (args.mT_cut_value == 95) :
+        from StopsCompressed.Analysis.regions	                 import controlRegions, signalRegions, regionMapping
+    elif (args.mT_cut_value == 100) :
+        from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
+    elif (args.mT_cut_value == 105) :
+        from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
+
 from StopsCompressed.Analysis.MCBasedEstimate import MCBasedEstimate
 from StopsCompressed.Analysis.DataObservation import DataObservation
 from StopsCompressed.Analysis.Cache           import Cache
@@ -110,7 +142,7 @@ setups = [setup]
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = 'fitAllregion_2016_v30SigNewSyst'
+elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -176,14 +208,17 @@ def wrapper(s):
     wPt     = 'wPt_%s'%year
     JEC     = 'JEC_%s'%year
     JER     = 'JER_%s'%year
-    leptonSF= 'leptonSF_%s'%year
+    leptonSF= 'leptonSF_new_%s'%year
     leptonSFsignal= 'leptonSFsignal_%s'%year
     
     PU      = 'PU_%s'%year
 
     Lumi    = 'Lumi_%s'%year
+
+    LeptonSFsyst = 'LeptonSFsyst_%s'%year
     
     c.addUncertainty(Lumi,          "lnN")
+    c.addUncertainty(LeptonSFsyst,          "lnN")
 
     c.addUncertainty(SFb,          shapeString)
     c.addUncertainty(SFl,          shapeString)
@@ -207,10 +242,10 @@ def wrapper(s):
     c.addCR(controlRegions)
     c.addSR(signalRegions)
     for setup in setups:
-      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir())
-      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir())
+      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
+      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
       for e in setup.estimators : 
-        e.initCache(setup.defaultCacheDir())
+        e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
       
       for r in setup.regions:
         print r 
@@ -231,6 +266,11 @@ def wrapper(s):
             
   
             expected = e.cachedEstimate(r, channel, setup)
+            logger.info("Expectation for process %s: %s", e.name, expected.val)                                                                                                                       
+              
+            expected = expected * args.scale
+            logger.info("Expectation for process %s after scaling: %s", e.name, expected.val)
+            
 
             Wcorr = 0
             if e.name.count('WJets'):
@@ -244,10 +284,6 @@ def wrapper(s):
             total_exp_bkg += Wcorr
             total_exp_bkg += TTbarcorr
               
-            logger.info("Expectation for process %s: %s", e.name, expected.val)                                                                                                                       
-              
-            expected = expected * args.scale
-            logger.info("Expectation for process %s: %s", e.name, expected.val)
             
 
 
@@ -303,10 +339,11 @@ def wrapper(s):
                 c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(r, sysChannel, setup).val)
                 c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
                 c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
-
+                c.specifyUncertainty(LeptonSFsyst, binname, name, 1.01)
 
                 if name == "WJets":
                   c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
+                  print "wpt sys: {}".format(e.wPtSystematic(         r, sysChannel, setup).val)
                   #pass #c.specifyUncertainty(Lumi, binname, name, 1)
                 elif name == "Top" :
                   c.specifyUncertainty(nISR,       binname, name, 1 + e.nISRSystematic(         r, sysChannel, setup).val * uncScale )
@@ -349,6 +386,7 @@ def wrapper(s):
 
           c.specifyUncertainty(Lumi, binname, 'signal', lumiUncertainty)
           c.specifyUncertainty(leptonSFsignal, binname, 'signal', 1.01)
+          c.specifyUncertainty(LeptonSFsyst, binname, 'signal', 1.01)
           logger.info("adding lumi uncertainty for signal")
           if signal.val>0.001:
 
@@ -552,8 +590,8 @@ if args.signal == "T2tt":
     if args.fullSim:
       from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
-      # data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
-      data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
+      data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
+      # data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
       postProcessing_directory    = 'compstops_2016_nano_v30/Met/'
       from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
   

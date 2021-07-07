@@ -88,17 +88,20 @@ class SystematicEstimator:
         return abs(0.5*(up-down)/ref) if ref > 0 else max(up,down)
 
     def nISRSystematic(self, region, channel, setup):
-	ref  = self.cachedEstimate(region, channel, setup)
-	up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightnISRUp']}))
-	down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightnISRDown']}))
-	return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
+        ref  = self.cachedEstimate(region, channel, setup)
+        up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightnISRUp']}))
+        down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightnISRDown']}))
+        return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
 
     def wPtSystematic(self, region, channel, setup):
-	ref  = self.cachedEstimate(region, channel, setup)
-	up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightwPtUp']}))
-	down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightwPtDown']}))
-	return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
+        ref  = self.cachedEstimate(region, channel, setup)
+        up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightwPtUp']}))
+        down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightwPtDown']})) 
+	    # print "wpt up: {} wpt down: {}".format(up,down)
+        return 0.5*(up-down)/ref if ref > 0 else max(up, down)
 
+    	# return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
+    
     def topPtSystematic(self, region, channel, setup):
         ref  = self.cachedEstimate(region, channel, setup)
         up   = self.cachedEstimate(region, channel, setup.sysClone({'remove':['reweightTopPt']}))
@@ -157,8 +160,10 @@ class SystematicEstimator:
 
     def leptonSFSystematic(self, region, channel, setup):
         ref  = self.cachedEstimate(region, channel, setup)
-        up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightLeptonSFUp']}))
-        down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightLeptonSFDown']}))
+        up   = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newUp(l1_pt,l1_eta,l1_pdgId)']}))
+        down = self.cachedEstimate(region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newDown(l1_pt,l1_eta,l1_pdgId)']}))
+       
+        # return min(0.03*ref/ref,abs(0.5*(up-down)/ref)) if ref > 0 else max(up, down)
         return abs(0.5*(up-down)/ref) if ref > 0 else max(up, down)
 
     def triggerSystematic(self, region, channel, setup):
@@ -237,8 +242,8 @@ class SystematicEstimator:
             (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Up']})),
             (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Down']})),
 
-            (region, channel, setup.sysClone({'reweight':['reweightLeptonSFDown']})),
-            (region, channel, setup.sysClone({'reweight':['reweightLeptonSFUp']})),
+            (region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newDown(l1_pt,l1_eta,l1_pdgId)']})),
+            (region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newUp(l1_pt,l1_eta,l1_pdgId)']})),
 
             (region, channel, setup.sysClone({'reweight':['reweightnISRDown']})),
             (region, channel, setup.sysClone({'reweight':['reweightnISRUp']})),
@@ -270,8 +275,8 @@ class SystematicEstimator:
                 (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Up']})),
                 (region, channel, setup.sysClone({'reweight':['reweightBTag_SF_l_Down']})),
 
-                (region, channel, setup.sysClone({'reweight':['reweightLeptonSFDown']})),
-                (region, channel, setup.sysClone({'reweight':['reweightLeptonSFUp']})),
+                (region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newDown(l1_pt,l1_eta,l1_pdgId)']})),
+                (region, channel, setup.sysClone({'reweight':['reweightLeptonSF_newUp(l1_pt,l1_eta,l1_pdgId)']})),
 
                 (region, channel, setup.sysClone({'reweight':['reweightDilepTriggerBackupDown']})),
                 (region, channel, setup.sysClone({'reweight':['reweightDilepTriggerBackupUp']})),
