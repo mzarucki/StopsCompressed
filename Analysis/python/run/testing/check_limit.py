@@ -42,6 +42,8 @@ argParser.add_argument("--l1pT_CR_split",       action='store_true',           d
 argParser.add_argument("--mT_cut_value",       action='store',            default=95, choices=[95,100,105], type=int,   help="plot region plot background substracted")
 argParser.add_argument("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
 argParser.add_argument("--CT_cut_value",       action='store',            default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
+argParser.add_argument("--R1only",        action='store_true',           default=False,   help="")
+argParser.add_argument("--R2only",        action='store_true',           default=False,   help="")
 
 
 args = argParser.parse_args()
@@ -80,7 +82,12 @@ if (args.l1pT_CR_split) :
           if (args.CT_cut_value == 450 ) :
             from StopsCompressed.Analysis.regions_splitCR_4mTregions_CT450 import controlRegions, signalRegions, regionMapping
           else :  
-            from StopsCompressed.Analysis.regions_splitCR_4mTregions import controlRegions, signalRegions, regionMapping
+            if (args.R1only) :
+              from StopsCompressed.Analysis.regions_splitCR_4mTregions_R1only import controlRegions, signalRegions, regionMapping
+            elif (args.R2only) :
+              from StopsCompressed.Analysis.regions_splitCR_4mTregions_R2only import controlRegions, signalRegions, regionMapping
+            else :
+              from StopsCompressed.Analysis.regions_splitCR_4mTregions import controlRegions, signalRegions, regionMapping
         else :    
           from StopsCompressed.Analysis.regions_splitCR	         import controlRegions, signalRegions, regionMapping
     elif (args.mT_cut_value == 100) :
@@ -136,13 +143,14 @@ elif args.fitAll:
 # Define estimators for CR
 estimators           = estimatorList(setup)
 setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+# setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD']) # removing DY
 
 setups = [setup]
 
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)
+elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only)
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -430,8 +438,11 @@ def wrapper(s):
             logger.info("Observation: %s", int(args.scale*observation.cachedObservation(r, channel, setup).val))
 
 
-      c.addRateParameter('WJets',1,'[0.,3.]')
-      c.addRateParameter('Top',1,'[0.,3.]')
+      # c.addRateParameter('WJets',1,'[0.,3.]')
+      # c.addRateParameter('Top',1,'[0.,3.]')
+      
+      c.addRateParameter('WJetsAndTop',1,'[0.,3.]')
+      # c.addRateParameter('Top',1,'[0.,3.]')
 
       # if year == 2016:
       #     lumiUncertainty = 1.025

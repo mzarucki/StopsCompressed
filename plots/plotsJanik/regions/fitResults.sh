@@ -1,15 +1,15 @@
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_540 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_540 --cores 10
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_540 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_540 --cores 10 --postFit
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_540 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_540 --cores 10 --postFit --plotImpacts
-
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_470 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_470 --cores 10
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_470 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_470 --cores 10 --postFit
-python fitResults.py --plotRegionPlot --cardfile T2tt_550_470 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_leptonSF/550_470 --cores 10 --postFit --plotImpacts
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyTrue_R2onlyFalse/cardFiles/T2tt/expected --cores 10 --R1only
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyTrue_R2onlyFalse/cardFiles/T2tt/expected --cores 10 --R1only --postFit
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyTrue_R2onlyFalse/cardFiles/T2tt/expected --cores 10 --R1only --postFit --plotImpacts
 
 
-# python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_r_hat/t5 --cores 10 --logLevel DEBUG
-# python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_r_hat/t5 --cores 10 --logLevel DEBUG --postFit
-# python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_r_hat/t5 --cores 10 --logLevel DEBUG --postFit --plotImpacts
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyTrue/cardFiles/T2tt/expected --cores 10 --R2only
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyTrue/cardFiles/T2tt/expected --cores 10 --R2only --postFit
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyTrue/cardFiles/T2tt/expected --cores 10 --R2only --postFit --plotImpacts
+
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyFalse/cardFiles/T2tt/expected --cores 10 
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyFalse/cardFiles/T2tt/expected --cores 10  --postFit
+python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_08_07_21/noDY/fitAllregion_nbins88_mt95_extramTTrue_CT400_R1onlyFalse_R2onlyFalse/cardFiles/T2tt/expected --cores 10  --postFit --plotImpacts
 
 
 # python fitResults.py --plotRegionPlot --cardfile T2tt_550_510 --l1pT_CR_split --mT_cut_value 95 --CT_cut_value 400 --extra_mT_cut --carddir debugging_r_hat --postFit 
