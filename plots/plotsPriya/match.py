@@ -31,9 +31,9 @@ argParser.add_argument('--logLevel',           		action='store',      default='I
 argParser.add_argument('--era',                		action='store',      default="Run2018",  	type=str )
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          		action='store',      default='v_44_noData')
-argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-isFake')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+argParser.add_argument('--targetDir',          		action='store',      default='v_test_Data')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-isPrompt')
+argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
@@ -82,8 +82,8 @@ elif "2016" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_Summer16_postProcessed import *
     #samples = [WJetsToLNu_HT_16, TTJets_1l_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
     #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, QCD_HT_16, VV_16, TTX_16]
-    #samples = [WJetsToLNu_HT_16]
-    samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, VV_16, TTX_16]
+    samples = [WJetsToLNu_HT_16, Top_pow_16]
+    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_LO_16, VV_16, TTX_16]
     from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import *
     from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import *
     #signals = [T2tt_375_365,T2tt_500_470]
@@ -138,7 +138,7 @@ def drawObjects( plotData, dataMCScale):
 def drawPlots(plots,mode, dataMCScale):
   for log in [False, True]:
     
-    plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
+    plot_directory_ = os.path.join(plot_directory, 'fakeStudies', args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
     for plot in plots:
       #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
       #for l in plot.histos:
@@ -159,15 +159,16 @@ def drawPlots(plots,mode, dataMCScale):
 
 # Read variables and sequences
 read_variables = [
-            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_pdgId/I", "l1_muIndex/I", "reweightHEM/F","l1_miniRelIso/F", "l1_relIso03/F", "nlep/I",
+            "weight/F", "l1_pt/F", "l1_eta/F" , "l1_phi/F", "l1_pdgId/I", "l1_muIndex/I", "reweightHEM/F","l1_miniRelIso/F", "l1_relIso03/F", "nlep/I","l1_muIndex/I","l1_eleIndex/I",
 	    "lep[pt/F, eta/F, phi/F]",
             "JetGood[pt/F, eta/F, phi/F, genPt/F]", 
             "Jet[pt/F, eta/F, phi/F, jetId/I]", 
             "met_pt/F", "met_phi/F","CT1/F", "HT/F","mt/F", 'l1_dxy/F', 'l1_dz/F', 'dphij0j1/F','ISRJets_pt/F', 'nISRJets/I','nSoftBJets/I','nHardBJets/I', "nBTag/I", "nJetGood/I", "PV_npvsGood/I","event/I","run/I"]
 read_variables += [
             "nMuon/I","nElectron/I","nJet/I",
-            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O]"
+            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O,genPartFlav/b]",
 
+            "Electron[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,pdgId/I,pt/F,genPartFlav/b]"
             ]
 #for s in samples:
 #    s.read_variables += ["genWeight/F",'reweightPU/F', 'Pileup_nTrueInt/F','reweightBTag_SF/F', 'GenMET_pt/F', 'GenMET_phi/F', 'Muon[genPartIdx/I,genPartFlav/b]']
@@ -178,32 +179,28 @@ genFilter = genFilter(year=year)
 
 sequence = []
 
-def mtwithdphi(event, sample):
-	event.mtmod = float('nan')
-	if deltaPhi(event.l1_phi ,event.met_phi) < 1.7: 
-		event.mtmod            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-def delR(event,sample):
-	event.dR = float("nan")
-	event.dR = sqrt(((deltaPhi(event.l1_phi,event.JetGood_phi[0])**2) + ((event.l1_eta - event.JetGood_eta[0])**2)))
-sequence.append(delR)
-def jetToLeptonRatio (event, sample):
-	event.cleanJets_pt  = float ('nan')
-	event.cleanJets_eta = float ('nan')
-	event.cleanJets_phi  = float ('nan')
-	Electrons =  getGoodElectrons(event, ele_selector = eleSelector("hybridIso", year=year))	
-	Muons =  getGoodMuons(event, mu_selector = muonSelector("hybridIso", year=year))	
-	leptons = Electrons + Muons
-	leptons.sort(key = lambda p:-p['pt'])
-	jets = getAllJets(event, leptons, ptCut=30, absEtaCut=2.4,jetVars= ['pt','eta','phi', 'jetId'] , jetCollections=["Jet"], idVar='jetId')
-	event.nJetsClean = len(jets)
-	if event.nJetsClean >0:
-		event.cleanJets_pt  = jets[0]['pt']
-		event.cleanJets_eta = jets[0]['eta']
-		event.cleanJets_phi = jets[0]['phi']
-#	for i,jet in enumerate(jets):
-#		event.cleanJets_pt  = jet['pt']
-#		event.cleanJets_eta = jet['eta']
-#		event.cleanJets_phi = jet['phi']
+def make_lepton_selection( event, sample ):
+	 # 0 unmatched, 1 prompt (gamma*) , 15 tau, 22 prompt photon (conv), 5 b, 4 c, 3 light/unknown
+	 # remember: if type is /b use ord()
+	 #if event.l1_muIndex>=0 and  ord(event.Muon_genPartFlav[event.l1_muIndex])==1:
+	 #     print event.Muon_pt[event.l1_muIndex], event.l1_pt
+	 #     print ord(event.Muon_genPartFlav[event.l1_muIndex])
+	 #if event.l1_muIndex>=0 :
+	 #     print event.Muon_pt[event.l1_muIndex], event.l1_pt
+	 #if event.l1_eleIndex>=0 and  ord(event.Electron_genPartFlav[event.l1_eleIndex])==1:
+	 #     print event.Electron_pt[event.l1_eleIndex], event.l1_pt
+	 #     print ord(event.Electron_genPartFlav[event.l1_eleIndex])
+	 #if event.l1_eleIndex>=0 :
+	 #     print event.Electron_pt[event.l1_eleIndex], event.l1_pt
+	 event.Pr = 0
+	 event.unmatch = 0
+	 if (ord(event.Muon_genPartFlav[event.l1_muIndex])==1) or (ord(event.Electron_genPartFlav[event.l1_eleIndex])==1) or (ord(event.Muon_genPartFlav[event.l1_muIndex])==15) or (ord(event.Electron_genPartFlav[event.l1_eleIndex])==15):
+		 #print event.l1_pt, event.l1_pdgId
+		 event.Pr = 1
+	 elif (ord(event.Muon_genPartFlav[event.l1_muIndex])==0) or (ord(event.Electron_genPartFlav[event.l1_eleIndex])==0):
+		event.unmatch = 1
+sequence.append( make_lepton_selection )
+
 
 #def make_weight (event, sample):
 #	print event.weight, event.reweightHEM
@@ -254,18 +251,6 @@ for index, mode in enumerate(allModes):
 			sample.style = styles.errorStyle( color=sample.color, markerSize = 0.6)
 			sample.setSelectionString([getFilterCut(isData=False, isFastSim=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 			sample.scale = lumi_scale
-	#	elif "T2tt_375_365" in sample.name:
-	#		sample.read_variables += [ 'reweight_nISR/F']
-	#		sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF * event.reweight_nISR*0.2546
-	#		sample.style = styles.errorStyle( color=sample.color, markerSize = 0.6)
-	#		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-	#		sample.scale = lumi_scale
-	#	elif "T2tt_500_420" in sample.name:
-	#		sample.read_variables += [ 'reweight_nISR/F']
-	#		sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF * event.reweight_nISR*0.3520
-	#		sample.style = styles.errorStyle( color=sample.color, markerSize = 0.6)
-	#		sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-	#		sample.scale = lumi_scale
 		else:
 			sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightwPt * event.reweightLeptonSF
 			sample.scale = lumi_scale 
@@ -293,9 +278,21 @@ for index, mode in enumerate(allModes):
 	    attribute = TreeVariable.fromString( "l1_dRgen/F" ),
 	    binning=[10,-1,1],
 	  ))
-	plots.append(Plot(
+	plots.append(Plot(name = "l1_pt_total",
 	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
 	    attribute = TreeVariable.fromString( "l1_pt/F" ),
+	    binning=[40,0,200],
+	  ))
+	plots.append(Plot(name = "l1_pt_Prompt",
+	    texX = 'p_{T}(l_{1}) prompt (GeV)', texY = 'Number of Events ',
+	    attribute = TreeVariable.fromString( "l1_pt/F" ),
+	    weight = lambda event, sample: event.Pr , 
+	    binning=[40,0,200],
+	  ))
+	plots.append(Plot( name = "l1_pt_nonPrompt",
+	    texX = 'p_{T}(l_{1}) nonPrompt (GeV)', texY = 'Number of Events ',
+	    attribute = TreeVariable.fromString( "l1_pt/F" ),
+	    weight = lambda event, sample: event.unmatch , 
 	    binning=[40,0,200],
 	  ))
 	plots.append(Plot(
@@ -394,11 +391,11 @@ for index, mode in enumerate(allModes):
 	    name = 'hybridIsolation', attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
 	    binning=[20,0,4],
 	  ))
-	plots.append(Plot(
-	    texX = 'dR between l1 and leading JetGood', texY = 'Number of Events ',
-	    name = 'deltaR', attribute = lambda event, sample: event.dR,
-	    binning=[10,-1,1],
-	  ))
+	#plots.append(Plot(
+	#    texX = 'dR between l1 and leading JetGood', texY = 'Number of Events ',
+	#    name = 'deltaR', attribute = lambda event, sample: event.dR,
+	#    binning=[10,-1,1],
+	#  ))
 	plots.append(Plot(
 	    texX = 'pt Ratio between l1 and leading JetGood', texY = 'Number of Events ',
 	    name = 'ptRatio', attribute = lambda event, sample: (event.JetGood_pt[0] / event.l1_pt),
@@ -471,16 +468,16 @@ for index, mode in enumerate(allModes):
 	    binning=[3, 0, 3],
 	  ))
 
-#	plots2D.append(Plot2D(
-#		name = "Data_Jet_eta_vs_phi",
-#		texX  = '#eta', texY = "#phi",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			lambda event, sample: event.JetGood_eta[0],
-#			lambda event, sample: event.JetGood_phi[0],
-#			),
-#		binning = [10,-3,3, 10,-pi,pi],
-#	  ))
+	#plots2D.append(Plot2D(
+	#	name = "Data_Jet_eta_vs_phi",
+	#	texX  = '#eta', texY = "#phi",
+	#	stack = Stack ([data_sample]),
+	#	attribute = (
+	#		lambda event, sample: event.JetGood_eta[0],
+	#		lambda event, sample: event.JetGood_phi[0],
+	#		),
+	#	binning = [10,-3,3, 10,-pi,pi],
+	#  ))
 	plots2D.append(Plot2D(
 		name = "MC_Jet_eta_vs_phi",
 		texX  = '#eta', texY = "#phi",
@@ -491,16 +488,16 @@ for index, mode in enumerate(allModes):
 			),
 		binning = [10,-3,3, 10,-pi,pi],
 	  ))
-#	plots2D.append(Plot2D(
-#		name = "Data_l1_eta_vs_phi",
-#		texX  = '#eta', texY = "#phi",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			TreeVariable.fromString( "l1_eta/F" ),
-#			TreeVariable.fromString( "l1_phi/F" ),
-#			),
-#		binning = [10,-3,3, 10,-pi,pi],
-#	  ))
+	#plots2D.append(Plot2D(
+	#	name = "Data_l1_eta_vs_phi",
+	#	texX  = '#eta', texY = "#phi",
+	#	stack = Stack ([data_sample]),
+	#	attribute = (
+	#		TreeVariable.fromString( "l1_eta/F" ),
+	#		TreeVariable.fromString( "l1_phi/F" ),
+	#		),
+	#	binning = [10,-3,3, 10,-pi,pi],
+	#  ))
 	plots2D.append(Plot2D(
 		name = "MC_l1_eta_vs_phi",
 		texX  = '#eta', texY = "#phi",
@@ -531,16 +528,16 @@ for index, mode in enumerate(allModes):
 #			),
 #		binning = [10,-3,3, 10,-pi,pi],
 #	  ))
-#	plots2D.append(Plot2D(
-#		name = "Data_cosdphi_vs_Mt",
-#		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
-#		stack = Stack ([data_sample]),
-#		attribute = (
-#			lambda event, sample: cos(event.l1_phi - event.met_phi),
-#			TreeVariable.fromString( "mt/F" ),
-#			),
-#		binning = [20,-1,1, 40,0,300],
-#	  ))
+	#plots2D.append(Plot2D(
+	#	name = "Data_cosdphi_vs_Mt",
+	#	texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
+	#	stack = Stack ([data_sample]),
+	#	attribute = (
+	#		lambda event, sample: cos(event.l1_phi - event.met_phi),
+	#		TreeVariable.fromString( "mt/F" ),
+	#		),
+	#	binning = [20,-1,1, 40,0,300],
+	#  ))
 	plots2D.append(Plot2D(
 		name = "MC_cosdphi_vs_Mt",
 		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",

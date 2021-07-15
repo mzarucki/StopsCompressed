@@ -91,12 +91,13 @@ dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
 dirs['QCD_HT'] 		= ["QCD_HT50to100", "QCD_HT100to200", "QCD_HT200to300_comb", "QCD_HT300to500_comb", "QCD_HT500to700_comb", "QCD_HT700to1000_comb", "QCD_HT1000to1500_comb", "QCD_HT1500to2000_comb", "QCD_HT2000toInf_comb" ]
 dirs['ZInv']		= ["ZJetsToNuNu_HT100to200_comb","ZJetsToNuNu_HT200to400_comb","ZJetsToNuNu_HT400to600_comb","ZJetsToNuNu_HT600to800","ZJetsToNuNu_HT800to1200","ZJetsToNuNu_HT1200to2500_comb","ZJetsToNuNu_HT2500toInf"]	
 
+dirs['fakes'] 		= dirs['DY_HT_LO'] + dirs['Top_pow'] + dirs['singleTop'] + dirs['TTX'] + dirs['WJetsToLNu_HT'] + dirs['VV'] + dirs['QCD_HT'] +dirs['ZInv']
 
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
 
 
 DY_HT_LO_16             = Sample.fromDirectory(name="DY_HT_LO",             treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan",                      directory=directories['DY_HT_LO'])
-Top_pow_16              = Sample.fromDirectory(name="Top_pow",              treeName="Events", isData=False, color=color.Top_pow,         texName="t#bar{t}/t",                     directory=directories['Top_pow'])
+Top_pow_16              = Sample.fromDirectory(name="Top_pow",              treeName="Events", isData=False, color=color.Top_pow,         texName="t#bar{t}",                     directory=directories['Top_pow'])
 TTLep_pow_16            = Sample.fromDirectory(name="TTLep_pow",            treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",                       directory=directories['TTLep_pow'])
 #TTJets_1l_16      = Sample.fromDirectory(name="TTJets_SingleLepton",      treeName="Events", isData=False, color=color.TTJets_1l,       texName="t#bar{t} (1l)",                  directory=directories['TTJets_SingleLepton'])
 #TTJets_2l_16         	= Sample.fromDirectory(name="TTJets_DiLept",              treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",                 directory=directories['TTJets_DiLept'])
@@ -111,4 +112,5 @@ WJetsToLNu_HT_16  	= Sample.fromDirectory(name="WJetsToLNu_HT_",       treeName=
 VV_16           	= Sample.fromDirectory(name="VV",                   treeName="Events", isData=False, color=color.VV,              texName="VV ",                               directory=directories['VV'])
 QCD_HT_16  		= Sample.fromDirectory(name="QCD_HT",    	    treeName="Events", isData=False, color=color.QCD_HT,          texName="QCD (HT)",                 directory=directories['QCD_HT'])
 ZInv_16  		= Sample.fromDirectory(name="ZInv",    	    	    treeName="Events", isData=False, color=color.ZInv,           texName="Z(#nu,#nu + Jets)",                 directory=directories['ZInv'])
+Fakes_16  		= Sample.fromDirectory(name="fakes",    	    treeName="Events", isData=False, color=color.fakes,           texName="Fakes(MC-nonPrompt)",                 directory=directories['fakes'])
 

@@ -193,7 +193,8 @@ class Setup:
 
         if parameters:
             for k in parameters.keys():
-                res.parameters[k] = parameters[k]
+		print "key: ", k
+		res.parameters[k] = parameters[k]
         return res
 
     def defaultParameters(self, update={} ):
@@ -252,10 +253,10 @@ class Setup:
         if nISRJet:
             res['prefixes'].append('nISRJets')
             res['cuts'].append('nISRJets>=1')
-        
+
         if l1_prompt:
-             res['prefixes'].append('l1_prompt')
-             res['cuts'].append('l1_isPrompt>=1')
+            res['prefixes'].append('l1_prompt')
+            res['cuts'].append('l1_isPrompt>=1')
        # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
        #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
        #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
