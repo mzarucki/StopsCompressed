@@ -70,7 +70,9 @@ signalString = options.signal
 #analysis_results = '/afs/hephy.at/user/p/phussain/www/'
 #for signals with geneff = 0.3
 #analysis_results = '/afs/hephy.at/user/p/phussain/www/splitCR_sv2/'
-analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_gen_AN/limits/T2tt/T2tt/'
+#analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_AN_comb/limits/T2tt/T2tt/'
+#analysis_results = '/scratch/priya.hussain/StopsCompressed/results/2016/fitAll_v22_ID_comb/limits/T2tt/T2tt/'
+analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_2016_newLeptonSFsignal/limits/T2tt/T2tt/'
 
 #defFile = os.path.join(analysis_results, "%s/fitAll/limits/%s/%s/limitResults.root"%(yearString,signalString,signalString))
 defFile =  os.path.join(analysis_results,"limitResults.root")
@@ -86,7 +88,8 @@ else:
     lumi = 137
 
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
-plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAll_gen_AN','FR_limitAll_mNeu_2016')
+#plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAll_v22_ID_comb','FR_limitAll_mNeu_2016')
+plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_2016_newLeptonSFsignal','FR_limitAll_mNeu_2016')
 if options.smooth:
     plotDir += "_smooth_it%s_%s"%(options.iterations, options.smoothAlgo)
 if options.expected:

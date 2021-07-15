@@ -12,7 +12,7 @@ import os
 import time
 
 #cmd = "submit --title='limit' "
-#cmd = "submit --title='limit' --walltime 6:00:00 "
+# cmd = "submit --title='limit' --walltime 6:00:00 "
 cmd = "echo"
 
 #print len(signalEstimators)

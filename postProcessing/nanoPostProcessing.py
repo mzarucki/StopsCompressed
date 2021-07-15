@@ -539,7 +539,7 @@ if not options.skipNanoTools:
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
     ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
-    from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
+    # from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
     logger.info("Will put files into directory %s", output_directory)
@@ -563,8 +563,8 @@ if not options.skipNanoTools:
             JMECorrector()
         ]
         
-        if not sample.isData:
-            modules.append( ISRcounter() )
+        # if not sample.isData:
+        #     modules.append( ISRcounter() )
 
        ##  need a hash to avoid data loss
         file_hash = str(hash(f))

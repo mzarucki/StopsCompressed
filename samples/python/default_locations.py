@@ -20,7 +20,7 @@ class default_locations:
     signal_2016_postProcessing_directory = "compstops_2016_nano_v24/MetSingleLep/"
 
     
-    #data_2016_data_directory = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
+    # data_2016_data_directory = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
     data_2016_data_directory = "/scratch/priya.hussain/StopsCompressed/nanoTuples/"
     ## data w/ all ext samples && old ID: v21
     #data_2016_postProcessing_directory = "compstops_2016_nano_v21/MetSingleLep/"

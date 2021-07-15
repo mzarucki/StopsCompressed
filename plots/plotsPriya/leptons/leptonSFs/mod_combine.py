@@ -16,6 +16,15 @@ def makeDir(path):
 
 def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', savedir = './', drawOriginalSFs = False, verbose = False):
 
+    # combineSFs(
+    # baseHistName = 'el_VetoWP_2D_cent',  
+    # updateHistName = 'el_VetoWP_2D_priv',  
+    # updatePtRange = [5, 10], 
+    # file_dir = '/scratch/priya.hussain/StopsCompressed/results/2018_94_pre3/finalplots/noIso/', 
+    # savedir = savedir, 
+    # drawOriginalSFs = True, 
+    # verbose = True)
+
     leptonSFsDict = {
         # muons
         #"mu_LooseWP_2D_cent":{"tag":'LooseWP_cent', "hist_name":'SF',                             "file_name":'TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root', "lep":'mu', 'dim':'2D'},
@@ -49,7 +58,7 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
     }
     
     for hist in selectedHistDict:
-	print hist
+	    print hist
         selectedHistDict[hist]['file'] = ROOT.TFile(file_dir + selectedHistDict[hist]['file_name'])
 
         if selectedHistDict[hist]['hist_name'] not in [x.GetName() for x in selectedHistDict[hist]['file'].GetListOfKeys()]:
@@ -121,8 +130,8 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
         #combinedEtaBins = [x for x in baseEtaBins if x >= 0] # only positive values for absEta
         combinedEtaBins = [x for x in baseEtaBins ] # all Eta values
         positiveEtaBinsDelta = len(baseEtaBins) - len(combinedEtaBins)
-	for x in baseEtaBins: print x  
-	print "Eta bins delta: ",positiveEtaBinsDelta
+        for x in baseEtaBins: print x  
+        print "Eta bins delta: ",positiveEtaBinsDelta
         nx = len(combinedEtaBins)-1
         combinedEtaBinsArray = array.array("d", combinedEtaBins) 
         combinedHistDict['binning']['xbins'] = combinedEtaBins
@@ -154,7 +163,7 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
                         #binContent = selectedHistDict[updateHistName]['hist'].GetBinContent(xbin-basePtBinsLowerDelta, ybinFix)
                         #binError   = selectedHistDict[updateHistName]['hist'].GetBinError(xbin-basePtBinsLowerDelta, ybinFix)
                         binContent = selectedHistDict[updateHistName]['hist'].GetBinContent(xbin,ybin-basePtBinsLowerDelta)
-                        binError   = selectedHistDict[updateHistName]['hist'].GetBinContent(xbin,ybin-basePtBinsLowerDelta)
+                        binError   = selectedHistDict[updateHistName]['hist'].GetBinError(xbin,ybin-basePtBinsLowerDelta)
                     elif selectedHistDict[updateHistName]['dim'] == "1D":
                         binContent = selectedHistDict[updateHistName]['hist'].GetBinContent(xbin-basePtBinsLowerDelta)
                         binError   = selectedHistDict[updateHistName]['hist'].GetBinError(xbin-basePtBinsLowerDelta)

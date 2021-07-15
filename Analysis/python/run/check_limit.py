@@ -159,110 +159,76 @@ def wrapper(s):
         c.reset()
         c.setPrecision(3)
         shapeString = 'lnN' if args.useTxt else 'shape'
-        # experimental
-        #JEC     = 'JEC_%s'%year
-        #JER     = 'JER_%s'%year
-        #PU      = 'PU_%s'%year
         Lumi    = 'Lumi_%s'%year
-        #leptonSF    = 'leptonSF_%s'%year
-        #c.addUncertainty(PU,           shapeString)
-	#c.addUncertainty(JEC,          shapeString)
-	#c.addUncertainty(JER,          shapeString)
-        c.addUncertainty(Lumi,          shapeString)
-        #c.addUncertainty(leptonSF,   shapeString)
+        wPt    = 'wPt_%s'%year
 
+        c.addUncertainty(Lumi,          shapeString)
+        c.addUncertainty(wPt,           shapeString)
 
         for setup in setups:
-          eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir())
-          observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir())
-          for e in setup.estimators: e.initCache(setup.defaultCacheDir())
+            eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir())
+            observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir())
+            for e in setup.estimators: e.initCache(setup.defaultCacheDir())
 
-	  for r in setup.regions[:1]:
-            print r 
-            for channel in setup.channels:
-                niceName = ' '.join([channel, r.__str__()])
-		#print niceName
-                logger.info("Bin name: %s", niceName)
-                binname = 'Bin'+str(counter)
-                counter += 1
-                total_exp_bkg = 0
-                c.addBin(binname, [e.name.split('-')[0] for e in setup.estimators ], niceName)
-                for e in setup.estimators:
-                  name = e.name.split('-')[0]
-		  #print name
-                  expected = e.cachedEstimate(r, channel, setup)
-		  #print "value for MC: ",expected
-                  expected = expected * args.scale
-                  total_exp_bkg += expected.val
-                  logger.info("Expectation for process %s: %s", e.name, expected.val)
-                  if e.name.count('WJets'):
-                    c.specifyExpectation(binname, 'WJets',  expected.val)
-#                    W_SF = 1
-#                    if W_SF != 1: logger.warning("Scaling WJets background by %s", W_SF)
-#                    c.specifyExpectation(binname, 'WJets',  expected.val * W_SF)
-                  elif e.name.count("DY"):
-                    DY_SF = 1
-                    c.specifyExpectation(binname, name, expected.val*DY_SF)
-                    if DY_SF != 1: logger.warning("Scaling DY background by %s", DY_SF)
-                  elif e.name.count("Top"):
-                    Top_SF = 1
-                    c.specifyExpectation(binname, name, expected.val*Top_SF)
-                    if Top_SF != 1: logger.warning("Scaling Top background by %s", Top_SF)
-                  elif e.name.count("singleTop"):
-                    singleTop_SF = 1
-                    c.specifyExpectation(binname, name, expected.val*singleTop_SF)
-                    if singleTop_SF != 1: logger.warning("Scaling singleTop background by %s", singleTop_SF)
-                  elif e.name.count("VV"):
-                    c.specifyExpectation(binname, name, expected.val)
-                  elif e.name.count("ZInv"):
-                    c.specifyExpectation(binname, name, expected.val)
-                  elif e.name.count("TTX"):
-                    TTX_SF = 1
-#                    TTX_expected = TTX.cachedEstimate(r, channel, setup)
-#                    logger.info("TTX expected %s", expected.val)
-#                    expected = expected+TZX_expected
-#                    logger.info("TTX expected %s", expected.val)
-                    c.specifyExpectation(binname, name, expected.val*TTX_SF)
-                    if TTX_SF != 1: logger.warning("Scaling TTX background by %s", TTX_SF)
-                  elif e.name.count("QCD"):
-                    c.specifyExpectation(binname, name, expected.val)
-#                    #c.specifyUncertainty("TTX", binname, name, 1.10)
-#                  elif e.name.count("TZX"):
-#                    logger.info("TZX has been added to TTZ")
-#                  elif e.name.count("TTXNoZ") or e.name.count("rare"):
-#                    c.specifyExpectation(binname, name, expected.val)
+            for r in setup.regions[:1] :
+                print r 
+                for channel in setup.channels:
+                    niceName = ' '.join([channel, r.__str__()])
+                    print niceName
+                    logger.info("Bin name: %s", niceName)
+                    binname = 'Bin'+str(counter)
+                    counter += 1
+                    total_exp_bkg = 0
+                    c.addBin(binname, [e.name.split('-')[0] for e in setup.estimators ], niceName)
+                    for e in setup.estimators:
+                        name = e.name.split('-')[0]
+                        expected = e.cachedEstimate(r, channel, setup)
+                        expected = expected * args.scale
+                        total_exp_bkg += expected.val
+                        logger.info("Expectation for process %s: %s", e.name, expected.val)
+                        if e.name.count('WJets'):
+                            c.specifyExpectation(binname, 'WJets',  expected.val)
+                        elif e.name.count("DY"):
+                            DY_SF = 1
+                            c.specifyExpectation(binname, name, expected.val*DY_SF)
+                            if DY_SF != 1: logger.warning("Scaling DY background by %s", DY_SF)
+                        elif e.name.count("Top"):
+                            Top_SF = 1
+                            c.specifyExpectation(binname, name, expected.val*Top_SF)
+                            if Top_SF != 1: logger.warning("Scaling Top background by %s", Top_SF)
+                        elif e.name.count("singleTop"):
+                            singleTop_SF = 1
+                            c.specifyExpectation(binname, name, expected.val*singleTop_SF)
+                            if singleTop_SF != 1: logger.warning("Scaling singleTop background by %s", singleTop_SF)
+                        elif e.name.count("VV"):
+                            c.specifyExpectation(binname, name, expected.val)
+                        elif e.name.count("ZInv"):
+                            c.specifyExpectation(binname, name, expected.val)
+                        elif e.name.count("TTX"):
+                            TTX_SF = 1
+                            c.specifyExpectation(binname, name, expected.val*TTX_SF)
+                            if TTX_SF != 1: logger.warning("Scaling TTX background by %s", TTX_SF)
+                        elif e.name.count("QCD"):
+                            c.specifyExpectation(binname, name, expected.val)
 
-                  if expected.val>0 or True:
-                      names = [name]
-                      for name in names:
-                        sysChannel = 'all' # could be channel as well
-                        uncScale = 1
-                        #c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
-			#if JEC > 0.0005:
-			#	c.specifyUncertainty(JEC,        binname, name, 1 + e.JECSystematic(        r, sysChannel, setup).val )
-			#if JER > 0.0005:
-                        #	c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(        r, sysChannel, setup).val)
-                        #c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
+                        if expected.val>0 or True:
+                            names = [name]
+                            for name in names:
+                                sysChannel = 'all' # could be channel as well
+                                uncScale = 1
 
-                        #MC bkg stat (some condition to neglect the smaller ones?)
-                        uname = 'Stat_'+binname+'_'+name
-                        c.addUncertainty(uname, 'lnN')
-                        c.specifyUncertainty(uname, binname, name, 1 + (expected.sigma/expected.val) * uncScale if expected.val>0 else 1)
-
+                                #MC bkg stat (some condition to neglect the smaller ones?)
+                                uname = 'Stat_'+binname+'_'+name
+                                c.addUncertainty(uname, 'lnN')
+                                c.specifyUncertainty(uname, binname, name, 1 + (expected.sigma/expected.val) * uncScale if expected.val>0 else 1)
+                                c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
                 #signal
-
                 eSignal.isSignal = True
                 e = eSignal
-		#genEff = 0.3
-                
+                    
                 if fastSim:
-#                    if args.signal == 'T2tt': # change this for next round. small impact
-#                        signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR', 'reweightLeptonFastSimSF']})
-#                    else:
-#                        signalSetup = setup.sysClone(sys={'reweight':[ 'reweightLeptonFastSimSF'], 'remove':[]})
-		    signalSetup = setup.sysClone()
+                    signalSetup = setup.sysClone()
                     if year == 2016:
-                        #signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup.sysClone({'selectionModifier':'GenMET'})))
                         signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup))
                     else:
                         signal = e.cachedEstimate(r, channel, signalSetup)
@@ -272,49 +238,30 @@ def wrapper(s):
 
                 signal = signal * args.scale
 
-                if signal.val<0.01 and niceName.count("control")==0:
+                if signal.val<0.01 and niceName.count("control")==0 :
                     signal.val = 0.001
                     signal.sigma = 0.001
-                #c.specifyExpectation(binname, 'signal', signal.val*xSecScale )
                 c.specifyExpectation(binname, 'signal', signal.val*xSecScale*genEff )
 
 
-                #logger.info("Signal expectation: %s", signal.val*xSecScale)
                 logger.info("Signal expectation: %s", signal.val*xSecScale*genEff)
 
 
                 if signal.val>0.001:
-                  if not fastSim:
-                    c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
-                    logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
-                  #c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
-                  #if not args.useTxt:
-                    #c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
-#                    c.specifyUncertainty(unclEn,          binname, 'signal', e.unclusteredSystematicAsym(r, channel, signalSetup) )
-                    #c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
-                  #else:
-                    #c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val[1] )
-#                    c.specifyUncertainty(unclEn,          binname, 'signal', e.unclusteredSystematicAsym(r, channel, signalSetup)[1] )
-                    #c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val[1] )
-                  #c.specifyUncertainty(SFb,             binname, 'signal', 1 + e.btaggingSFbSystematic(r, channel, signalSetup).val )
-                  #c.specifyUncertainty(SFl,             binname, 'signal', 1 + e.btaggingSFlSystematic(r, channel, signalSetup).val )
-                  #c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
-#
-                  #if fastSim: 
-                  #  c.specifyUncertainty('btagFS',   binname, 'signal', 1 + e.btaggingSFFSSystematic(r, channel, signalSetup).val )
-                  uname = 'Stat_'+binname+'_signal'
-                  c.addUncertainty(uname, 'lnN')
-                  c.specifyUncertainty(uname, binname, 'signal', 1 + signal.sigma/signal.val if signal.val>0 else 1 )
-            
-                else:
-                  uname = 'Stat_'+binname+'_signal'
-                  c.addUncertainty(uname, 'lnN')
-                  c.specifyUncertainty(uname, binname, 'signal', 1 )
+                    if not fastSim:
+                        c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
+                        logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
+                    uname = 'Stat_'+binname+'_signal'
+                    c.addUncertainty(uname, 'lnN')
+                    c.specifyUncertainty(uname, binname, 'signal', 1 + signal.sigma/signal.val if signal.val>0 else 1 )
+                else :
+                    uname = 'Stat_'+binname+'_signal'
+                    c.addUncertainty(uname, 'lnN')
+                    c.specifyUncertainty(uname, binname, 'signal', 1 )
                 
                 logger.info("Done with MC. Now working on observation.")
                 ## Observation ##
                 # expected
-                #if (args.expected or (not args.unblind and not niceName.count('control'))) and not args.signalInjection:
                 if args.expected :
                     c.specifyObservation(binname, int(round(total_exp_bkg,0)))
                     logger.info("Expected observation: %s", int(round(total_exp_bkg,0)))
@@ -325,7 +272,7 @@ def wrapper(s):
                     logger.info("Expected observation (signal is injected!): %s", pseudoObservation)
                 # real observation (can be scaled for studies)
                 else:
-		    #print "be here", total_exp_bkg
+		            #print "be here", total_exp_bkg
                     c.specifyObservation(binname, int(args.scale*observation.cachedObservation(r, channel, setup).val))
                     logger.info("Observation: %s", int(args.scale*observation.cachedObservation(r, channel, setup).val))
                 
@@ -355,12 +302,12 @@ def wrapper(s):
 
     if not args.significanceScan:
         if useCache and not overWrite and limitCache.contains(sConfig):
-          res = limitCache.get(sConfig)
+            res = limitCache.get(sConfig)
         else:
-          res = c.calcLimit(cardFileName)#, options="--run blind")
-          if not args.skipFitDiagnostics:
-              c.calcNuisances(cardFileName)
-          limitCache.add(sConfig, res)
+            res = c.calcLimit(cardFileName)#, options="--run blind")
+            if not args.skipFitDiagnostics:
+                c.calcNuisances(cardFileName)
+            limitCache.add(sConfig, res)
     else:
         if useCache and not overWrite and signifCache.contains(sConfig):
             res = signifCache.get(sConfig)
@@ -378,7 +325,6 @@ def wrapper(s):
         
         # get the most signal region like bins
 
-
         print cardFileName
         combineWorkspace = cardFileName.replace('shapeCard.txt','shapeCard_FD.root')
         print "Extracting fit results from %s"%combineWorkspace
@@ -393,126 +339,97 @@ def wrapper(s):
             preFitShapes    = fitResults['hists']['shapes_prefit']['Bin0']
             postFitResults  = fitResults['results']['shapes_fit_b']['Bin0']
             postFitShapes   = fitResults['hists']['shapes_fit_b']['Bin0']
-	    print "WJet-sprefit" ,  preFitResults['WJets']
-	    print "WJet-spostfit" ,postFitResults['WJets']
-	    print 
-	    print "Top-prefit" ,  preFitResults['Top']
-	    print "Top-postfit" ,postFitResults['Top']
-	    print 
-	    print "DY-prefit" ,  preFitResults['DY']
-	    print "DY-postfit" ,postFitResults['DY']
-	    print 
-	    print "singleTop-prefit" ,  preFitResults['singleTop']
-	    print "singleTop-postfit" ,postFitResults['singleTop']
-	    print 
-	    print "VV-prefit" ,  preFitResults['VV']
-	    print "VV-postfit" ,postFitResults['VV']
-	    print 
-	    print "ZInv-prefit" ,  preFitResults['ZInv']
-	    print "ZInv-postfit" ,postFitResults['ZInv']
-	    print 
-	    print "TTX-prefit" ,  preFitResults['TTX']
-	    print "TTX-postfit" ,postFitResults['TTX']
-	    print 
-	    #print "QCD-prefit" ,  preFitResults['QCD']
-	    #print "QCD-postfit" ,postFitResults['QCD']
-            top_prefit  = preFitResults['Top']
-            top_postfit = postFitResults['Top']
-            top_prefit_SR_err   = ROOT.Double()
-            top_postfit_SR_err  = ROOT.Double()
+        
+        
+        print "WJet-sprefit" ,  preFitResults['WJets']
+        print "WJet-spostfit" ,postFitResults['WJets']
+        print 
+        print "Top-prefit" ,  preFitResults['Top']
+        print "Top-postfit" ,postFitResults['Top']
+        print 
+        print "DY-prefit" ,  preFitResults['DY']
+        print "DY-postfit" ,postFitResults['DY']
+        print 
+        print "singleTop-prefit" ,  preFitResults['singleTop']
+        print "singleTop-postfit" ,postFitResults['singleTop']
+        print 
+        print "VV-prefit" ,  preFitResults['VV']
+        print "VV-postfit" ,postFitResults['VV']
+        print 
+        print "ZInv-prefit" ,  preFitResults['ZInv']
+        print "ZInv-postfit" ,postFitResults['ZInv']
+        print 
+        print "TTX-prefit" ,  preFitResults['TTX']
+        print "TTX-postfit" ,postFitResults['TTX']
+        print 
+        print "QCD-prefit" ,  preFitResults['QCD']
+        print "QCD-postfit" ,postFitResults['QCD']
+        top_prefit  = preFitResults['Top']
+        top_postfit = postFitResults['Top']
+        top_prefit_SR_err   = ROOT.Double()
+        top_postfit_SR_err  = ROOT.Double()
 
-            WJ_prefit  = preFitResults['WJets']
-            WJ_postfit = postFitResults['WJets']
-            WJ_prefit_SR_err   = ROOT.Double()
-            WJ_postfit_SR_err  = ROOT.Double()
-            #
-            TTX_prefit  = preFitResults['TTX']
-            TTX_postfit = postFitResults['TTX']
+        WJ_prefit  = preFitResults['WJets']
+        WJ_postfit = postFitResults['WJets']
+        WJ_prefit_SR_err   = ROOT.Double()
+        WJ_postfit_SR_err  = ROOT.Double()
+        
+        TTX_prefit  = preFitResults['TTX']
+        TTX_postfit = postFitResults['TTX']
 
-            #ttZ_prefit_SR_err   = ROOT.Double()
-            #ttZ_postfit_SR_err  = ROOT.Double()
-            #ttZ_prefit_SR  = preFitShapes['TTZ'].IntegralAndError(iBinTTZLow, iBinTTZHigh, ttZ_prefit_SR_err)
-            #ttZ_postfit_SR = postFitShapes['TTZ'].IntegralAndError(iBinTTZLow, iBinTTZHigh, ttZ_postfit_SR_err)
-            #
-            DY_prefit  = preFitResults['DY']
-            DY_postfit = postFitResults['DY']
+        DY_prefit  = preFitResults['DY']
+        DY_postfit = postFitResults['DY']
 
-            DY_prefit_SR_err   = ROOT.Double()
-            DY_postfit_SR_err  = ROOT.Double()
-            #
-            MB_prefit  = preFitResults['VV']
-            MB_postfit = postFitResults['VV']
-            #
-            #MB_prefit_SR_err   = ROOT.Double()
-            #MB_postfit_SR_err  = ROOT.Double()
-            #MB_prefit_SR  = preFitShapes['multiBoson'].IntegralAndError(iBinDYLow, iBinDYHigh, MB_prefit_SR_err)
-            #MB_postfit_SR = postFitShapes['multiBoson'].IntegralAndError(iBinDYLow, iBinDYHigh, MB_postfit_SR_err)
-
-            #other_prefit  = preFitResults['TTXNoZ']
-            #other_postfit = postFitResults['TTXNoZ']
-
-            #other_prefit_SR_err   = ROOT.Double()
-            #other_postfit_SR_err  = ROOT.Double()
-            #other_prefit_SR  = preFitShapes['TTXNoZ'].IntegralAndError(iBinOtherLow, iBinOtherHigh, other_prefit_SR_err)
-            #other_postfit_SR = postFitShapes['TTXNoZ'].IntegralAndError(iBinOtherLow, iBinOtherHigh, other_postfit_SR_err)
+        DY_prefit_SR_err   = ROOT.Double()
+        DY_postfit_SR_err  = ROOT.Double()
+        
+        MB_prefit  = preFitResults['VV']
+        MB_postfit = postFitResults['VV']
+        
+        
+        for i in range(1):
+            top_prefit_SR  =  preFitShapes['Top'].IntegralAndError(i, i+1, top_prefit_SR_err)
+            top_postfit_SR = postFitShapes['Top'].IntegralAndError(i, i+1, top_postfit_SR_err)
+            WJ_prefit_SR  =  preFitShapes['WJets'].IntegralAndError(i, i+1, WJ_prefit_SR_err)
+            WJ_postfit_SR = postFitShapes['WJets'].IntegralAndError(i, i+1, WJ_postfit_SR_err)
+            DY_prefit_SR  = preFitShapes['DY'].IntegralAndError(i, i+1, DY_prefit_SR_err)
+            DY_postfit_SR = postFitShapes['DY'].IntegralAndError(i, i+1, DY_postfit_SR_err)
 
             print
-            print "## Scale Factors for backgrounds, integrated over ALL regions: ##"
-            print "{:20}{:4.2f}{:3}{:4.2f}".format('top:',          (top_postfit/top_prefit).val, '+/-',  top_postfit.sigma/top_postfit.val)
-            print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ:',          (WJ_postfit/WJ_prefit).val, '+/-',  WJ_postfit.sigma/WJ_postfit.val)
-            print "{:20}{:4.2f}{:3}{:4.2f}".format('TTX:',          (TTX_postfit/TTX_prefit).val, '+/-',  TTX_postfit.sigma/TTX_postfit.val)
-            print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan:',    (DY_postfit/DY_prefit).val,   '+/-',  DY_postfit.sigma/DY_postfit.val)
-            print "{:20}{:4.2f}{:3}{:4.2f}".format('multiBoson:',   (MB_postfit/MB_prefit).val,   '+/-',  MB_postfit.sigma/MB_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('other:',        (other_postfit/other_prefit).val, '+/-',  other_postfit.sigma/other_postfit.val)
-#	     AN and split CR have different binning, of course
-	    for i in range(1):
-	    #for i in range(1,13):
-	    #for i in range(1,25):
-	    #for i in range(1,37):
-		    top_prefit_SR  =  preFitShapes['Top'].IntegralAndError(i, i+1, top_prefit_SR_err)
-		    top_postfit_SR = postFitShapes['Top'].IntegralAndError(i, i+1, top_postfit_SR_err)
-		    WJ_prefit_SR  =  preFitShapes['WJets'].IntegralAndError(i, i+1, WJ_prefit_SR_err)
-		    WJ_postfit_SR = postFitShapes['WJets'].IntegralAndError(i, i+1, WJ_postfit_SR_err)
-		    DY_prefit_SR  = preFitShapes['DY'].IntegralAndError(i, i+1, DY_prefit_SR_err)
-		    DY_postfit_SR = postFitShapes['DY'].IntegralAndError(i, i+1, DY_postfit_SR_err)
-
-		    print
-		    print "## Scale Factors for backgrounds, integrated over dedicated control regions: ##" if not args.fitAll else "## Scale Factors for backgrounds, integrated over the signal regions: ##"
-		    print "region %i"%i
-		    print "{:20}{:4.2f}{:3}{:4.2f}".format('top: CR: ',          (top_postfit_SR/top_prefit_SR), '+/-',  top_postfit_SR_err/top_postfit_SR)
-		    print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ: CR : ',          (WJ_postfit_SR/WJ_prefit_SR), '+/-',  WJ_postfit_SR_err/WJ_postfit_SR)
-		    print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan: CR: ',    (DY_postfit_SR/DY_prefit_SR),   '+/-',  DY_postfit_SR_err/DY_postfit_SR)
-		    #print "{:20}{:4.2f}{:3}{:4.2f}".format('multiBoson:',   (MB_postfit_SR/MB_prefit_SR),   '+/-',  MB_postfit_SR_err/MB_postfit_SR)
-		    #print "{:20}{:4.2f}{:3}{:4.2f}".format('other:',        (other_postfit_SR/other_prefit_SR), '+/-',  other_postfit_SR_err/other_postfit_SR)
-
+            print "## Scale Factors for backgrounds, integrated over dedicated control regions: ##" if not args.fitAll else "## Scale Factors for backgrounds, integrated over the signal regions: ##"
+            print "region %i"%i
+            print "{:20}{:4.2f}{:3}{:4.2f}".format('top: CR: ',          (top_postfit_SR/top_prefit_SR), '+/-',  top_postfit_SR_err/top_postfit_SR)
+            print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ: CR : ',          (WJ_postfit_SR/WJ_prefit_SR), '+/-',  WJ_postfit_SR_err/WJ_postfit_SR)
+            print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan: CR: ',    (DY_postfit_SR/DY_prefit_SR),   '+/-',  DY_postfit_SR_err/DY_postfit_SR)
+		
     if xSecScale != 1:
         for k in res:
             res[k] *= xSecScale
     
     if res: 
-      if   args.signal == "TTbarDM":                        sString = "mChi %i mPhi %i type %s" % sConfig
-      elif args.signal == "T2tt":                           sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T2bt":                           sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T2bW":                           sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05":   sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09":   sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":    sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p95":   sString = "mStop %i mNeu %i" % sConfig
-      elif args.signal == "ttHinv":                         sString = "ttH->inv"
-      if args.significanceScan:
-        try:   
-            print "Result: %r significance %5.3f"%(sString, res['-1.000'])
-            return sConfig, res
-        except:
-            print "Problem with limit: %r" + str(res)
-            return None
-      else:
-        try:
-            print "Result: %r obs %5.3f exp %5.3f -1sigma %5.3f +1sigma %5.3f"%(sString, res['-1.000'], res['0.500'], res['0.160'], res['0.840'])
-            return sConfig, res
-        except:
-            print "Problem with limit: %r"%str(res)
-            return None
+        if   args.signal == "TTbarDM":                        sString = "mChi %i mPhi %i type %s" % sConfig
+        elif args.signal == "T2tt":                           sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T2bt":                           sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T2bW":                           sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05":   sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09":   sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":    sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p95":   sString = "mStop %i mNeu %i" % sConfig
+        elif args.signal == "ttHinv":                         sString = "ttH->inv"
+        if args.significanceScan:
+            try:   
+                print "Result: %r significance %5.3f"%(sString, res['-1.000'])
+                return sConfig, res
+            except:
+                print "Problem with limit: %r" + str(res)
+                return None
+        else:
+            try:
+                print "Result: %r obs %5.3f exp %5.3f -1sigma %5.3f +1sigma %5.3f"%(sString, res['-1.000'], res['0.500'], res['0.160'], res['0.840'])
+                return sConfig, res
+            except:
+                print "Problem with limit: %r"%str(res)
+                return None
 
 
 ######################################
@@ -522,16 +439,14 @@ def wrapper(s):
 if args.signal == "T2tt":
     if year == 2016:
         if args.fullSim:
-             from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
+            from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
         else:
-            #data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
             data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
             postProcessing_directory    = 'compstops_2016_nano_v21/MetSingleLep/'
-            #postProcessing_directory    = 'compstops_2016_nano_v11/MetSingleLep/'
             from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
     elif year == 2017:
         if args.fullSim:
-             from StopsDilepton.samples.nanoTuples_Fall17_FullSimSignal_postProcessed import signals_T2tt as jobs
+            from StopsDilepton.samples.nanoTuples_Fall17_FullSimSignal_postProcessed import signals_T2tt as jobs
         else:
             data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             postProcessing_directory    = 'stops_2017_nano_v0p22/dilep/'
@@ -565,12 +480,12 @@ results = [r for r in results if r]
 
 limitPrefix = args.signal
 if args.significanceScan:
-  limitResultsFilename = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'signifResults.root')
+    limitResultsFilename = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'signifResults.root')
 else:
-  if not os.path.isdir(os.path.join(baseDir, 'limits', args.signal, limitPrefix)):
-    os.makedirs(os.path.join(baseDir, 'limits', args.signal, limitPrefix))
-  limitResultsFilename = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'limitResults.root')
-  pklFile = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'limitResults.pkl')
+    if not os.path.isdir(os.path.join(baseDir, 'limits', args.signal, limitPrefix)):
+        os.makedirs(os.path.join(baseDir, 'limits', args.signal, limitPrefix))
+    limitResultsFilename = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'limitResults.root')
+    pklFile = os.path.join(baseDir, 'limits', args.signal, limitPrefix,'limitResults.pkl')
 
 ## new try, other thing is buggy
 def toGraph2D(name,title,length,x,y,z):
@@ -585,7 +500,6 @@ def toGraph2D(name,title,length,x,y,z):
     c = ROOT.TCanvas()
     result.Draw()
     del c
-    #res = ROOT.TGraphDelaunay(result)
     return result
 
 if not args.signal == 'ttHinv':
@@ -600,9 +514,7 @@ if not args.signal == 'ttHinv':
     for r in results:
         s, res = r
         mStop, mNeu = s
-	dm = mStop - mNeu
-        #if mStop%50>0: continue
-        #if mNeu%50>0 and not mNeu>(mStop-125): continue
+        dm = mStop - mNeu
         mStop_list.append(mStop)
         mLSP_list.append(mNeu)
         dm_list.append(dm)
@@ -647,39 +559,38 @@ if not args.signal == 'ttHinv':
     val['0.160'] = exp_up_list
     val['0.840'] = exp_down_list
     val['-1.000'] = obs_list
-    #print val
     pickle.dump( val, file(pklFile,'w'))
     print pklFile
     print limitResultsFilename
 
 # Make table for DM
 if args.signal == "TTbarDM":
-  limitPrefix = args.signal
-  # Create table
-  texdir = os.path.join(baseDir, 'limits', args.signal, limitPrefix)
-  if not os.path.exists(texdir): os.makedirs(texdir)
+    limitPrefix = args.signal
+    # Create table
+    texdir = os.path.join(baseDir, 'limits', args.signal, limitPrefix)
+    if not os.path.exists(texdir): os.makedirs(texdir)
 
-  for type in sorted(set([type_ for ((mChi, mPhi, type_), res) in results])):
-    for lim, key in [['exp','0.500'], ['obs', '-1.000']]:
-        chiList = sorted(set([mChi  for ((mChi, mPhi, type_), res) in results if type_ == type]))
-        phiList = sorted(set([mPhi  for ((mChi, mPhi, type_), res) in results if type_ == type]))
-        ofilename = texdir + "/%s_%s.tex"%(type, lim)
-        print "Writing to ", ofilename 
-        with open(ofilename, "w") as f:
-          f.write("\\begin{tabular}{cc|" + "c"*len(phiList) + "} \n")
-          f.write(" & & \multicolumn{" + str(len(phiList)) + "}{c}{$m_\\phi$ (GeV)} \\\\ \n")
-          f.write("& &" + " & ".join(str(x) for x in phiList) + "\\\\ \n \\hline \\hline \n")
-          for chi in chiList:
-            resultList = []
-            for phi in phiList:
-              result = ''
-              try:
-                for ((c, p, t), r) in results:
-                  if c == chi and p == phi and t == type:
-                      result = "%.2f" % r[key]
-              except:
-                pass
-              resultList.append(result)
-            if chi == chiList[0]: f.write("\\multirow{" + str(len(chiList)) + "}{*}{$m_\\chi$ (GeV)}")
-            f.write(" & " + str(chi) + " & " + " & ".join(resultList) + "\\\\ \n")
-          f.write(" \\end{tabular}")
+    for type in sorted(set([type_ for ((mChi, mPhi, type_), res) in results])):
+        for lim, key in [['exp','0.500'], ['obs', '-1.000']]:
+            chiList = sorted(set([mChi  for ((mChi, mPhi, type_), res) in results if type_ == type]))
+            phiList = sorted(set([mPhi  for ((mChi, mPhi, type_), res) in results if type_ == type]))
+            ofilename = texdir + "/%s_%s.tex"%(type, lim)
+            print "Writing to ", ofilename 
+            with open(ofilename, "w") as f:
+                f.write("\\begin{tabular}{cc|" + "c"*len(phiList) + "} \n")
+                f.write(" & & \multicolumn{" + str(len(phiList)) + "}{c}{$m_\\phi$ (GeV)} \\\\ \n")
+                f.write("& &" + " & ".join(str(x) for x in phiList) + "\\\\ \n \\hline \\hline \n")
+            for chi in chiList:
+                resultList = []
+                for phi in phiList:
+                    result = ''
+                    try:
+                        for ((c, p, t), r) in results:
+                            if c == chi and p == phi and t == type:
+                                result = "%.2f" % r[key]
+                    except:
+                        pass
+                resultList.append(result)
+                if chi == chiList[0]: f.write("\\multirow{" + str(len(chiList)) + "}{*}{$m_\\chi$ (GeV)}")
+                f.write(" & " + str(chi) + " & " + " & ".join(resultList) + "\\\\ \n")
+            f.write(" \\end{tabular}")

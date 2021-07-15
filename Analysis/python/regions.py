@@ -21,6 +21,7 @@ from StopsCompressed.Analysis.Region      import Region
 SR1 = Region("HT", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) 
 signalRegions  = []
 controlRegions = []
+region = {}
 SR1vlaX = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (3.5,5)) + Region ("CT1", (300,400))    
 SR1laX  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (5,12))  + Region ("CT1", (300,400)) 
 SR1maX  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (12,20)) + Region ("CT1", (300,400)) 
@@ -103,4 +104,22 @@ CR2cY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region
 
 signalRegions = [SR1vlaX,SR1laX, SR1maX, SR1haX, SR1vlaY,SR1laY, SR1maY, SR1haY, SR1vlbX,SR1lbX, SR1mbX, SR1hbX, SR1vlbY,SR1lbY, SR1mbY, SR1hbY, SR1lcX, SR1mcX, SR1hcX,SR1lcY, SR1mcY, SR1hcY, SR2vlaX,SR2laX, SR2maX, SR2haX, SR2vlaY,SR2laY, SR2maY, SR2haY, SR2vlbX,SR2lbX, SR2mbX, SR2hbX, SR2vlbY,SR2lbY, SR2mbY, SR2hbY,SR2lcX, SR2mcX, SR2hcX,SR2lcY, SR2mcY, SR2hcY]
 controlRegions= [ CR1aX, CR1aY, CR1bX, CR1bY, CR1cX, CR1cY, CR2aX, CR2aY, CR2bX, CR2bY, CR2cX, CR2cY]
+regionMapping = {
+		    0 : 4,
+		        1 : 4,
+			    2 : 4,
+			        3 : 4,
+				    4 : 3,
+				        5 : 3,
+					    6 : 4,
+					        7 : 4,
+						    8 : 4,
+						        9 : 4,
+							    10 : 3,
+							        11 : 3,
+								}
+
+
 #controlRegions= [ CR1aX]
+#region={'CR1aX':CR1aX,'SR1vlaX':SR1vlaX,'SR1laX':SR1laX,'SR1maX':SR1maX,'SR1haX':SR1haX,'CR1aY':CR1aY,'SR1vlaY':SR1vlaY,'SR1laY':SR1laY,'SR1maY':SR1maY,'SR1haY':SR1haY}
+#region=[CR1aX,SR1vlaX,SR1laX,SR1maX,SR1haX,CR1aY,SR1vlaY,SR1laY,SR1maY,SR1haY]

@@ -1,0 +1,7 @@
+*.pyc
+*.root
+*__init__.py
+*.DS_Store
+*.__.DS_Store
+plots/plotsJanik/regions/utilities/jsonFilesDCcomparison/*
+Analysis/python/run/testing/InvestigateDataCards/**/*.txt
