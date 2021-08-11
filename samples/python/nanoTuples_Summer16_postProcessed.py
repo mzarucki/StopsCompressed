@@ -91,6 +91,7 @@ dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
 dirs['QCD_HT'] 		= ["QCD_HT50to100", "QCD_HT100to200", "QCD_HT200to300_comb", "QCD_HT300to500_comb", "QCD_HT500to700_comb", "QCD_HT700to1000_comb", "QCD_HT1000to1500_comb", "QCD_HT1500to2000_comb", "QCD_HT2000toInf_comb" ]
 dirs['ZInv']		= ["ZJetsToNuNu_HT100to200_comb","ZJetsToNuNu_HT200to400_comb","ZJetsToNuNu_HT400to600_comb","ZJetsToNuNu_HT600to800","ZJetsToNuNu_HT800to1200","ZJetsToNuNu_HT1200to2500_comb","ZJetsToNuNu_HT2500toInf"]	
 
+dirs['others']           = dirs['DY_HT_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
 
@@ -111,4 +112,4 @@ WJetsToLNu_HT_16  	= Sample.fromDirectory(name="WJetsToLNu_HT_",       treeName=
 VV_16           	= Sample.fromDirectory(name="VV",                   treeName="Events", isData=False, color=color.VV,              texName="VV ",                               directory=directories['VV'])
 QCD_HT_16  		= Sample.fromDirectory(name="QCD_HT",    	    treeName="Events", isData=False, color=color.QCD_HT,          texName="QCD (HT)",                 directory=directories['QCD_HT'])
 ZInv_16  		= Sample.fromDirectory(name="ZInv",    	    	    treeName="Events", isData=False, color=color.ZInv,           texName="Z(#nu,#nu + Jets)",                 directory=directories['ZInv'])
-
+Others_16                = Sample.fromDirectory(name="others",                treeName="Events", isData=False, color=color.others,           texName="Others",                 directory=directories['others'])    

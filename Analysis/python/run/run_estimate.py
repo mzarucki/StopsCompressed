@@ -13,10 +13,11 @@ parser.add_option("--control",               dest="control",               defau
 parser.add_option("--useGenMet",             dest="useGenMet",             default=False,               action='store_true', help="use genMET instead of recoMET, used for signal studies")
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true', help="overwrite existing results?")
 parser.add_option("--all",                   dest="all",                   default=False,               action='store_true', help="Run over all SR and CR?")
-parser.add_option("--l1pT_CR_split",       action='store_true',           default=False,   help="plot region plot background substracted")
-parser.add_option("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
-parser.add_option("--mT_cut_value",       action='store',            default=95, choices=[95,100,105],   help="plot region plot background substracted")
-parser.add_option("--CT_cut_value",       action='store',            default=400, type="int", help="plot region plot background substracted")
+parser.add_option("--l1pT_CR_split",       action='store_true',            default=False,   help="plot region plot background substracted")
+parser.add_option("--extra_mT_cut",        action='store_true',            default=False,   help="plot region plot background substracted")
+parser.add_option("--mT_cut_value",        action='store',                 default=95, choices=[95,100,105],   help="plot region plot background substracted")
+parser.add_option("--CT_cut_value",        action='store',                 default=400, type="int", help="plot region plot background substracted")
+parser.add_option("--isPrompt",            action='store_true',            default=False,   help="promplt leptons contributing to regions")
 
 
 
@@ -89,15 +90,18 @@ signals_T2tt = []
 #from StopsDilepton.samples.cmgTuples_FullSimTTbarDM_mAODv2_25ns_postProcessed import signals_TTbarDM
 #allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels + trilepChannels}) for s in signals_TTbarDM + signals_T2tt + signals_T8bbllnunu_XCha0p5_XSlep0p5 + signals_T8bbllnunu_XCha0p5_XSlep0p05 + signals_T8bbllnunu_XCha0p5_XSlep0p95]
 
+if options.isPrompt:
+	setup.parameters["l1_prompt"] = True
 estimators = estimatorList(setup)
-allEstimators = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+#allEstimators = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+allEstimators = estimators.constructEstimatorList(['WJets','Top','Others', 'ZInv', 'QCD'])
 allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals_T2tt ]
 # Select estimate
 if not options.selectEstimator == 'Data':
     estimate = next((e for e in allEstimators if e.name == options.selectEstimator), None)
     estimate.isData = False
 else:
-    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value)))
+    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="others_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value,options.isPrompt)))
     estimate.isSignal = False
     estimate.isData   = True
 
@@ -122,7 +126,7 @@ def wrapper(args):
         res = estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
         return (estimate.uniqueKey(r,channel, setup), res )
 
-estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value)))
+estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="others_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value,options.isPrompt)))
 
 jobs=[]
 for channel in channels:
@@ -137,7 +141,7 @@ results = map(wrapper, jobs)
 #print results
 for channel in (['all']):
     for (i, r) in enumerate(allRegions):
-	#print r
+	print r
         if options.selectRegion is not None and options.selectRegion != i: continue
         if options.useGenMet: estimate.cachedEstimate(r, setup.sysClone({'selectionModifier':'genMet'}), save=True)
         else: estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)

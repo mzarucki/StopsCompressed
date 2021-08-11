@@ -50,6 +50,7 @@ color.TTJetsNG       = 7
 
 color.other          = 46
 
+color.others          = ROOT.kYellow
 color.T2tt_450_0                       = ROOT.kBlack
 color.TTbarDMJets_scalar_Mchi1_Mphi200 = ROOT.kBlack
 color.TTbarDMJets_scalar_Mchi1_Mphi10  = ROOT.kBlack

@@ -70,16 +70,13 @@ class Setup:
         #    from Samples.Tools.config import redirector_global as redirector
         if year == 2016 :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import DY_HT_LO_16, Top_pow_16 , singleTop_16, ZInv_16, TTX_16, WJetsToLNu_HT_16,VV_16, QCD_HT_16
+            from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
 
             from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import Run2016
-            DY           = DY_HT_LO_16
             WJets        = WJetsToLNu_HT_16
             Top          = Top_pow_16
-            singleTop    = singleTop_16 
-            VV           = VV_16 
-            QCD		     = QCD_HT_16
-            TTX          = TTX_16
+            QCD		 = QCD_HT_16
+            Others       = Others_16
             ZInv    	 = ZInv_16
             data         = Run2016
 
@@ -121,17 +118,14 @@ class Setup:
             self.lumi     = 59.74*1000
             self.dataLumi = 59.74*1000
 
-        mc           = [DY, WJets, Top, singleTop, VV, TTX, ZInv, QCD ]
+        mc           = [WJets, Top, Others, ZInv, QCD ]
         self.processes = {
 
-            'DY'        : DY,
             'WJets'     : WJets,
             'Top'       : Top,
-            'singleTop' : singleTop,
-            'VV'        : VV,
-            'TTX'       : TTX,        
-	        'ZInv'      : ZInv,
-	        'QCD'       : QCD
+            'Others'    : Others,        
+	    'ZInv'      : ZInv,
+	    'QCD'       : QCD
         }
         self.processes["Data"] = data
 

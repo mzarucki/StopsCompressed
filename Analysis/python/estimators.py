@@ -2,7 +2,7 @@ from StopsCompressed.Analysis.MCBasedEstimate             import MCBasedEstimate
 from StopsCompressed.Analysis.Region                      import *
 
 class estimatorList:
-    def __init__(self, setup, samples=['DY','WJets','Top','ZInv','singleTop','VV','TTX', 'QCD']):
+    def __init__(self, setup, samples=['WJets','Top','ZInv','Others', 'QCD']):
         for s in samples:
             setattr(self, s, MCBasedEstimate(name=s, sample=setup.processes[s]))
                 

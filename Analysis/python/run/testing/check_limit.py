@@ -38,10 +38,11 @@ argParser.add_argument("--year",           default=2016,     action="store",    
 argParser.add_argument("--dpm",            default= False,   action="store_true",help="Use dpm?",)
 argParser.add_argument("--scaleWjets",     default=0.0, choices=[0.0,-0.1,0.1], type=float,  action="store",help="scaling Wjets for testing",)
 argParser.add_argument("--scaleTTbar",     default=0.0, choices=[0.0,-0.1,0.1], type=float,   action="store",help="scaling TTbar for testing",)
-argParser.add_argument("--l1pT_CR_split",       action='store_true',           default=False,   help="plot region plot background substracted")
-argParser.add_argument("--mT_cut_value",       action='store',            default=95, choices=[95,100,105], type=int,   help="plot region plot background substracted")
-argParser.add_argument("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
-argParser.add_argument("--CT_cut_value",       action='store',            default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
+argParser.add_argument("--l1pT_CR_split",      action='store_true',           default=False,   help="plot region plot background substracted")
+argParser.add_argument("--mT_cut_value",       action='store',                default=95, choices=[95,100,105], type=int,   help="plot region plot background substracted")
+argParser.add_argument("--extra_mT_cut",       action='store_true',           default=False,   help="plot region plot background substracted")
+argParser.add_argument("--CT_cut_value",       action='store',                default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
+argParser.add_argument("--isPrompt",           action='store_true',           default=False,   help="promplt leptons contributing to regions")
 
 
 args = argParser.parse_args()
@@ -135,14 +136,17 @@ elif args.fitAll:
 
 # Define estimators for CR
 estimators           = estimatorList(setup)
-setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+#setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','Others', 'QCD'])
+if args.isPrompt:
+	        setup.parameters["l1_prompt"] = True
 
 setups = [setup]
 
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)
+elif args.fitAll:	        subDir = "others_fitAllregion_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -242,10 +246,10 @@ def wrapper(s):
     c.addCR(controlRegions)
     c.addSR(signalRegions)
     for setup in setups:
-      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
-      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
+      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="others_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)))
+      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="others_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)))
       for e in setup.estimators : 
-        e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
+        e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="others_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)))
       
       for r in setup.regions:
         print r 
@@ -297,26 +301,14 @@ def wrapper(s):
             
             if e.name.count('WJets'):
               c.specifyExpectation(binname, 'WJets',  expected.val)
-            elif e.name.count("DY"):
-              DY_SF = 1
-              c.specifyExpectation(binname, name, expected.val*DY_SF)
-              if DY_SF != 1: logger.warning("Scaling DY background by %s", DY_SF)
             elif e.name.count("Top"):
               Top_SF = 1
               c.specifyExpectation(binname, name, expected.val*Top_SF)
               if Top_SF != 1: logger.warning("Scaling Top background by %s", Top_SF)
-            elif e.name.count("singleTop"):
-              singleTop_SF = 1
-              c.specifyExpectation(binname, name, expected.val*singleTop_SF)
-              if singleTop_SF != 1: logger.warning("Scaling singleTop background by %s", singleTop_SF)
-            elif e.name.count("VV"):
+            elif e.name.count("Others"):
               c.specifyExpectation(binname, name, expected.val)
             elif e.name.count("ZInv"):
               c.specifyExpectation(binname, name, expected.val)
-            elif e.name.count("TTX"):
-              TTX_SF = 1
-              c.specifyExpectation(binname, name, expected.val*TTX_SF)
-              if TTX_SF != 1: logger.warning("Scaling TTX background by %s", TTX_SF)
             elif e.name.count("QCD"):
               c.specifyExpectation(binname, name, expected.val)               
             if expected.val>0 or True:
@@ -337,7 +329,7 @@ def wrapper(s):
                 c.specifyUncertainty(SFl,        binname, name, 1 + e.btaggingSFlSystematic(r, channel, setup).val * uncScale )
                 c.specifyUncertainty(JEC,        binname, name, 1 + e.JECSystematic(r, sysChannel, setup).val )
                 c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(r, sysChannel, setup).val)
-                c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
+                c.specifyUncertainty(leptonSF,   binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
                 c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
                 c.specifyUncertainty(LeptonSFsyst, binname, name, 1.01)
 
@@ -502,20 +494,11 @@ def wrapper(s):
         print "Top-prefit" ,  preFitResults['Top']
         print "Top-postfit" ,postFitResults['Top']
         print 
-        print "DY-prefit" ,  preFitResults['DY']
-        print "DY-postfit" ,postFitResults['DY']
-        print 
-        print "singleTop-prefit" ,  preFitResults['singleTop']
-        print "singleTop-postfit" ,postFitResults['singleTop']
-        print 
-        print "VV-prefit" ,  preFitResults['VV']
-        print "VV-postfit" ,postFitResults['VV']
-        print 
         print "ZInv-prefit" ,  preFitResults['ZInv']
         print "ZInv-postfit" ,postFitResults['ZInv']
         print 
-        print "TTX-prefit" ,  preFitResults['TTX']
-        print "TTX-postfit" ,postFitResults['TTX']
+        print "Others-prefit" ,  preFitResults['Others']
+        print "Others-postfit" ,postFitResults['Others']
         
         top_prefit  = preFitResults['Top']
         top_postfit = postFitResults['Top']
@@ -527,17 +510,13 @@ def wrapper(s):
         WJ_prefit_SR_err   = ROOT.Double()
         WJ_postfit_SR_err  = ROOT.Double()
         
-        TTX_prefit  = preFitResults['TTX']
-        TTX_postfit = postFitResults['TTX']
+        Others_prefit  = preFitResults['Others']
+        Others_postfit = postFitResults['Others']
 
-        DY_prefit  = preFitResults['DY']
-        DY_postfit = postFitResults['DY']
 
         DY_prefit_SR_err   = ROOT.Double()
         DY_postfit_SR_err  = ROOT.Double()
 
-        MB_prefit  = preFitResults['VV']
-        MB_postfit = postFitResults['VV']
 
         QCD_prefit_SR_err   = ROOT.Double()
         QCD_postfit_SR_err  = ROOT.Double()
@@ -546,9 +525,7 @@ def wrapper(s):
         print "## Scale Factors for backgrounds, integrated over {} regions: ##".format(r)
         print "{:20}{:4.2f}{:3}{:4.2f}".format('top:',          (top_postfit/top_prefit).val, '+/-',  top_postfit.sigma/top_postfit.val)
         print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ:',          (WJ_postfit/WJ_prefit).val, '+/-',  WJ_postfit.sigma/WJ_postfit.val)
-        print "{:20}{:4.2f}{:3}{:4.2f}".format('TTX:',          (TTX_postfit/TTX_prefit).val, '+/-',  TTX_postfit.sigma/TTX_postfit.val)
-        print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan:',    (DY_postfit/DY_prefit).val,   '+/-',  DY_postfit.sigma/DY_postfit.val)
-        print "{:20}{:4.2f}{:3}{:4.2f}".format('multiBoson:',   (MB_postfit/MB_prefit).val,   '+/-',  MB_postfit.sigma/MB_postfit.val)
+        print "{:20}{:4.2f}{:3}{:4.2f}".format('Others:',          (Others_postfit/Others_prefit).val, '+/-',  Others_postfit.sigma/Others_postfit.val)
 
 
   if xSecScale != 1:
@@ -590,9 +567,10 @@ if args.signal == "T2tt":
     if args.fullSim:
       from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
-      data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
-      # data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
-      postProcessing_directory    = 'compstops_2016_nano_v30/Met/'
+      #data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
+      data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
+      postProcessing_directory    = 'compstops_2016_nano_v27/Met/'
+      #postProcessing_directory    = 'compstops_2016_nano_v28/Met/'
       from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
   
   elif year == 2017:

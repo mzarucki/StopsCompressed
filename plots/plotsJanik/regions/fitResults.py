@@ -126,13 +126,11 @@ logger.info("Plotting from cardfile %s"%cardFile)
 ###Processes###
 processes = { 
 	'WJets': { "process":'WJets',	"color": color.WJetsToLNu ,	"texName":'W(l,#nu) + Jets (HT)'},
-	'DY'   : { "process":'DY',	"color": color.DY,		"texName":'Drell-Yan'},
 	'Top'  : { "process":'Top',	"color":color.Top_pow,		"texName":'t#bar{t}/t'},
-	'singleTop':{"process":'singleTop',"color":color.singleTop,	"texName":'single-top'},
 	'ZInv' : { "process":'ZInv',	"color":color.ZInv,		"texName":'Z(#nu,#nu + Jets)'},
-	'VV'   : {"process" :'VV',	"color":color.VV,		"texName":'VV'},
 	'QCD'  : {"process":'QCD',	"color":color.QCD_HT,		"texName":'QCD (HT)'},
-	'TTX'  : {"process":'TTX',	"color":color.TTX,		"texName":'t#bar{t}X'}
+	#'Others': {"process":'Others',	"color":color.others,		"texName":'Others'}, #YELLOW
+	'Others': {"process":'Others',	"color":color.other,		"texName":'Others'}
 	}
 
 
