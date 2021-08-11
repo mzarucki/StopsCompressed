@@ -116,6 +116,7 @@ isFastSim = estimate.name.count('T2tt')
 isFastSim = estimate.name.count('T8bbllnunu')
 if isFastSim:
   setup = setup.sysClone(sys={'reweight':['reweightLeptonFastSimSF'], 'remove':['reweightPU36fb']})
+  print "here"
 
 
 #setup = setup.sysClone()

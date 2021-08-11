@@ -61,6 +61,8 @@ argParser.add_argument("--l1pT_CR_split",       action='store_true',           d
 argParser.add_argument("--mT_cut_value",       action='store',            default=95, choices=[95,100,105], type=int,   help="plot region plot background substracted")
 argParser.add_argument("--extra_mT_cut",        action='store_true',           default=False,   help="plot region plot background substracted")
 argParser.add_argument("--CT_cut_value",       action='store',            default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
+argParser.add_argument("--R1only",        action='store_true',           default=False,   help="")
+argParser.add_argument("--R2only",        action='store_true',           default=False,   help="")
 
 
 args = argParser.parse_args()
@@ -72,7 +74,17 @@ if (args.l1pT_CR_split) :
         if (args.extra_mT_cut) :
             _NBINS = 88
             _NCR = 16
-            from StopsCompressed.Analysis.regions_splitCR_4mTregions import controlRegions, signalRegions, regionMapping
+            if (args.R1only) :
+                _NBINS = 44
+                _NCR = 8
+                from StopsCompressed.Analysis.regions_splitCR_4mTregions_R1only import controlRegions, signalRegions, regionMapping
+            elif (args.R2only) :
+                _NCR = 8
+                _NBINS = 44
+                from StopsCompressed.Analysis.regions_splitCR_4mTregions_R2only import controlRegions, signalRegions, regionMapping
+            else :
+                from StopsCompressed.Analysis.regions_splitCR_4mTregions import controlRegions, signalRegions, regionMapping
+        
         else :  
             if (args.CT_cut_value ==450) :
                 from StopsCompressed.Analysis.regions_splitCR_CT450	         import controlRegions, signalRegions, regionMapping           
@@ -117,7 +129,7 @@ elif args.year == 2018: lumi_scale = 59.74
 
 
 
-plotDirectory = os.path.join( plot_directory, "fit", str(args.year),"nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value), args.cardfile, args.carddir.split("/")[-1] )
+plotDirectory = os.path.join( plot_directory, "fit", str(args.year),"nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only), args.cardfile, args.carddir.split("/")[-1] )
 cardFile      = os.path.join( analysis_results,str(args.year), args.carddir,   args.cardfile+".txt" )
 cardFileShape = os.path.join( analysis_results,str(args.year), args.carddir,   args.cardfile+"_shapeCard.txt" )
 logger.info("Plotting from cardfile %s"%cardFile)

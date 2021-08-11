@@ -80,12 +80,11 @@ setup.channels = allChannels
 
 # Define regions for CR
 if args.control2016:
-    setup.regions   = controlRegions
+	setup.regions   = controlRegions
 elif args.signal2016:
-    setup.regions   = signalRegions
+	setup.regions   = signalRegions
 elif args.fitAll:
-    setup.regions   = controlRegions + signalRegions
-
+	setup.regions   = controlRegions + signalRegions
 
 # Define estimators for CR
 estimators           = estimatorList(setup)

@@ -48,6 +48,7 @@ color.TTJetsF        = 7
 color.TTJetsG        = 7
 color.TTJetsNG       = 7
 
+color.fakes          = ROOT.kYellow
 color.other          = 46
 
 color.others          = ROOT.kYellow

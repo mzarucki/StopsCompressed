@@ -15,8 +15,8 @@ class wPtWeight:
 				}
 		self.sys	= {
 				'b0' : 0.0,
-				'b1' : 0.001,
-				'b2' : 0.002,
+				'b1' : 0.052,
+				'b2' : 0.00,
 				'b3' : 0.003,
 				'b4' : 0.004,
 				'b5' : 0.008,
@@ -55,9 +55,19 @@ class wPtWeight:
 		else:
 			print "Error: Issue with computing wPt weight"
 		corr_fact = self.params[a]
-		sys_fact  = self.sys[b]
 		#print "weights: wPt %s , correction factor: %s"%(wPt,corr_fact)
 		w = (norm*corr_fact)+(sys_fact*sigma)
+
+		if sigma==0:
+			print (norm*corr_fact)
+			return (norm*corr_fact)
+		elif sigma <0:
+			print ((norm*corr_fact)**2)
+			return ((norm*corr_fact)**2)
+		elif sigma>0:
+			print 1
+			return 1
+		##up=no weight, nom=weighted, down= (reweight)^2
 		#print "weight calculated in function: ", w 
-		return (norm*corr_fact)+(sys_fact*sigma) 
-				
+		#return (norm*corr_fact)+(sys_fact*sigma) 
+		#return	()	
