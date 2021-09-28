@@ -169,23 +169,25 @@ def muonSelector( lepton_selection, year):
     # tigher isolation applied on analysis level
     # medium Id for sensitivity studies from l["looseId"] -> l["mediumId"]
     if lepton_selection == 'hybridIso':
+        print "better not be here!" 
         def func(l):
             if l["pt"] <= 25 and l["pt"] >3.5:
                 return \
                     abs(l["eta"])       < 2.4 \
-                    and (l['pfRelIso03_all']*l['pt']) < 5.0 \
+                    and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 \
                     and l["looseId"] 
             elif l["pt"] > 25:
                 return \
                     abs(l["eta"])       < 2.4 \
-                    and l['pfRelIso03_all'] < 0.2 \
+                    and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 \
                     and l["looseId"] 
                     
     elif lepton_selection == 'looseHybridIso':
+	print "here for looseHybridIsolation"
         def func(l):
             if l["pt"] <= 25 and l["pt"] >3.5:
                 return \
@@ -201,16 +203,6 @@ def muonSelector( lepton_selection, year):
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 \
                     and l["looseId"] 
-    
-    elif lepton_selection == 'noHybridIso':
-        def func(l):
-            if l["pt"] >3.5:
-                return \
-                    abs(l["eta"])       < 2.4 \
-                    and abs(l["dxy"])       < 0.1 \
-                    and abs(l["dz"])        < 0.5 \
-                    and l["looseId"] 
-            
     return func
 
 
@@ -285,27 +277,28 @@ def eleSelector( lepton_selection, year):
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pt'] ) \
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
     if lepton_selection == 'hybridIso':
+        print "better not be here!" 
         def func(l):
-            
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
-                    and (l['pfRelIso03_all']*l['pt']) < 5.0 \
+                    and (l['pfRelIso03_all']*l['pt']) < 20.0 \
                     and abs(l["dxy"])       < 0.02 \
-                    and abs(l["dz"])        < 0.1 
+                    and abs(l["dz"])        < 0.1
             elif l["pt"] > 25:
                 
                 return \
 		    abs(l["eta"]) < 2.5 \
 		    and ECALGap(l) \
                     and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
-                    and l['pfRelIso03_all'] < 0.2 \
+                    and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.02 \
                     and abs(l["dz"])        < 0.1 
 
     elif lepton_selection == 'looseHybridIso':
+	print "electrons for looseHybridIsolation"
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
@@ -323,17 +316,6 @@ def eleSelector( lepton_selection, year):
                     and l['pfRelIso03_all'] < 0.8 \
                     and abs(l["dxy"])       < 0.1 \
                     and abs(l["dz"])        < 0.5 
-    elif lepton_selection == 'noHybridIso':
-        def func(l):
-            if l["pt"] >5:
-                return \
-		    abs(l["eta"]) < 2.5 \
-		    and ECALGap(l) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pt'] ) \
-                    and electronVIDSelector( l, idVal= 1 , removedCuts=['pfRelIso03_all'] ) \
-                    and abs(l["dxy"])       < 0.1 \
-                    and abs(l["dz"])        < 0.5 
-             
     return func
 
 
@@ -358,7 +340,14 @@ def getGoodMuons(c, collVars=muonVars, mu_selector = alwaysFalse):
     return [l for l in getMuons(c, collVars) if mu_selector(l)]
 
 def getGoodElectrons(c, collVars=electronVars, ele_selector = alwaysFalse):
-    return [l for l in getElectrons(c, collVars) if ele_selector(l)]
+    lep=[]
+    for l in getElectrons(c, collVars):
+        if ele_selector(l):
+            lep.append(l)
+        else:
+            print "rejeted ele: " ,l
+    return lep
+    #return [l for l in getElectrons(c, collVars) if ele_selector(l)]
 
 idCutBased={'loose':0 ,'medium':1, 'tight':2}
 photonVars=['eta','pt','phi','mass','cutBased']

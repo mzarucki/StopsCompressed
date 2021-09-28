@@ -26,7 +26,7 @@ from StopsCompressed.Tools.helpers           import deltaR, deltaPhi, get_wPt
 from StopsCompressed.Tools.wPtWeight	     import wPtWeight
 from StopsCompressed.Tools.isrWeight         import ISRweight
 from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus #tauSelector,
-from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets, getParentIds, categorizeLep, matchLep
+from StopsCompressed.Tools.objectSelection   import getGoodJets, isBJet, jetId, getGenPartsAll, getJets, getPhotons, getAllJets, categorizeLep, matchLep
 from StopsCompressed.Tools.leptonSF          import leptonSF as leptonSF_
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
 #from StopsDilepton.Tools.leptonFastSimSF     import leptonFastSimSF as leptonFastSimSF_
@@ -92,6 +92,8 @@ logger_rt = _logger_rt.get_logger(options.logLevel, logFile = logFile )
 # Flags 
 isSingleLep        = options.skim.lower().startswith('singlelep')
 isMetSingleLep     = options.skim.lower().startswith('metsinglelep')
+isMet              = options.skim.lower().startswith('met')
+noSkim             = options.skim.lower().startswith('noskim')
 
 # Skim condition
 skimConds = []
@@ -99,12 +101,16 @@ skimConds = []
 if isSingleLep:
     skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)>=1" )
 elif isMetSingleLep:
-    skimConds.append( "Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)>=1 && MET_pt>=100" )
+    skimConds.append( "(Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)) >=1 && MET_pt>=100" )
+elif isMet:
+    skimConds.append( "MET_pt>=100" )
+elif noSkim:
+    skimConds.append( "1" )
 #Samples: Load samples
 maxN = 1 if options.small else None
 if options.small:
     maxNFiles = 1
-    maxNEvents = 100
+    maxNEvents = 200
     options.job = 0
     options.nJobs = 1000 # set high to just run over 1 input file
 
@@ -377,6 +383,7 @@ branchKeepStrings_DATAMC = [\
     "nElectron", "Electron_*",
     "nMuon", "Muon_*",
     "nTau", "Tau_*",
+    "nPhoton", "Photon_*",
 ]
 if not options.fastSim:
     branchKeepStrings_DATAMC += ["HLT_*"]
@@ -453,7 +460,7 @@ read_variables += [\
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[genPartIdx/I, pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I, genPartFlav/b]'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I]'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,idMVAoldDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
@@ -469,7 +476,8 @@ new_variables += [\
 # Add weight branches for susy signal samples from friend tree
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
-cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
+#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
+cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISR2016"
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/gen_v7_2016"
 renormISR = False
 if options.susySignal:
@@ -483,8 +491,8 @@ if options.susySignal:
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
-    if getT2ttISRNorm(samples[0], masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
-    #if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
+    #if getT2ttISRNorm(samples[0], masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir_ISR):
+    if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
 		    renormISR = True
 		    logger.info("Successfully loaded ISR normalzations.")
     else:
@@ -495,9 +503,9 @@ new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', '
 new_variables += ["reweightHEM/F"]
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
-if isSingleLep or isMetSingleLep:
+if isSingleLep or isMetSingleLep or isMet or noSkim:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
-    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I', 'l1_isPrompt/O', 'l1_dRgen/F'] )
+    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I', 'l1_isPrompt/O', 'l1_dRgen/F', 'l1_HI/F' ,] )
     if isMC: 
         new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F', 'reweightwPtUp/F', 'reweightwPtDown/F'])
 
@@ -539,7 +547,7 @@ if not options.skipNanoTools:
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
     ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
-    # from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
+    from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
     logger.info("Will put files into directory %s", output_directory)
@@ -563,8 +571,8 @@ if not options.skipNanoTools:
             JMECorrector()
         ]
         
-        # if not sample.isData:
-        #     modules.append( ISRcounter() )
+        if not sample.isData:
+            modules.append( ISRcounter() )
 
        ##  need a hash to avoid data loss
         file_hash = str(hash(f))
@@ -595,7 +603,7 @@ def filler( event ):
     r = reader.event
     #workaround  = (r.run, r.luminosityBlock, r.event) # some fastsim files seem to have issues, apparently solved by this.
     event.isData = s.isData
-    
+     
     if isMC:
 
         ## genMatching taken from Lukas ##
@@ -701,14 +709,15 @@ def filler( event ):
 	isr = ISRweight()
 	#print "mStop",event.mStop
         #isr.getISRWeight(r, norm=ISRnorm, isFast=True )
-        #event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm,isFast=True )             if options.susySignal else 1
-        #event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)     if options.susySignal else 1
-        #event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1)    if options.susySignal else 1
+	#print "ISRnorm: ", ISRnorm
+        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm,isFast=True )             if options.susySignal else 1
+        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)     if options.susySignal else 1
+        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1)    if options.susySignal else 1
 	#print event.reweight_nISR, event.reweight_nISRUp, event.reweight_nISRDown
-
-        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
-        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
-        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
+	### use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
+        #event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
+        #event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
+        #event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
 	#print "ISR reweight: " , event.reweight_nISR
 
     if options.keepAllJets:
@@ -736,7 +745,6 @@ def filler( event ):
         m['eleIndex']   = -1
     nHEMElectrons 	= len(filter(lambda e:e['eta']<-1.392 and e['eta']>-3.00 and e['phi']<-0.87 and e['phi']>-1.57, electrons ))
     leptons 		= electrons + muons
-    
     leptons.sort(key = lambda p:-p['pt'])
 
     event.l1_isPrompt = True
@@ -758,7 +766,8 @@ def filler( event ):
     allJetsNotClean = getAllJets(r, [], ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar=None)
     reallyAllJets= getAllJets(r, leptons, ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar='jetId') # keeping robert's comment: ... yeah, I know.
     allJets      = filter(lambda j:abs(j['eta'])<jetAbsEtaCut, reallyAllJets)
-    jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
+    #lower jet pt threshold to 20 for sensitivity studies
+    jets         = filter(lambda j:jetId(j, ptCut=20,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
     if options.year == 2016:
@@ -812,6 +821,7 @@ def filler( event ):
                 else:
                     event.JetGood_genPt[iJet] = -1
         getattr(event, "JetGood_pt")[iJet] = jet['pt']
+	#print "Jet pt: ", jet['pt']
 
     #veto events with 3rd jet pt>60
     #if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
@@ -845,7 +855,7 @@ def filler( event ):
         for b in jetVarNames:
             getattr(event, 'JetGoodBTS_'+b)[iJet] = jet[b]
         getattr(event, 'JetGoodBTS_pt')[iJet] = jet['pt']
-
+	#print "BJet pt: ", jet['pt']
     event.HT          = sum([j['pt'] for j in jets])
     event.nBTag       = len(bJets)
     event.nSoftBJets  = len(softBJets)
@@ -880,6 +890,9 @@ def filler( event ):
 		    event.reweightwPtUp  = wpt.wPtWeight(leptons[0]['wPt'], sigma=1) 
 		    event.reweightwPtDown  = wpt.wPtWeight(leptons[0]['wPt'], sigma=-1) 
 		    #print "wpt weight: " , event.reweightwPt, "length of leptons: ", len(leptons) 
+		    #print "pt of Wjet: ", leptons[0]['wPt']
+		    #print "wpt Up:", event.reweightwPtUp
+		    #print "wpt down:", event.reweightwPtDown
 	    else:
 		    event.reweightwPt = 1 
 		    event.reweightwPtUp = 1 
@@ -893,7 +906,8 @@ def filler( event ):
             if not var.startswith('unclust'):
                 corrFactor = 'corr_JER' if var == 'jer' else None
                 alljets_sys[var]    = allJetsNotClean
-                jets_sys[var]       = filter(lambda j: jetId(j, ptCut=30, absEtaCut=jetAbsEtaCut, ptVar='pt_'+var if not var=='jer' else 'pt_nom', corrFactor=corrFactor), allJets)
+		#lowering jet pt threshold, senstivity studies
+                jets_sys[var]       = filter(lambda j: jetId(j, ptCut=20, absEtaCut=jetAbsEtaCut, ptVar='pt_'+var if not var=='jer' else 'pt_nom', corrFactor=corrFactor), allJets)
                 bjets_sys[var]      = filter(lambda j: isBJet(j) and abs(j['eta'])<2.4, jets_sys[var])
                 nonBjets_sys[var]   = filter(lambda j: not ( isBJet(j) and abs(j['eta'])<2.4), jets_sys[var])
                 
@@ -905,7 +919,7 @@ def filler( event ):
                 setattr(event, 'nBTag_'+var,    len(bjets_sys[var]))
 
     #if sampleName.startswith('WJets') or sampleName.startswith('TTLep') or sampleName.startswith('TTSingle'):
-    if isMC:
+    if isMC or options.susySignal:
 	    #for gl in genLeptons:
 	    #	print "genlep: ", gl['pdgId'],"genlep mother index: ",  gl["genPartIdxMother"], "genlep pt: ", gl['pt'], "gen status: ", gl['status'], "gen index: ", gl['index']
 	    #print "gen leptons length: ", len(genLeptons)
@@ -915,6 +929,7 @@ def filler( event ):
 		    #l['isPrompt'],l['dRgen'] = categorizeLep(l, genLeptons, cone =0.1)
 		    l['isPrompt'] = matchLep(l)
 
+
 	    if leptons:
 	    	event.l1_isPrompt = leptons[0]['isPrompt']
 	    	#event.l1_dRgen    = leptons[0]['dRgen']
@@ -923,7 +938,7 @@ def filler( event ):
 	#		print "sub-leading lepton prompt: ", leptons[1]['isPrompt']
 	    #if event.l1_isPrompt == 0:
 	    #	print "+" * 15
-    if isSingleLep or isMetSingleLep:
+    if isSingleLep or isMetSingleLep or isMet or noSkim:
         event.nGoodMuons      = len(filter( lambda l:abs(l['pdgId'])==13, leptons))
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
@@ -943,8 +958,12 @@ def filler( event ):
             event.l1_muIndex    = leptons[0]['muIndex']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
 	    #print"pt, eta, pdg: ", event.l1_pt, event.l1_eta, abs(event.l1_pdgId)
+	    event.l1_HI = event.l1_relIso03 * min(event.l1_pt,25)
+	    #print "hybrin iso: ", event.HI, event.l1_pt, event.l1_relIso03
+	    #print "#"*25
         if isMC:
-            leptonsForSF   = ( leptons[:1] if isMetSingleLep else [] )
+            #leptonsForSF   = ( leptons[:1] if (isMetSingleLep or isMet) else [] )
+            leptonsForSF   = leptons[:1]
             leptonSFValues = [ leptonSF.getSF(pdgId=l['pdgId'], pt=l['pt'], eta=((l['eta'] + l['deltaEtaSC']) if abs(l['pdgId'])==11 else l['eta'])) for l in leptonsForSF ]
             event.reweightLeptonSF     = reduce(mul, [sf[0] for sf in leptonSFValues], 1)
             event.reweightLeptonSFDown = reduce(mul, [sf[1] for sf in leptonSFValues], 1)
