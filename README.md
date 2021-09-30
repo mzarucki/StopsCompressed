@@ -15,7 +15,7 @@ scram b -j9
 ```
 
 # Get combine
-# Latest recommendations at https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#setting-up-the-environment-and-installation
+Latest recommendations at https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#setting-up-the-environment-and-installation
 cd $CMSSW_BASE/src
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
@@ -40,9 +40,7 @@ python check_limit.py --fitAll --expected --skipFitDiagnostics --l1pT_CR_split -
 ```
 
 * If you want to scale processes you can use the flags `--scaleWjets` or `--scaleTTbar` available inside `check_limit.py`. Print statements are output while running `sh check_limit.sh` (see above). However, these scale the processes globally. For more specific scaling, implement your changes here:
-```
 https://github.com/jandrejk/StopsCompressed/blob/MC_based/Analysis/python/run/testing/check_limit.py#L302-L312
-```
 
 * After you tested with one mass point you can submit the whole mass point grid using 
 ```
@@ -61,10 +59,8 @@ This produces a .pkl and .root file which are inputs to the plotting script
 sh plot_SMS_limit_v2.py
 ```
 but don't forget to set the path correctly inside `plot_SMS_limit_v2.py`:
-```
 https://github.com/jandrejk/StopsCompressed/blob/MC_based/Analysis/python/plot/plot_SMS_limit_v2.py#L67
-```
+
 and
-```
+
 https://github.com/jandrejk/StopsCompressed/blob/MC_based/Analysis/python/plot/plot_SMS_limit_v2.py#L82
-``` 
