@@ -44,9 +44,12 @@ argParser.add_argument("--extra_mT_cut",        action='store_true',           d
 argParser.add_argument("--CT_cut_value",       action='store',            default=400, type=int,choices=[400,450],   help="plot region plot background substracted")
 argParser.add_argument("--R1only",        action='store_true',           default=False,   help="")
 argParser.add_argument("--R2only",        action='store_true',           default=False,   help="")
+argParser.add_argument("--isLooseAndNotTight",        action='store_true',           default=False,   help="plot region plot background substracted")
 
 
 args = argParser.parse_args()
+
+useFakes = False
 
 for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/python/run/testing/*.C')) :
   if ROOT.gROOT.LoadMacro(macro): #compile it
@@ -117,6 +120,16 @@ from Analysis.Tools.cardFileWriter import cardFileWriter
 
 setup = Setup(year=year)
 
+if useFakes :
+  if (args.isLooseAndNotTight) :
+    setup.parameters["l1_isLooseAndNotTight"] = True
+    setup.parameters["l1_prompt"] = True
+    setup.sys["remove"] = [ "reweightPU", "reweightL1Prefire", 
+    "reweightBTag_SF", 
+    "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)", 
+    "reweightHEM"]
+    setup.sys["reweight"].append("reweightFakeRate(l1_pt,l1_eta,l1_pdgId)")
+
 def getRegion(region, CR=False):
 	if CR == True:
 		for key,val in region.items():
@@ -143,14 +156,14 @@ elif args.fitAll:
 # Define estimators for CR
 estimators           = estimatorList(setup)
 setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
-# setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD']) # removing DY
 
 setups = [setup]
 
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only)
+elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}_isLNotT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isLooseAndNotTight)
+# elif args.fitAll:	        subDir = "mergeDCs_F0p1"
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -203,7 +216,9 @@ def wrapper(s):
 
   logger.info("Running over signal: %s", s.name)
 
+  # cardFileName = os.path.join(limitDir, s.name+'_shapeCard.txt')
   cardFileName = os.path.join(limitDir, s.name+'.txt')
+  
   if not os.path.exists(cardFileName) or overWrite:
     counter=0
     c.reset()
@@ -217,6 +232,8 @@ def wrapper(s):
     JEC     = 'JEC_%s'%year
     JER     = 'JER_%s'%year
     leptonSF= 'leptonSF_new_%s'%year
+    if useFakes :
+      FakeRate= 'FakeRate_%s'%year
     leptonSFsignal= 'leptonSFsignal_%s'%year
     
     PU      = 'PU_%s'%year
@@ -237,7 +254,9 @@ def wrapper(s):
     c.addUncertainty(leptonSF,   shapeString)
     c.addUncertainty(leptonSFsignal,          "lnN")
     c.addUncertainty(PU,           shapeString)
-
+  
+    # c.addUncertainty(FakeRate,   shapeString)
+    
     if year == 2016:
       lumiUncertainty = 1.025
     elif year == 2017:
@@ -250,10 +269,10 @@ def wrapper(s):
     c.addCR(controlRegions)
     c.addSR(signalRegions)
     for setup in setups:
-      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
-      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
+      eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}_isLNotT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isLooseAndNotTight)))
+      observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}_isLNotT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isLooseAndNotTight)))
       for e in setup.estimators : 
-        e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value)))
+        e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy="nbins{}_mt{}_extramT{}_CT{}_isLNotT{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isLooseAndNotTight)))
       
       for r in setup.regions:
         print r 
@@ -349,6 +368,8 @@ def wrapper(s):
                 c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
                 c.specifyUncertainty(LeptonSFsyst, binname, name, 1.01)
 
+                # c.specifyUncertainty(FakeRate, binname, name, 1 + e.FRSystematic(   r, channel, setup).val * uncScale ) 
+                
                 if name == "WJets":
                   c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
                   print "wpt sys: {}".format(e.wPtSystematic(         r, sysChannel, setup).val)
@@ -402,6 +423,7 @@ def wrapper(s):
             c.specifyUncertainty(SFl,             binname, 'signal', 1 + e.btaggingSFlSystematic(r, channel, signalSetup).val )
             c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
             c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
+            # c.specifyUncertainty(FakeRate,      binname, 'signal', 1 + e.FRSystematic(   r, channel, signalSetup).val )
             # c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
             
             c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
@@ -467,7 +489,8 @@ def wrapper(s):
   elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":  sConfig = s.mStop, s.mNeu
   elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p95": sConfig = s.mStop, s.mNeu
   elif args.signal == "ttHinv":                       sConfig = ("ttHinv", "2l")
-
+  
+  
   if not args.significanceScan:
     if useCache and not overWrite and limitCache.contains(sConfig):
       res = limitCache.get(sConfig)
@@ -603,7 +626,7 @@ if args.signal == "T2tt":
     else:
       data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
       # data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
-      postProcessing_directory    = 'compstops_2016_nano_v30/Met/'
+      postProcessing_directory    = 'compstops_2016_nano_v27/Met/'
       from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
   
   elif year == 2017:
