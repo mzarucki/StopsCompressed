@@ -33,6 +33,10 @@ default_lepVeto     = True
 default_jetVeto     = True
 default_MET         = (300, -999)
 default_prompt      = False
+default_isLooseAndNotTight = False
+
+# default_HI_tight    = True
+# default_isSignal    = False
 
 class Setup:
     def __init__(self, year=2016):
@@ -54,6 +58,9 @@ class Setup:
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
             "l1_prompt":    default_prompt,
+            "l1_isLooseAndNotTight" : default_isLooseAndNotTight
+            # "l1_HI"    :    default_HI_tight,
+            # "isSignal" :    default_isSignal
         }
 
 
@@ -186,6 +193,7 @@ class Setup:
                         if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
                         if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
                         if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
+                        if "reweightFakeRate{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightFakeRate(l1_pt,l1_eta,l1_pdgId)")
 
 
                 else:
@@ -211,7 +219,7 @@ class Setup:
         logger.debug("Using cut-string: %s", cut)
         return cut
 
-    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto,l1_prompt,channel='all', isFastSim =False):
+    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto,l1_prompt, l1_isLooseAndNotTight,channel='all', isFastSim =False):
         """Define full selection
            dataMC: "Data" or "MC"
            channel: "all", "e" or "mu"
@@ -247,7 +255,7 @@ class Setup:
 
         if lepVeto:
             res['prefixes'].append('lepSel')
-            res['cuts'].append('Sum$(lep_pt>20)<=1&&l1_pt>0')
+            res['cuts'].append('Sum$(lep_pt>20&&abs(lep_dxy)<0.02&&abs(lep_dz)<0.1)<=1&&l1_pt>0')
 
         if nISRJet:
             res['prefixes'].append('nISRJets')
@@ -256,6 +264,22 @@ class Setup:
         if l1_prompt:
              res['prefixes'].append('l1_prompt')
              res['cuts'].append('l1_isPrompt>=1')
+        
+        if l1_isLooseAndNotTight :
+            res['prefixes'].append('l1_HI_dxy_dz')
+            res['cuts'].append('l1_HI>5&&abs(l1_dxy)<0.02&&abs(l1_dz)<0.1')
+
+            
+            
+        # if l1_HI :
+        #     res['prefixes'].append('l1_HI')
+        #     res['cuts'].append('l1_HI<=5')
+        # else :
+        #     if (isSignal == False) : # in case of signal don't apply HI cut - the variable l1_HI is not even in the ntuple
+        #         res['prefixes'].append('l1_HI')
+        #         res['cuts'].append('l1_HI>5') 
+
+
        # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
        #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
        #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
