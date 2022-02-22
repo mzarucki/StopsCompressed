@@ -40,7 +40,7 @@ def getAllJets(c, leptons, ptCut=30, absEtaCut=2.4, jetVars=jetVars, jetCollecti
 
     return res
 
-def isBJet(j, tagger = 'DeepCSV', year = 2016):
+def isBJet(j, tagger = 'DeepCSV', year = 'UL2016'):
     if tagger == 'CSVv2':
         if year == 2016:
             # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
@@ -51,15 +51,18 @@ def isBJet(j, tagger = 'DeepCSV', year = 2016):
         else:
             raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
     elif tagger == 'DeepCSV':
-        if year == 2016:
-            # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
-            return j['btagDeepB'] > 0.6321
-        elif year == 2017:
-            # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-            return j['btagDeepB'] > 0.4941
-        elif year == 2018:
-            # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-            return j['btagDeepB'] > 0.4184
+        if year == 'UL2016':
+		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
+            return j['btagDeepB'] > 0.5847
+        elif year == 'UL2016_preVFP':
+		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
+            return j['btagDeepB'] > 0.5847
+        elif year == 'UL2017':
+		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+            return j['btagDeepB'] > 0.4506
+        elif year == 'UL2018':
+		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+            return j['btagDeepB'] > 0.4168
         else:
             raise (NotImplementedError, "Don't know what cut to use for year %s"%year)
 
@@ -169,7 +172,6 @@ def muonSelector( lepton_selection, year):
     # tigher isolation applied on analysis level
     # medium Id for sensitivity studies from l["looseId"] -> l["mediumId"]
     if lepton_selection == 'hybridIso':
-        print "better not be here!" 
         def func(l):
             if l["pt"] <= 25 and l["pt"] >3.5:
                 return \
@@ -277,7 +279,6 @@ def eleSelector( lepton_selection, year):
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pt'] ) \
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
     if lepton_selection == 'hybridIso':
-        print "better not be here!" 
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
@@ -353,7 +354,7 @@ idCutBased={'loose':0 ,'medium':1, 'tight':2}
 photonVars=['eta','pt','phi','mass','cutBased']
 photonVarsMC = photonVars + ['mcPt']
 
-tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'idAntiMu','idAntiE', 'idMVAnewDM2017v2','idMVAoldDM2017v2'] #idMVAnewDM2017v2 :2 =VLose
+tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'decayMode', 'idDeepTau2017v2p1VSjet',] #idDeepTau2017v2p1VSjet :4 =VLose, decayMode != 5 or 6
 def getTaus(c, collVars=tauVars):
     return [getObjDict(c, 'Tau_', collVars, i) for i in range(int(getVarValue(c, 'nTau')))]
 
@@ -361,11 +362,13 @@ def looseTauID( l, ptCut=20, absEtaCut=2.3):
 
     #print l["idMVAnewDM2017v2"], ord(l["idMVAnewDM2017v2"])
     # use Tau_idMVAnewDM2017v2 corresponding to AN-2017 newMVA ID, VLoose
-    ##and ord(l["idMVAnewDM2017v2"])>=2\
-    ##and ord(l["idMVAoldDM2017v2"])>=2\
+    #print "Tau ID: ", l["idDeepTau2017v2p1VSjet"], "ord: ", ord(l["idDeepTau2017v2p1VSjet"])
+    #print "Tau decay modes: ", l["decayMode"]
+    #print "Tau eta: ", abs(l["eta"]), "Tau pT: ", l["pt"]
     return \
     l["pt"]>=ptCut\
-    and ord(l["idMVAnewDM2017v2"])>=2\
+    and ord(l["idDeepTau2017v2p1VSjet"])>=4\
+    and (l["decayMode"] != 5 or l["decayMode"] != 6)\
     and abs(l["eta"])<absEtaCut\
 
 def getGoodTaus(c, leptons, collVars=tauVars):

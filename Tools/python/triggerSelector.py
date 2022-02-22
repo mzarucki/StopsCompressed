@@ -1,18 +1,18 @@
 class triggerSelector:
     def __init__(self, year, era=None):
-        if year == 2016:
+        if year == "UL2016" or "UL2016_preVFP":
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_IsoMu24", "HLT_Mu50"]
             self.jet     = ["HLT_PFJet450", "HLT_AK8PFJet450", "HLT_PFHT800"]
             self.e       = ["HLT_Ele27_WPTight_Gsf"] 
 
-        elif year == 2017:
+        elif year == "UL2017":
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_IsoMu24", "HLT_Mu50"]
             self.jet     = ["HLT_PFJet450", "HLT_AK8PFJet450", "HLT_PFHT800"]
             self.e       = ["HLT_Ele35_WPTight_Gsf"] 
 
-        elif year == 2018:
+        elif year == "UL2018":
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_IsoMu24", "HLT_Mu50"]
             self.jet     = ["HLT_PFJet450", "HLT_AK8PFJet450", "HLT_PFHT800"]
