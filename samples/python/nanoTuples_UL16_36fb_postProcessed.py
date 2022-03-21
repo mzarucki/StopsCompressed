@@ -1,5 +1,6 @@
 import copy, os, sys
 from RootTools.core.Sample import Sample
+from RootTools.core.standard import *
 import ROOT
 
 # Logging
@@ -13,7 +14,7 @@ try:
     data_directory_ = sys.modules['__main__'].data_directory
 except:
     from StopsCompressed.samples.default_locations import default_locations
-    data_directory_ = default_locations.mc_2016_data_directory 
+    data_directory_ = default_locations.mc_2016_36fb_data_directory 
 
 # Take post processing directory if defined in main module
 try:
@@ -21,7 +22,7 @@ try:
   postProcessing_directory_ = sys.modules['__main__'].postProcessing_directory
 except:
   from StopsCompressed.samples.default_locations import default_locations
-  postProcessing_directory_ = default_locations.mc_2016_postProcessing_directory 
+  postProcessing_directory_ = default_locations.mc_2016_36fb_postProcessing_directory 
 
 logger.info("Loading MC samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
@@ -41,7 +42,13 @@ DY_M50_HT =[
             "DYJetsToLL_M50_HT600to800",
             "DYJetsToLL_M50_HT800to1200",
             "DYJetsToLL_M50_HT1200to2500",
-            "DYJetsToLL_M50_HT2500toInf"
+            "DYJetsToLL_M50_HT2500toInf",
+	    "DYJetsToLL_M50_HT70to100_preVFP",
+	    "DYJetsToLL_M50_HT100to200_preVFP",
+	    "DYJetsToLL_M50_HT200to400_preVFP",
+	    "DYJetsToLL_M50_HT600to800_preVFP",
+	    "DYJetsToLL_M50_HT800to1200_preVFP",
+	    "DYJetsToLL_M50_HT2500toInf_preVFP",
             ] 
 
 
@@ -50,8 +57,8 @@ dirs = {}
 dirs['DY_HT_M50_LO']     =  DY_M50_HT 
 #dirs['DY_HT_M5to50_LO']  =  DY_M5to50_HT 
 #
-dirs['TTLep_pow']        = ["TTLep_pow_CP5"]
-dirs['TTSingleLep_pow']  = ["TTSingleLep_pow_CP5"]
+dirs['TTLep_pow']        = ["TTLep_pow_CP5", "TTLep_pow_CP5_preVFP"]
+dirs['TTSingleLep_pow']  = ["TTSingleLep_pow_CP5", "TTSingleLep_pow_CP5_preVFP"]
 dirs['Top_pow']          = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
 #
 ##dirs['TTbar']            	     = ["TTbar"]
@@ -62,52 +69,33 @@ dirs['Top_pow']          = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
 ##
 ##dirs['Top_pow']          = dirs['TTLep_pow']  
 ##
-dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "T_tch_pow", "TBar_tch_pow"]#, "TToLeptons_tch_powheg", "TBarToLeptons_tch_powheg"]
-dirs['singleTop_tch']    = ["T_tch_pow", "TBar_tch_pow"]
+dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "T_tch_pow", "TBar_tch_pow", "TBar_tWch_ext_preVFP", "T_tWch_ext_preVFP", "T_tch_pow_preVFP", "TBar_tch_pow_preVFP"]#, "TToLeptons_tch_powheg", "TBarToLeptons_tch_powheg"]
+dirs['singleTop_tch']    = ["T_tch_pow", "TBar_tch_pow", "T_tch_pow_preVFP", "TBar_tch_pow_preVFP"]
 #
 #
 #dirs['TTZ_LO']         = ['TTZ_LO']
 ##
-dirs['TTG']             = ["TTGJets"]
+dirs['TTG']             = ["TTGJets", "TTGJets_preVFP"]
 ##
-dirs['TTW']             = ['TTWToLNu_CP5', 'TTWToQQ']
+dirs['TTW']             = ['TTWToLNu_CP5', 'TTWToQQ', 'TTWToLNu_CP5_preVFP']
 #use TTWJets from 14Dec, LO samples
 #dirs['TTW']             = ['TTW_LO']
 
 dirs['TTX']             = dirs['TTW'] + dirs['TTG'] #+ dirs['TTZ_LO']
 
-dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"]
+dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf", "WJetsToLNu_HT100to200_preVFP", "WJetsToLNu_HT200to400_preVFP", "WJetsToLNu_HT400to600_preVFP", "WJetsToLNu_HT600to800_preVFP", "WJetsToLNu_HT800to1200_preVFP", "WJetsToLNu_HT1200to2500_preVFP", "WJetsToLNu_HT2500toInf_preVFP", ]
 
-dirs['WW']              = ["WWTo2L2Nu"] 
-##For the time being, till WWtoLNuQQ becomes available, use WW_inclusive
-dirs['WW_incl']		= ["WW"]
+dirs['WW']              = ["WWTo2L2Nu", "WWTo2L2Nu_preVFP"] #TTWToLNu_CP5
 dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
-dirs['ZZ']              = ["ZZTo2L2Nu"] # "ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" ,
+dirs['ZZ']              = ["ZZTo2L2Nu", "ZZTo2L2Nu_preVFP",] # "ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" ,
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
-dirs['VV']              = dirs['WW_incl'] + dirs['WZ'] + dirs['ZZ']
+dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
 #dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
 #dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 
-dirs['QCD_HT'] 		= [
-			   #"QCD_HT50to100", 
-			   #"QCD_HT100to200", 
-			   #"QCD_HT100to200_madgraph",
-			   "QCD_HT200to300",
-			   "QCD_HT200to300_madgraph",
-			   "QCD_HT300to500",
-			   "QCD_HT300to500_madgraph", 
-			   "QCD_HT500to700_madgraph", 
-			   ##"QCD_HT700to1000",
-			   "QCD_HT700to1000_madgraph",
-			   "QCD_HT1000to1500", 
-			   "QCD_HT1000to1500_madgraph",
-			   "QCD_HT1500to2000", 
-			   "QCD_HT1500to2000_madgraph",
-			   "QCD_HT2000toInf", 
-			   "QCD_HT2000toInf_madgraph" 
-			   ] 
-dirs['ZInv']            = ["DYJetsToNuNu_HT100to200", "DYJetsToNuNu_HT200to400", "DYJetsToNuNu_HT400to600", "DYJetsToNuNu_HT600to800", "DYJetsToNuNu_HT800to1200", "DYJetsToNuNu_HT1200to2500", "DYJetsToNuNu_HT2500toInf" ]
+dirs['QCD_HT'] 		= ["QCD_HT50to100", "QCD_HT100to200", "QCD_HT200to300","QCD_HT200to300_madgraph", "QCD_HT300to500_madgraph", "QCD_HT500to700_madgraph", "QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT2000toInf_madgraph", "QCD_HT100to200_preVFP", "QCD_HT500to700_preVFP", "QCD_HT700to1000_madgraph_preVFP", "QCD_HT1000to1500_preVFP", "QCD_HT1000to1500_madgraph_preVFP", "QCD_HT1500to2000_preVFP", "QCD_HT1500to2000_madgraph_preVFP", "QCD_HT2000toInf_preVFP" ] #"QCD_HT700to1000_comb",
+dirs['ZInv']            = ["DYJetsToNuNu_HT100to200", "DYJetsToNuNu_HT200to400", "DYJetsToNuNu_HT600to800", "DYJetsToNuNu_HT1200to2500", "DYJetsToNuNu_HT2500toInf" , "DYJetsToNuNu_HT100to200_preVFP", "DYJetsToNuNu_HT200to400_preVFP", "DYJetsToNuNu_HT400to600_preVFP", "DYJetsToNuNu_HT600to800_preVFP", "DYJetsToNuNu_HT800to1200_preVFP", "DYJetsToNuNu_HT1200to2500_preVFP", "DYJetsToNuNu_HT2500toInf_preVFP"]
 
 dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 

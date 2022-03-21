@@ -37,10 +37,10 @@ DY_M50_HT =[
             "DYJetsToLL_M50_HT70to100",
             "DYJetsToLL_M50_HT100to200",
             "DYJetsToLL_M50_HT200to400",
-#            "DYJetsToLL_M50_HT400to600",
+            "DYJetsToLL_M50_HT400to600",
             "DYJetsToLL_M50_HT600to800",
             "DYJetsToLL_M50_HT800to1200",
-#            "DYJetsToLL_M50_HT1200to2500",
+            "DYJetsToLL_M50_HT1200to2500",
             "DYJetsToLL_M50_HT2500toInf"
             ] 
 
@@ -66,42 +66,50 @@ dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "T_tch_pow", "TBar_t
 dirs['singleTop_tch']    = ["T_tch_pow", "TBar_tch_pow"]
 #
 #
-#dirs['TTZ_LO']         = ['TTZ_LO']
+dirs['TTZ_LO']         = ['TTZ_LO']
 ##
 dirs['TTG']             = ["TTGJets"]
 ##
-dirs['TTW']             = ['TTWToLNu_CP5'] #, 'TTWToQQ']
-#use TTWJets from 14Dec, LO samples
-#dirs['TTW']             = ['TTW_LO']
+dirs['TTW']             = ['TTWToLNu_CP5', 'TTWToQQ']
+#use TTWJets from 14Dec, LO samples , for now keep it with combination, later once TTW_LO is available for postVFP, switch them out
+dirs['TTW_LO']             = ['TTW_LO']
 
-dirs['TTX']             = dirs['TTW'] + dirs['TTG'] #+ dirs['TTZ_LO']
+dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
 dirs['WJetsToLNu_HT']   = [ "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"] #"WJetsToLNu_HT70to100",
 
-dirs['WW']              = ["WWTo2L2Nu"] #TTWToLNu_CP5
+dirs['WW']              = ["WWTo2L2Nu"] #WWToLNuQQ_CP5
+dirs['WW_incl']         = ["WW"] 
 #dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
 dirs['ZZ']              = ["ZZTo2L2Nu"] # "ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" ,
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
 #dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
-dirs['VV']              = dirs['WW']  + dirs['ZZ']
+##replace with WW to single and double lepton once thet are available, for now use inclusive
+dirs['VV']              = dirs['WW_incl']  + dirs['ZZ']
 
 #dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
 #dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 
 dirs['QCD_HT'] 		= [
-				##"QCD_HT50to100", 
+				#"QCD_HT50to100", 
+				#"QCD_HT50to100_madgraph",
 			   	#"QCD_HT100to200", 
-				##"QCD_HT200to300",
-				##"QCD_HT200to300_madgraph", 
-				##"QCD_HT300to500_madgraph", 
+				#"QCD_HT100to200_madgraph",
+				#"QCD_HT200to300",
+				"QCD_HT200to300_madgraph", 
+				"QCD_HT300to500",
+				"QCD_HT300to500_madgraph", 
 				"QCD_HT500to700", 
+				"QCD_HT500to700_madgraph",
+				"QCD_HT700to1000",
 				"QCD_HT700to1000_madgraph",
 				"QCD_HT1000to1500", 
 				"QCD_HT1000to1500_madgraph", 
 				"QCD_HT1500to2000", 
 				"QCD_HT1500to2000_madgraph", 
 				"QCD_HT2000toInf", 
+				"QCD_HT2000toInf_madgraph"
 				] 
 dirs['ZInv']            = ["DYJetsToNuNu_HT100to200", "DYJetsToNuNu_HT200to400", "DYJetsToNuNu_HT400to600", "DYJetsToNuNu_HT600to800", "DYJetsToNuNu_HT800to1200", "DYJetsToNuNu_HT1200to2500", "DYJetsToNuNu_HT2500toInf" ]
 

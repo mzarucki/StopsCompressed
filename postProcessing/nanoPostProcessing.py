@@ -12,7 +12,7 @@ import uuid
 
 from array import array
 from operator import mul
-from math import sqrt, atan2, sin, cos
+from math import sqrt, atan2, sin, cos, isnan
 
 # RootTools
 from RootTools.core.standard import *
@@ -31,7 +31,7 @@ from StopsCompressed.Tools.leptonSF          import leptonSF as leptonSF_
 #from StopsDilepton.Tools.triggerEfficiency   import triggerEfficiency
 #from StopsDilepton.Tools.leptonFastSimSF     import leptonFastSimSF as leptonFastSimSF_
 
-from Analysis.Tools.puProfileCache           import *
+#from Analysis.Tools.puProfileCache           import *
 from Analysis.Tools.L1PrefireWeight          import L1PrefireWeight
 #from Analysis.Tools.LeptonTrackingEfficiency import LeptonTrackingEfficiency
 #from Analysis.Tools.isrWeight                import ISRweight
@@ -129,7 +129,7 @@ if options.year == "UL2016":
     from Samples.nanoAOD.UL16v9_private 		import allSamples as mcSamples
     from Samples.nanoAOD.Run2016_private_ULnanoAODv9    import allSamples as dataSamples
 
-    allSamples = mcSamples + dataSamples
+    allSamples = mcSamples + dataSamples 
 
 elif options.year == "UL2016_preVFP":
 	#UL changes
@@ -213,7 +213,7 @@ else:
 has_susy_weight_friend = False
 if options.susySignal and options.fastSim:
     # Make friend sample
-    friend_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
+    friend_dir = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
     if os.path.exists( friend_dir ):
         weight_friend = Sample.fromDirectory( "weight_friend", directory = [friend_dir] ) 
         if weight_friend.chain.BuildIndex("luminosityBlock", "event")>0:
@@ -487,7 +487,7 @@ read_variables += [\
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I,looseId/O]'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I,decayMode/I,idDeepTau2017v2p1VSjet/b]'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I,decayMode/I,idDeepTau2017v2p1VSjet/b,idMVAoldDM2017v2/b]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
@@ -504,7 +504,9 @@ new_variables += [\
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
-cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISR2016"
+cache_dir = "/groups/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
+##For UL FullSim points: 
+#cache_dir = "/groups/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISRUL2016"
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/gen_v7_2016"
 renormISR = False
 if options.susySignal:
@@ -526,7 +528,7 @@ if options.susySignal:
     		    logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
 		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F', 'dPhiMetJet/F', 'metJet/I'] )
 new_variables += ["reweightHEM/F"]
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
@@ -594,6 +596,7 @@ if not options.skipNanoTools:
     newFileList = []
     logger.info("Starting nanoAOD postprocessing")
     for f in sample.files:
+	logger.info("For FASTSIM no UL tags available for JEC, since we use preUL FastSim samples, repeating the same tags, FIX IT once FastSim UL Tags are available!!!")
         JMECorrector = createJMECorrector(isMC=(not sample.isData), dataYear=options.year, runPeriod=era, jesUncert="Total", jetType = "AK4PFchs", metBranchName=METBranchName, isFastSim=options.fastSim, applySmearing=False)
         modules = [
             JMECorrector()
@@ -641,7 +644,7 @@ def filler( event ):
 	    event.year	 = 2018
 
 
-    print "year stored: ", event.year 
+    #print "year stored: ", event.year 
     if isMC:
 
         ## genMatching taken from Lukas ##
@@ -743,7 +746,7 @@ def filler( event ):
         #event.reweightPUVVUp = nTrueInt_puRWVVUp   ( r.Pileup_nTrueInt )
 
     # top pt reweighting
-    if isMC:
+    if isMC and options.fastSim:
         #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
         ISRnorm = getT2ttISRNorm(samples[0], r.GenSusyMStop, r.GenSusyMNeutralino, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
 	isr = ISRweight()
@@ -867,7 +870,48 @@ def filler( event ):
                     event.JetGood_genPt[iJet] = -1
         getattr(event, "JetGood_pt")[iJet] = jet['pt']
 	#print "Jet pt: ", jet['pt']
+#    if event.nJetGood > 0:
+#	    dphiMetJets = []
+#	    for j in range(event.nJetGood):
+#		dphiMetJets.append(deltaPhi(event.met_phi, event.JetGood_phi[j]))
+#	    event.dPhiMetJet = min(dphiMetJets)
+#	    #print "minimum delta phi b/w jet and met: ", event.dPhiMetJet
+#    else:
+#	    event.dPhiMetJet = -999
+    dphiMetJets = []
+    event.dphiMetJet = -999
+    event.metJet = 0
+    leadJet = float("NaN")
+    subLeadJet = float("NaN")
+    if event.JetGood_pt[0]> 60 or event.JetGood_pt[1]> 60:
+	    leadJet = deltaPhi(event.met_phi, event.JetGood_phi[0])
+	    subLeadJet = deltaPhi(event.met_phi, event.JetGood_phi[1])
+    if isnan(leadJet) == False  and isnan(subLeadJet) == False:
+    	event.dPhiMetJet = min(leadJet, subLeadJet)
+	if event.dPhiMetJet == leadJet:
+			event.metJet = 0
+	elif event.dPhiMetJet == subLeadJet:
+			event.metJet = 1
+    elif isnan(leadJet) == False and isnan(subLeadJet):
+    	    event.dPhiMetJet = leadJet
+	    event.metJet = 0
+    elif math.isnan(leadJet) and isnan(subLeadJet) == False:
+    	    event.dPhiMetJet = subLeadJet
+	    event.metJet = 1
+    print "selected jet for dphi lead 0; sublead 1: ", event.metJet, "dphi of leadin jet w/ met: ", leadJet, "dphi of subleading jet w/ met: ", subLeadJet, "selected min dphi metJet: ", event.dPhiMetJet
 
+	    
+    #if event.JetGood_pt[0]> 60:
+    #        leadJet = 1 
+    #        dphiMetJets.append(deltaPhi(event.met_phi, event.JetGood_phi[0]))
+    #        print "lead jet>60: ", event.JetGood_pt[0], "dphi: ", deltaPhi(event.met_phi, event.JetGood_phi[0])
+    #elif event.JetGood_pt[1]> 60:
+    #        subleadJet = 1
+    #        dphiMetJets.append(deltaPhi(event.met_phi, event.JetGood_phi[1]))
+    #        print "subleading jet>60: ", event.JetGood_pt[1], "dphi: ", deltaPhi(event.met_phi, event.JetGood_phi[1])
+    #if dphiMetJets:
+    #	print "min of dphi between met & jets: ", min(dphiMetJets), "lead jet: ", leadJet, "sublead jet: ", subleadJet
+    
     #veto events with 3rd jet pt>60
     #if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
 
@@ -974,8 +1018,8 @@ def filler( event ):
 	    for l in leptons:
 		    #l['isPrompt'],l['dRgen'] = categorizeLep(l, genLeptons, cone =0.1)
 		    l['isPrompt'] = matchLep(l)
-	    for t in taus:
-		    print "Tau decay mode", t['decayMode'] 
+	    #for t in taus:
+		    #print "Tau decay mode", t['decayMode'] 
 
 
 	    if leptons:
@@ -1020,7 +1064,7 @@ def filler( event ):
             event.reweightLeptonSFUp   = reduce(mul, [sf[2] for sf in leptonSFValues], 1)  
             if event.reweightLeptonSF ==0:
                 logger.error( "reweightLeptonSF is zero!")
-	    print "lepton SF legacy: ", event.reweightLeptonSF, event.reweightLeptonSFDown, event.reweightLeptonSFUp
+	    #print "lepton SF legacy: ", event.reweightLeptonSF, event.reweightLeptonSFDown, event.reweightLeptonSFUp
 	##Keeping lepton SFs 1 for UL till we decide on how to extract our own
             #event.reweightLeptonSF     = 1
             #event.reweightLeptonSFDown = 1

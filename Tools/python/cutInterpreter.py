@@ -12,6 +12,7 @@ mIsoWP = { "VT":5, "T":4, "M":3 , "L":2 , "VL":1, 0:"None" }
 special_cuts = {
     "deltaPhiJetsInverted"  	:  "dphij0j1>=2.5",
     "deltaPhiJets"  	        :  "dphij0j1<2.5",
+    "deltaPhiMetJetsInv"	:  "dPhiMetJet<0.5",
     "deltaPhiJetsmod"           :  "dphij0j1<2.5&&dphij0j1>0",
     "lepSel"        	        :  "Sum$(lep_pt>20)<=1&&l1_pt>0",
     "lpt"           	        :  "l1_pt>0",
@@ -32,7 +33,7 @@ special_cuts = {
     "isFake"            :  "l1_isPrompt==0",
   }
 
-continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ,("leta","abs(l1_eta)"), ("Cone", "CT1"), ("Ctwo", "CT2")]
+continous_variables = [ ("met", "met_pt"), ("mt", "mt"), ("ht", "HT") , ('ISRJets_pt', 'ISRJets_pt'), ("nPV", "PV_npvsGood"), ("lpt","l1_pt") ,("leta","abs(l1_eta)"), ("Cone", "CT1"), ("Ctwo", "CT2"),("dphimetjet","dPhiMetJet")]
 discrete_variables  = [ ("njet", "nJetGood"), ("nbtag", "nBTag") ,("nHardJet", "Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)"), ("nSoftJets", "Sum$(JetGood_pt>=30&&JetGood_pt<60&&abs(Jet_eta)<2.4)"), ("nISRJets", "nISRJets"),( "ntau","nGoodTaus"),("nSoftBJets", "nSoftBJets"),("nHardBJets", "nHardBJets"), ("nISR", "nISR"), ("isPrompt","l1_isPrompt")]
 
 class cutInterpreter:

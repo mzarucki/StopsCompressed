@@ -76,9 +76,9 @@ dirs['TTW']             = ['TTW_LO']
 dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
 ##added WJetsHT800T01200 from legacy as place holder to check the affect : compstops_2017_nano_v8
-dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"] 
+dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"] #, "WJetsToLNu_HT800to1200" 
 
-dirs['WW']              = ["WWTo2L2Nu", "WWToLNuQQ"] #TTWToLNu_CP5
+dirs['WW']              = ["WWTo2L2Nu"] #, "WWToLNuQQ" TTWToLNu_CP5
 dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
 dirs['ZZ']              = ["ZZTo2L2Nu", "ZZTo4L" ] # "ZZTo2L2Q", "ZZTo2Q2Nu",
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]

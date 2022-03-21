@@ -15,7 +15,7 @@ lumi_year 	  = {201619: Run2016preVFP.lumi, 201616: Run2016postVFP.lumi}
 
 import StopsCompressed.samples.nanoTuples_UL16APV_postProcessed  as UL16preVFP
 import StopsCompressed.samples.nanoTuples_UL16_postProcessed 	 as UL16postVFP
-import StopsCompressed.samples.nanoTuples_Summer16_postProcessed as legacy16
+#import StopsCompressed.samples.nanoTuples_Summer16_postProcessed as legacy16
 
 DY_HT_M50_LO_16        	= Sample.combine( "DY_HT_M50_LO", [UL16preVFP.DY_HT_M50_LO_16APV, UL16postVFP.DY_HT_M50_LO_16])
 Top_pow_16              = Sample.combine( "Top_pow", 	  [UL16preVFP.Top_pow_16APV ,   UL16postVFP.Top_pow_16])
@@ -27,4 +27,5 @@ VV_16        		= Sample.combine( "VV",		  [UL16preVFP.VV_16APV , 	UL16postVFP.VV
 #WWToLNuQQ_16		= Sample.combine( "WWToLNuQQ",	  [legacy16.WWToLNuQQ_16])
 QCD_HT_16        	= Sample.combine( "QCD_HT",	  [UL16preVFP.QCD_HT_16APV , 	UL16postVFP.QCD_HT_16])
 ZInv_16        		= Sample.combine( "ZInv",	  [UL16preVFP.ZInv_16APV , 	UL16postVFP.ZInv_16])
+Others_16		= Sample.combine( "Others",	  [UL16preVFP.Others_16APV,	UL16postVFP.Others_16])
 
