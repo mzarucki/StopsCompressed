@@ -15,6 +15,16 @@ if os.environ['USER'] in ['priya.hussain']:
     postProcessing_output_directory     = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
     plot_directory                      = "/groups/hephy/cms/priya.hussain/www/StopsCompressed/"
     private_results_directory           = "/groups/hephy/cms/priya.hussain/"
+
+if os.environ['USER'] in ['dietrich.liko']:
+    results_directory                   = "/groups/hephy/cms/dietrich.liko/StopsCompressed/"
+    analysis_results                    = "/scratch-cbe/users/dietrich.liko/StopsCompressed/results/"
+    #cache_directory                     = "/mnt/hephy/cms/priya.hussain/StopsCompressed/"
+    cache_directory                     = "/scratch-cbe/users/dietrich.liko/StopsCompressed/cache/analysis/"
+    postProcessing_output_directory     = "/groups/hephy/cms/dietrich.liko/StopsCompressed/nanoTuples/"
+    plot_directory                      = "/groups/hephy/cms/dietrich.liko/www/StopsCompressed/"
+    private_results_directory           = "/groups/hephy/cms/dietrich.liko/"
+
 if os.environ['USER'] in ['janik.andrejkovic']:
     results_directory                   = "/groups/hephy/cms/janik.andrejkovic/StopsCompressed/"
     analysis_results                    = "/scratch/janik.andrejkovic/StopsCompressed/results/"
