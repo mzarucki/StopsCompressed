@@ -53,7 +53,7 @@ def isBJet(j, tagger = 'DeepCSV', year = 'UL2016'):
     elif tagger == 'DeepCSV':
         if year == 'UL2016':
 		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
-            return j['btagDeepB'] > 0.5847
+            return j['btagDeepB'] > 0.6001
         elif year == 'UL2016_preVFP':
 		# https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
             return j['btagDeepB'] > 0.5847
@@ -346,7 +346,8 @@ def getGoodElectrons(c, collVars=electronVars, ele_selector = alwaysFalse):
         if ele_selector(l):
             lep.append(l)
         else:
-            print "rejeted ele: " ,l
+            #print "rejeted ele: " ,l
+	    print "bla"
     return lep
     #return [l for l in getElectrons(c, collVars) if ele_selector(l)]
 
@@ -354,7 +355,7 @@ idCutBased={'loose':0 ,'medium':1, 'tight':2}
 photonVars=['eta','pt','phi','mass','cutBased']
 photonVarsMC = photonVars + ['mcPt']
 
-tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'decayMode', 'idDeepTau2017v2p1VSjet',] #idDeepTau2017v2p1VSjet :4 =VLose, decayMode != 5 or 6
+tauVars=['eta','pt','phi','pdgId','charge', 'dxy', 'dz', 'idDecayModeNewDMs', 'idCI3hit', 'decayMode', 'idDeepTau2017v2p1VSjet', 'idMVAoldDM2017v2', 'idDecayModeOldDMs'] #idDeepTau2017v2p1VSjet :4 =VLose, decayMode != 5 or 6
 def getTaus(c, collVars=tauVars):
     return [getObjDict(c, 'Tau_', collVars, i) for i in range(int(getVarValue(c, 'nTau')))]
 
@@ -363,8 +364,8 @@ def looseTauID( l, ptCut=20, absEtaCut=2.3):
     #print l["idMVAnewDM2017v2"], ord(l["idMVAnewDM2017v2"])
     # use Tau_idMVAnewDM2017v2 corresponding to AN-2017 newMVA ID, VLoose
     #print "Tau ID: ", l["idDeepTau2017v2p1VSjet"], "ord: ", ord(l["idDeepTau2017v2p1VSjet"])
-    #print "Tau decay modes: ", l["decayMode"]
-    #print "Tau eta: ", abs(l["eta"]), "Tau pT: ", l["pt"]
+    #and ord(l["idMVAoldDM2017v2"]) >= 2\
+
     return \
     l["pt"]>=ptCut\
     and ord(l["idDeepTau2017v2p1VSjet"])>=4\
