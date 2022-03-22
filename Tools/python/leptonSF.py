@@ -19,9 +19,9 @@ class leptonSF:
         self.ele_abs_eta = True
         self.ele_max_pt  = 200
 
-        if   year == 2016:
-            keys_mu  = [ ("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10.root",  "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10"),
-                         ("2016_mu_sf.root",   "muon_SF_IpIsoSpec_2D")
+        if   '2016' in year :
+            keys_mu  = [ ("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10.root",  "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10_merged"),
+                         ("2016_mu_sf.root",   "muon_SF_IpIsoSpec_2D_merged")
 			 ]
             self.ele_x_is_pt = False 
             self.ele_abs_eta = False 
@@ -29,7 +29,7 @@ class leptonSF:
             keys_ele = [ ("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016.root",       "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016"),
                          ("2016_el_sf.root",       "ele_SF_IpIso_2D") 
 			 ]
-        elif year == 2017:
+        elif '2017' in year:
             keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20.root",         "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20"),
                         ("2017_mu_sf.root",  "muon_SF_IpIsoSpec_2D")]
             self.ele_x_is_pt = False 
@@ -37,7 +37,7 @@ class leptonSF:
             self.ele_max_pt  = 500
             keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017"),
                         ("2017_el_sf.root", "ele_SF_IpIso_2D")]
-        elif year == 2018:
+        elif '2018' in year:
             keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018.root",           "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018"),
                         ("2018_mu_sf.root",  "muon_SF_IpIsoSpec_2D")] # 2017 Iso SF are recommended
             self.ele_x_is_pt = False 
@@ -46,7 +46,7 @@ class leptonSF:
             keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018"),
                         ("2018_el_sf.root", "ele_SF_IpIso_2D")]
         
-        self.dataDir = "/users/janik.andrejkovic/public/HEPHY_Analysis/CMSSW_10_2_18/src/StopsCompressed/Tools/data/leptonSFData/"
+        self.dataDir = "/users/priya.hussain/private/CMSSW_10_6_25/src/StopsCompressed/Tools/data/leptonSFData/"
 
         self.mu  = [getObjFromFile(os.path.expandvars(os.path.join(self.dataDir, file)), key) for (file, key) in keys_mu]
         self.ele = [getObjFromFile(os.path.expandvars(os.path.join(self.dataDir, file)), key) for (file, key) in keys_ele]
@@ -84,6 +84,6 @@ class leptonSF:
         return sf.val, (1-sf.sigma)*sf.val, (1+sf.sigma)*sf.val 
 
 if __name__ == "__main__":
-    sf_2016 = leptonSF( year = 2016 )
-    sf_2017 = leptonSF( year = 2017 )
-    sf_2018 = leptonSF( year = 2018 )
+    sf_2016 = leptonSF( year = 'UL2016' )
+    sf_2017 = leptonSF( year = 'UL2017' )
+    sf_2018 = leptonSF( year = 'UL2018' )
