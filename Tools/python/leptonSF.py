@@ -46,7 +46,7 @@ class leptonSF:
             keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018"),
                         ("2018_el_sf.root", "ele_SF_IpIso_2D")]
         
-        self.dataDir = "/users/priya.hussain/private/CMSSW_10_6_25/src/StopsCompressed/Tools/data/leptonSFData/"
+        self.dataDir = "$CMSSW_BASE/src/StopsCompressed/Tools/data/leptonSFData/"
 
         self.mu  = [getObjFromFile(os.path.expandvars(os.path.join(self.dataDir, file)), key) for (file, key) in keys_mu]
         self.ele = [getObjFromFile(os.path.expandvars(os.path.join(self.dataDir, file)), key) for (file, key) in keys_ele]

@@ -2,5 +2,8 @@
 *.root
 *.DS_Store
 *.__.DS_Store
+__init__.py
 plots/plotsJanik/regions/utilities/jsonFilesDCcomparison/*
 Analysis/python/run/testing/InvestigateDataCards/**/*.txt
+postProcessing/mysubmit.log
+postProcessing/files.stat

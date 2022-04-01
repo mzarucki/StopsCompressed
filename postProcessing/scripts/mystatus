@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import csv
+import subprocess
+import re
+import os
+import sys
+
+import ROOT
+
+def main(jobid, name):
+
+    output = subprocess.check_output(['sacct', '-j', "%d.batch" % jobid, '-n', '-P', '-o', 'jobid,state,cpu,maxrss'])
+
+    re_jobid = re.compile('(\d+)_(\d+)\.batch')
+    for line in output[:-1].splitlines():
+        jid, state, cpu, maxrss = line.split('|')
+        match = re_jobid.match(jid)
+        if not match:
+            print('Invalid jobid', jid)
+            continue
+        sjid = int(match.group(2))
+        if maxrss=='0' or maxrss == "":
+            maxrss = 0
+        else:
+            maxrss = float(maxrss[:-1])/(1024*1024)
+        print( '%4d : %10s : %s : %5.2fG ' % (sjid, state, cpu, maxrss), end="" )
+
+        jobout = '/scratch-cbe/users/%s/batch_output/%s-%d-%d.out' % ( os.getlogin(), name, jobid, sjid )
+        if not os.path.exists(jobout):
+            print('Output file %s does not exists' % jobout)
+        joberr = '/scratch-cbe/users/%s/batch_output/%s-%d-%d.err' % ( os.getlogin(), name, jobid, sjid )
+        if not os.path.exists(joberr):
+            print('Error file %s does not exists' % joberr)
+
+        try:
+            output = subprocess.check_output( ['grep', 'nanoPostProcessing.py', joberr]).split()
+            if len(output) in [15, 16]:
+                dataset = output[-5]
+                number = output[-1]
+                files = output[-3]
+            else:
+                dataset = output[-1]
+        except subprocess.CalledProcessError:
+                dataset = ""
+
+        if state in ['RUNNING', 'FAILED']:
+            print( ': %s - %s/%s' % (dataset, number, files) )
+            if state == 'FAILED':
+                print('     ', jobout)
+                print('     ', joberr)
+            continue
+
+
+        output = subprocess.check_output( ['grep', 'Issue', joberr] )
+        ntuple = output.split()[-1]
+        ntp = ROOT.TFile.Open(ntuple)
+        entries = ntp.Get('Events').GetEntries()
+        ntp.Close()
+
+        print( ': %s - %s/%s : Entries: %d' % (dataset, number, files, entries) )
+
+
+
+if __name__ == "__main__":
+
+    jobid = int(sys.argv[1])
+
+    id2name = {}
+    with open("mysubmit.log") as csvfile:
+        csvreader = csv.reader(csvfile)
+        for jid, name, uuid in csvreader:
+            id2name[int(jid)] = name
+
+    if jobid not in id2name:
+        print('Job %d not found' % jobid)
+        sys.exit()
+
+    main(jobid, id2name[jobid])
