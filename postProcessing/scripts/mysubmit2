@@ -49,14 +49,6 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
 
     commands, splits = filter_failed(commands, splits) 
 
-    for cmd, s in zip(commands, splits):
-        if s > 1:
-            print(cmd, '#SPLIT%d' % s)
-        else:
-            print(cmd)
-
-    sys.exit()
-
     log.debug('Found %d commands', len(commands))
 
     # env variables to transmit
@@ -87,7 +79,6 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
                 cmds=zip(commands, splits),
                 cwd=os.getcwd(),
                 export=export,
-                proxy=proxy,
                 **kwargs
             ),
             file=job,
@@ -108,12 +99,12 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
 
 def getarg(cmd_array, arg):
 
-    idx = cmd_array.index(arg)
-    if idx < 0:
-        print('--sample not found')
-        return None
-    else:
+    try:
+        idx = cmd_array.index(arg)
         return cmd_array[idx+1]
+    except ValueError:
+        print("Token %s is not in the list %s" % (arg, ' '.join(cmd_array)))
+        sys.exit()
 
 
 def filter_failed(commands, splits):

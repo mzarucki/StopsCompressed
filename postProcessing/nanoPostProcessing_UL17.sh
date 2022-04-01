@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample WJetsToLNu_HT70to100 #SPLIT14 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample WJetsToLNu_HT100to200 #SPLIT15 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample WJetsToLNu_HT200to400 #SPLIT14 
