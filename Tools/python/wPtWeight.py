@@ -56,7 +56,7 @@ class wPtWeight:
 			print "Error: Issue with computing wPt weight"
 		corr_fact = self.params[a]
 		#print "weights: wPt %s , correction factor: %s"%(wPt,corr_fact)
-		w = (norm*corr_fact)+(sys_fact*sigma)
+		#w = (norm*corr_fact)+(self.sys*sigma)
 
 		if sigma==0:
 			print (norm*corr_fact)
