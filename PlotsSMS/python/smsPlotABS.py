@@ -87,7 +87,7 @@ class smsPlotABS(object):
         CMS_lumi.extraText = "Preliminary"
         CMS_lumi.lumi_13TeV="35.9 fb^{-1}"
 
-        CMS_lumi.lumi_sqrtS = "13 TeV"  
+        CMS_lumi.lumi_sqrtS = "13TeV"  
         iPos=0
         CMS_lumi.CMS_lumi(self.c,4, iPos)
         # CMS LABEL
@@ -95,7 +95,8 @@ class smsPlotABS(object):
         textCMS.SetNDC()
         textCMS.SetTextAlign(13)
         textCMS.SetTextFont(52)
-        textCMS.SetTextSize(0.038)
+        textCMS.SetTextSize(0.03)
+        #textCMS.SetTextSize(0.038)
         textCMS.Draw()
         self.c.textCMS = textCMS
         # MODEL LABEL

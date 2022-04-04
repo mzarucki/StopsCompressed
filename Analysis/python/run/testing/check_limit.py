@@ -56,7 +56,7 @@ for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompress
 
 removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False
 
-year = int(args.year)
+year = str(args.year)
 
 # Logging
 import Analysis.Tools.logger as logger 
@@ -147,7 +147,7 @@ estimators           = estimatorList(setup)
 setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','Others', 'QCD'])
 if args.isPrompt:
 	        setup.parameters["l1_prompt"] = True
-setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
+#setup.estimators     = estimators.constructEstimatorList(['WJets','DY','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
 # setup.estimators     = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD']) # removing DY
 
 setups = [setup]
@@ -155,9 +155,11 @@ setups = [setup]
 if args.control2016:      subDir = 'CRregion_test3'
 elif args.signal2016:     subDir = 'SRregion_test3'
 #TODO new name here for all mass points needed!
-elif args.fitAll:	        subDir = "others_fitAllregion_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)
 #elif args.fitAll:	        subDir = "fitAllregion_nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only)
-
+##For UL tests with dPhiMetJets and combination of dphi jets cuts
+#elif args.fitAll:	        subDir = "fitAllregion_dphiMetJets_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)
+#elif args.fitAll:	        subDir = "fitAllregion_dphiComb_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)
+elif args.fitAll:	        subDir = "fitAllregion_dphiJets_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.isPrompt)
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
 sSubDir = 'expected' if args.expected else 'observed'
@@ -222,17 +224,18 @@ def wrapper(s):
     wPt     = 'wPt_%s'%year
     JEC     = 'JEC_%s'%year
     JER     = 'JER_%s'%year
-    leptonSF= 'leptonSF_new_%s'%year
+    #leptonSF= 'leptonSF_new_%s'%year
+    leptonSF= 'leptonSF_%s'%year
     leptonSFsignal= 'leptonSFsignal_%s'%year
     
     PU      = 'PU_%s'%year
 
     Lumi    = 'Lumi_%s'%year
 
-    LeptonSFsyst = 'LeptonSFsyst_%s'%year
+    leptonSFsyst = 'leptonSFsyst_%s'%year
     
     c.addUncertainty(Lumi,          "lnN")
-    c.addUncertainty(LeptonSFsyst,          "lnN")
+    c.addUncertainty(leptonSFsyst,          "lnN")
 
     c.addUncertainty(SFb,          shapeString)
     c.addUncertainty(SFl,          shapeString)
@@ -244,8 +247,9 @@ def wrapper(s):
     c.addUncertainty(leptonSFsignal,          "lnN")
     c.addUncertainty(PU,           shapeString)
 
-    if year == 2016:
+    if '2016' in year:
       lumiUncertainty = 1.025
+      print "lumi unc for 2016 era, both pre/post"
     elif year == 2017:
       lumiUncertainty = 1.023
     elif year == 2018:
@@ -341,7 +345,7 @@ def wrapper(s):
                 c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(r, sysChannel, setup).val)
                 c.specifyUncertainty(leptonSF,   binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
                 c.specifyUncertainty(PU,         binname, name, 1 + e.PUSystematic(         r, sysChannel, setup).val * uncScale )
-                c.specifyUncertainty(LeptonSFsyst, binname, name, 1.01)
+                c.specifyUncertainty(leptonSFsyst, binname, name, 1.01)
 
                 if name == "WJets":
                   c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
@@ -362,7 +366,7 @@ def wrapper(s):
             
           if fastSim :
             signalSetup = setup.sysClone()
-            if year == 2016:
+            if  '2016' in year:
               extra_pars = {} # use default parameters
               if (args.usePromptSignalOnly) :
                 extra_pars = {'l1_prompt':True}
@@ -373,8 +377,16 @@ def wrapper(s):
             else:
               signal = e.cachedEstimate(r, channel, signalSetup)
           else:
-            signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]}) 
-            signal = e.cachedEstimate(r, channel, signalSetup)
+            signalSetup = setup.sysClone()
+	    if  '2016' in year:
+	      extra_pars = {} # use default parameters
+	      if (args.usePromptSignalOnly):
+	        extra_pars = {'l1_prompt':True}
+                signalSetup = setup.sysClone(sys={'reweight':[], 'remove':['reweight_nISR']},parameters=extra_pars)
+	        
+                signal = e.cachedEstimate(r, channel, signalSetup)
+	      else:
+	        signal = e.cachedEstimate(r, channel, signalSetup)
 
           
           signal = signal * args.scale
@@ -388,7 +400,7 @@ def wrapper(s):
 
           c.specifyUncertainty(Lumi, binname, 'signal', lumiUncertainty)
           c.specifyUncertainty(leptonSFsignal, binname, 'signal', 1.01)
-          c.specifyUncertainty(LeptonSFsyst, binname, 'signal', 1.01)
+          c.specifyUncertainty(leptonSFsyst, binname, 'signal', 1.01)
           logger.info("adding lumi uncertainty for signal")
           if signal.val>0.001:
 
@@ -400,9 +412,9 @@ def wrapper(s):
             
             c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
 
-            if not fastSim:
-              c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
-              logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
+            #if not fastSim:
+            #  c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
+            #  logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
               
               
             uname = 'Stat_'+binname+'_signal'
@@ -576,9 +588,18 @@ def wrapper(s):
 ######################################
 
 if args.signal == "T2tt":
-  if year == 2016:
+  if year == "2016postVFP":
     if args.fullSim:
-      from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
+      from StopsCompressed.samples.nanoTuples_UL16_FullSimSignal_postProcessed import signals_T2tt as jobs
+    else:
+      #data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
+      data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
+      postProcessing_directory    = 'compstops_2016_nano_v27/Met/'
+      #postProcessing_directory    = 'compstops_2016_nano_v28/Met/'
+      from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
+  if year == "2016preVFP":
+    if args.fullSim:
+      from StopsCompressed.samples.nanoTuples_UL16APV_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
       #data_directory              = '/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/'
       data_directory              = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
@@ -664,6 +685,7 @@ if not args.signal == 'ttHinv':
   for r in results:
     s, res = r
     mStop, mNeu = s
+    print "Stop: ", mStop, "mLSP: ", mNeu 
     dm = mStop - mNeu
     mStop_list.append(mStop)
     mLSP_list.append(mNeu)

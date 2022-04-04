@@ -4,7 +4,7 @@ class triggerSelector:
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_IsoMu24", "HLT_Mu50"]
             self.jet     = ["HLT_PFJet450", "HLT_AK8PFJet450", "HLT_PFHT800"]
-            self.e       = ["HLT_Ele27_WPTight_Gsf"] 
+            self.e       = ["HLT_Ele8_CaloIdM_TrackIdM_PFJet30", "HLT_Ele17_CaloIdM_TrackIdM_PFJet30", "HLT_Ele23_CaloIdM_TrackIdM_PFJet30"] 
 
         elif year == "UL2017":
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
@@ -27,11 +27,11 @@ class triggerSelector:
         #self.JetHT          = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.jet ] )if self.jet else None
         #self.SingleMuon     = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.m ] ) if self.m else None
         #self.SingleElectron = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.e ] ) if self.e else None
-        #self.EGamma 	    = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.e ] ) if self.e else None
+        self.DoubleEG 	    = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.e ] ) if self.e else None
 
         # define an arbitrary hierarchy
-        if year == 2016 or year == 2017:
-            self.PDHierarchy = [ "MET" ]
+        if year == "UL2016" or year == "UL2016_preVFP" or year == "UL2017":
+            self.PDHierarchy = [ "MET" , "DoubleEG"]
         else:
             # DoubleEG and SingleElectron PDs are merged into EGamma. No change necessary for MC though.
             self.PDHierarchy = [ "MET" ]

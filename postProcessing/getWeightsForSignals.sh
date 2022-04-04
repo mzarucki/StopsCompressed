@@ -11,7 +11,8 @@
 #python getWeightsForSignals.py --year 2016 --sample SMS_T8bbllnunu_XCha0p5_XSlep0p5_mN1_700_1300
 #python getWeightsForSignals.py --year 2016 --sample SMS_T8bbllnunu_XCha0p5_XSlep0p95
 #python getWeightsForSignals.py --year 2016 --sample SMS_T8bbllnunu_XCha0p5_XSlep0p95_mN1_700_1600
-python getWeightsForSignals.py --year 2016 --sample SMS_T2tt_dM_10to80  #/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/2016/SMS_T2tt_dM_10to80_signalCounts.root
+#python getWeightsForSignals.py --year 2016 --sample SMS_T2tt_dM_10to80  #/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/2016/SMS_T2tt_dM_10to80_signalCounts.root
+python getWeightsForSignals.py --year UL2016 --sample SMS_T2tt_dM_10to80  #UL bkg and data , but fast sim sample still legacy
 #
 ## 2017
 #python getWeightsForSignals.py --year 2017 --sample SMS_T2tt_mStop_150to250

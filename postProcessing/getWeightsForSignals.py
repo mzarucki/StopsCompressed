@@ -29,7 +29,8 @@ import StopsCompressed.Tools.user as user
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
 
 # use a cacheDir that's read/writable for all of us
-cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
+cacheDir = "/groups/hephy/cms/priya.hussain/StopsCompressed/signals/caches/preUL"
+#cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
 #cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
 
 def get_parser():
@@ -41,7 +42,7 @@ def get_parser():
     argParser.add_argument('--logLevel',        action='store',         nargs='?',  choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'],   default='INFO', help="Log level for logging" )
     argParser.add_argument('--samples',         action='store',         nargs='*',  type=str, default=['TTZToLLNuNu_ext'],                  help="List of samples to be post-processed, given as CMG component name" )
     argParser.add_argument('--ppSamplePath',    action='store',         nargs='*',  type=str, default=None,                  help="List of samples to be post-processed, given as CMG component name" )
-    argParser.add_argument('--year',            action='store',                     type=int,                                               help="Which year?" )
+    argParser.add_argument('--year',            action='store',                     type=str,                                               help="Which year?" )
     argParser.add_argument('--overwrite',       action='store_true',                help="Overwrite ISR norm cache?" )
 
     return argParser
@@ -61,11 +62,14 @@ cacheDir += "%s/"%options.year
 
 ## First, get the normalization per masspoint (done on nanoAOD tuples)
 
-if options.year == 2016:
-    from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as bkgSamples
-    from Samples.nanoAOD.Summer16_private_legacy_v1 import compSUSY as signalSamples
-    from Samples.nanoAOD.Run2016_17Jul2018_private  import allSamples as dataSamples
-    allSamples = bkgSamples + dataSamples + signalSamples
+if options.year == 'UL2016':
+    #from Samples.nanoAOD.Summer16_private_legacy_v1 import allSamples as bkgSamples
+    #from Samples.nanoAOD.Summer16_private_legacy_v1 import compSUSY as signalSamples
+    #from Samples.nanoAOD.Run2016_17Jul2018_private  import allSamples as dataSamples
+    #allSamples = bkgSamples + dataSamples + signalSamples
+    from Samples.nanoAOD.UL16v9_private import compSUSY as signalSamples
+    
+    allSamples = signalSamples
 elif options.year == 2017:
     from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as bkgSamples
     from Samples.nanoAOD.Fall17_private_legacy_v1   import SUSY as signalSamples

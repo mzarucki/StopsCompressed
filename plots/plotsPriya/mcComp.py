@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-''' Analysis script for standard plots
+'''
+Analysis script for standard plots
 '''
 #
 # Standard imports and batch mode
@@ -15,22 +15,24 @@ from math   import pi, sqrt, sin, cos, atan2, log
 from RootTools.core.standard import *
 from StopsCompressed.Tools.user             import plot_directory
 from Analysis.Tools.metFilters              import getFilterCut
-#from Analysis.Tools.metFilters              import getFilterCut
 from StopsCompressed.Tools.cutInterpreter   import cutInterpreter
-from Analysis.Tools.puProfileCache import *
-from StopsCompressed.Tools.helpers           import deltaR, deltaPhi
+#from Analysis.Tools.puProfileCache import *
+from StopsCompressed.Tools.helpers           import deltaR, deltaPhi,ptRatio
 from StopsCompressed.Tools.objectSelection   import muonSelector, eleSelector,  getGoodMuons, getGoodElectrons, getGoodTaus, getAllJets
+#read gen filter efficicency
+from StopsCompressed.Tools.genFilter import genFilter
 #
 # Arguments
 #
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument('--logLevel',           		action='store',      default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'], help="Log level for logging")
-#argParser.add_argument('--era',                		action='store',      default="2018",  	type=str )
+argParser.add_argument('--era',                		action='store',      default="Run2018",  	type=str )
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
-argParser.add_argument('--targetDir',          		action='store',      default='v0p0')
+argParser.add_argument('--targetDir',          		action='store',      default='v_UL01')
 argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
 #argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
@@ -61,9 +63,17 @@ if args.postHEM:                       args.targetDir += "_postHEM"
 #
 from Analysis.Tools.puReweighting import getReweightingFunction
 
-from StopsCompressed.samples.nanoTuples_RunUL16_postProcessed import Run2016postVFP
-from StopsCompressed.samples.nanoTuples_RunUL16APV_postProcessed import Run2016preVFP
-samples = [Run2016postVFP, Run2016preVFP]
+from StopsCompressed.samples.nanoTuples_UL16APV_postProcessed import *
+from StopsCompressed.samples.nanoTuples_UL16_postProcessed import *
+samples = [WJetsToLNu_HT_16APV, WJetsToLNu_HT_16]
+samples = [ WJetsToLNu_HT_16, WJetsToLNu_HT_16APV]
+
+
+if args.small:
+	for sample in samples:
+		sample.normalization = 1.
+		sample.reduceFiles( factor = 60 )
+		#sample.scale /= sample.normalization
 
 # Text on the plots
 #
@@ -73,34 +83,32 @@ tex.SetTextSize(0.04)
 tex.SetTextAlign(11) # align right
 #lumi_scale = 35.9
 
-def drawObjects( plotData):
+def drawObjects( plotData, dataMCScale):
     lines = [
-      (0.15, 0.95, 'CMS Preliminary' if plotData else 'CMS Simulation'), 
-      (0.45, 0.95, ' 13 TeV ' )
+      (0.15, 0.95, 'CMS Simulation'), 
+      (0.45, 0.95, ' L= 1 fb{}^{-1}(13 TeV)' )
+      #(0.45, 0.95, ' L= 19.5,16.5 fb{}^{-1}(13 TeV)' )
+      #(0.45, 0.95, ' L= 19.5,16.5 fb{}^{-1} (13 TeV) Scale %3.2f'% ( dataMCScale) )
       #(0.15, 0.95, ' L=%3.1f fb{}^{-1}(13 TeV) Scale %3.2f Integral %3.2f'% ( lumi_scale , dataMCScale, mcIntegral) )
-      #(0.15, 0.95, 'Scale %3.2f MCIntegral %3.2f DataIntegral %3.2f'% ( dataMCScale, mcIntegral, mcIntegral) )
     ]
     return [tex.DrawLatex(*l) for l in lines] 
 
-def drawPlots(plots,mode):
+def drawPlots(plots,mode, dataMCScale):
   for log in [False, True]:
     
-    plot_directory_ = os.path.join(plot_directory, 'dataPlots', args.targetDir ,mode +("log" if log else ""), args.selection)
+    plot_directory_ = os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode +("log" if log else ""), args.selection)
     for plot in plots:
-      #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
-      #for l in plot.histos:
-	#if len(l)>1: print "yayy", [ l[x].GetName() for x in range(len(l))]
-	#if len(l)>1: mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) 
+      
       _drawObjects = []
       plotting.draw(plot,
         plot_directory = plot_directory_,
-        ratio = {'yRange':(0.1,1.9)},
+	ratio = {'yRange':(0.1,1.9), 'texY': 'preVFP / postVFP'},
         #ratio = None,
         logX = False, logY = log, sorting = False,
         yRange = (0.03, "auto") if log else (0.001, "auto"),
         scaling = {},
         legend = ( (0.18,0.88-0.03*sum(map(len, plot.histos)),0.9,0.88), 2),
-        drawObjects = drawObjects( True) + _drawObjects,
+        drawObjects = drawObjects( True, dataMCScale) + _drawObjects,
         copyIndexPHP = True, extensions = ["png","pdf", "root"],
       )
 
@@ -112,45 +120,12 @@ read_variables = [
             "Jet[pt/F, eta/F, phi/F, jetId/I]", 
             "met_pt/F", "met_phi/F","CT1/F", "HT/F","mt/F", 'l1_dxy/F', 'l1_dz/F', 'dphij0j1/F','ISRJets_pt/F', 'nISRJets/I','nSoftBJets/I','nHardBJets/I', "nBTag/I", "nJetGood/I", "PV_npvsGood/I","event/I","run/I"]
 read_variables += [
-            "nMuon/I","nElectron/I","nJet/I",
-            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O]"
+            "nMuon/I","nElectron/I","nJet/I",'reweightPU/F', 'Pileup_nTrueInt/F','reweightLeptonSF/F', 'reweightBTag_SF/F','reweightL1Prefire/F','reweightnISR/F', 'reweightwPt/F',
+            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O, genPartIdx/I,genPartFlav/b]"
 
             ]
-#for s in samples:
-#    s.read_variables += ["genWeight/F",'reweightPU/F', 'Pileup_nTrueInt/F','reweightBTag_SF/F', 'GenMET_pt/F', 'GenMET_phi/F', 'Muon[genPartIdx/I,genPartFlav/b]']
-
 
 sequence = []
-
-def mtwithdphi(event, sample):
-	event.mtmod = float('nan')
-	if deltaPhi(event.l1_phi ,event.met_phi) < 1.7: 
-		event.mtmod            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-
-def jetToLeptonRatio (event, sample):
-	event.cleanJets_pt  = float ('nan')
-	event.cleanJets_eta = float ('nan')
-	event.cleanJets_phi  = float ('nan')
-	Electrons =  getGoodElectrons(event, ele_selector = eleSelector("hybridIso", year=year))	
-	Muons =  getGoodMuons(event, mu_selector = muonSelector("hybridIso", year=year))	
-	leptons = Electrons + Muons
-	leptons.sort(key = lambda p:-p['pt'])
-	jets = getAllJets(event, leptons, ptCut=30, absEtaCut=2.4,jetVars= ['pt','eta','phi', 'jetId'] , jetCollections=["Jet"], idVar='jetId')
-	event.nJetsClean = len(jets)
-	if event.nJetsClean >0:
-		event.cleanJets_pt  = jets[0]['pt']
-		event.cleanJets_eta = jets[0]['eta']
-		event.cleanJets_phi = jets[0]['phi']
-#	for i,jet in enumerate(jets):
-#		event.cleanJets_pt  = jet['pt']
-#		event.cleanJets_eta = jet['eta']
-#		event.cleanJets_phi = jet['phi']
-
-#def make_weight (event, sample):
-#	print event.weight, event.reweightHEM
-#sequence.append (make_weight)
-
-
 def getLeptonSelection( mode ):
 	if   mode == 'mu': return "abs(l1_pdgId)==13"
 	elif mode == 'e' : return "abs(l1_pdgId)==11"
@@ -158,29 +133,20 @@ def getLeptonSelection( mode ):
 yields   = {}
 allPlots = {}
 allModes = ['mu','e']
+WJetsToLNu_HT_16APV.texName += "_preVFP"
 for index, mode in enumerate(allModes):
 	yields[mode] = {}
-	Run2016preVFP.setSelectionString([getFilterCut(isData=True, year=2016, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter), getLeptonSelection(mode)])
-	Run2016postVFP.setSelectionString([getFilterCut(isData=True, year=2016, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter), getLeptonSelection(mode)])
-
-	#Run2018.setSelectionString([getFilterCut(isData=True, year=2018, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter), getLeptonSelection(mode)])
-	if args.preHEM:   lumi_scale *= 0.37
-	if args.postHEM:  lumi_scale *= 0.63
-	Run2016preVFP.scale          = 1.
-	Run2016postVFP.scale         = 1.
-	Run2016postVFP.style         = styles.errorStyle(ROOT.kRed)
-	Run2016preVFP.style          = styles.errorStyle(ROOT.kBlue)
-	#Run2018.style          = styles.errorStyle(ROOT.kGreen)
-	
 	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
-	stack_ = Stack(Run2016preVFP, Run2016postVFP )
-	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
+	for sample in samples:
+		sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt 
+		sample.setSelectionString([getFilterCut(isData=False, year=2016, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+	WJetsToLNu_HT_16APV.style = styles.lineStyle(ROOT.kBlue)
+	#WJetsToLNu_HT_16.scale = 16.5 
+	#WJetsToLNu_HT_16APV.scale = 19.5 
+	WJetsToLNu_HT_16.style = styles.lineStyle(ROOT.kRed)
+	stack_ = Stack( *list([s] for s in samples)) 
 
-	if args.small:
-		for sample in samples :
-			sample.reduceFiles( factor = 40 )
-			print sample.name
 
 	# Use some defaults
 	Plot.setDefaults(stack = stack_, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection), addOverFlowBin='upper', histo_class=ROOT.TH1D)
@@ -188,6 +154,11 @@ for index, mode in enumerate(allModes):
 	plots   = []
 	plots2D = []
 
+	plots.append(Plot(
+	    texX = '(l_{1} dR reco w/ gen) (GeV)', texY = 'Number of Events ',
+	    attribute = TreeVariable.fromString( "l1_dRgen/F" ),
+	    binning=[10,-1,1],
+	  ))
 	plots.append(Plot(
 	    texX = 'p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
 	    attribute = TreeVariable.fromString( "l1_pt/F" ),
@@ -231,7 +202,7 @@ for index, mode in enumerate(allModes):
 	plots.append(Plot(
 	    texX = 'MET (GeV)', texY = 'Number of Events ',
 	    attribute = TreeVariable.fromString( "met_pt/F" ),
-	    binning=[50,0,1000],
+	    binning=[40,200,1000],
 	  ))
 	plots.append(Plot(
 	    texX = '#phi MET (GeV)', texY = 'Number of Events ',
@@ -246,7 +217,7 @@ for index, mode in enumerate(allModes):
 	plots.append(Plot(
 	    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
 	    attribute = TreeVariable.fromString( "mt/F" ),
-	    binning=[40,0,300],
+	    binning=[40,0,200],
 	  ))
 	#plots.append(Plot(
 	#    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
@@ -288,6 +259,11 @@ for index, mode in enumerate(allModes):
 	    texX = 'log(1+HI)/log(1+5)', texY = 'Number of Events',
 	    name = 'hybridIsolation', attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
 	    binning=[20,0,4],
+	  ))
+	plots.append(Plot(
+	    texX = 'pt Ratio between l1 and leading JetGood', texY = 'Number of Events ',
+	    name = 'ptRatio', attribute = lambda event, sample: (event.JetGood_pt[0] / event.l1_pt),
+	    binning=[10,0,10],
 	  ))
 	#plots.append(Plot(
 	#    texX = 'p_{T}(clean-leading jet) (GeV)', texY = 'Number of Events / 30 GeV',
@@ -356,46 +332,46 @@ for index, mode in enumerate(allModes):
 	    binning=[3, 0, 3],
 	  ))
 
-	#plots2D.append(Plot2D(
-	#	name = "Data_Jet_eta_vs_phi",
-	#	texX  = '#eta', texY = "#phi",
-	#	stack = Stack ([data_sample]),
-	#	attribute = (
-	#		lambda event, sample: event.JetGood_eta[0],
-	#		lambda event, sample: event.JetGood_phi[0],
-	#		),
-	#	binning = [10,-3,3, 10,-pi,pi],
-	#  ))
-	#plots2D.append(Plot2D(
-	#	name = "MC_Jet_eta_vs_phi",
-	#	texX  = '#eta', texY = "#phi",
-	#	stack = Stack (samples),
-	#	attribute = (
-	#		lambda event, sample: event.JetGood_eta[0],
-	#		lambda event, sample: event.JetGood_phi[0],
-	#		),
-	#	binning = [10,-3,3, 10,-pi,pi],
-	#  ))
-	#plots2D.append(Plot2D(
-	#	name = "Data_l1_eta_vs_phi",
-	#	texX  = '#eta', texY = "#phi",
-	#	stack = Stack ([data_sample]),
-	#	attribute = (
-	#		TreeVariable.fromString( "l1_eta/F" ),
-	#		TreeVariable.fromString( "l1_phi/F" ),
-	#		),
-	#	binning = [10,-3,3, 10,-pi,pi],
-	#  ))
-	#plots2D.append(Plot2D(
-	#	name = "MC_l1_eta_vs_phi",
-	#	texX  = '#eta', texY = "#phi",
-	#	stack = Stack (samples),
-	#	attribute = (
-	#		TreeVariable.fromString( "l1_eta/F" ),
-	#		TreeVariable.fromString( "l1_phi/F" ),
-	#		),
-	#	binning = [10,-3,3, 10,-pi,pi],
-	#  ))
+#	plots2D.append(Plot2D(
+#		name = "Data_Jet_eta_vs_phi",
+#		texX  = '#eta', texY = "#phi",
+#		stack = Stack ([data_sample]),
+#		attribute = (
+#			lambda event, sample: event.JetGood_eta[0],
+#			lambda event, sample: event.JetGood_phi[0],
+#			),
+#		binning = [10,-3,3, 10,-pi,pi],
+#	  ))
+#	plots2D.append(Plot2D(
+#		name = "MC_Jet_eta_vs_phi",
+#		texX  = '#eta', texY = "#phi",
+#		stack = Stack (samples),
+#		attribute = (
+#			lambda event, sample: event.JetGood_eta[0],
+#			lambda event, sample: event.JetGood_phi[0],
+#			),
+#		binning = [10,-3,3, 10,-pi,pi],
+#	  ))
+#	plots2D.append(Plot2D(
+#		name = "Data_l1_eta_vs_phi",
+#		texX  = '#eta', texY = "#phi",
+#		stack = Stack ([data_sample]),
+#		attribute = (
+#			TreeVariable.fromString( "l1_eta/F" ),
+#			TreeVariable.fromString( "l1_phi/F" ),
+#			),
+#		binning = [10,-3,3, 10,-pi,pi],
+#	  ))
+#	plots2D.append(Plot2D(
+#		name = "MC_l1_eta_vs_phi",
+#		texX  = '#eta', texY = "#phi",
+#		stack = Stack (samples),
+#		attribute = (
+#			TreeVariable.fromString( "l1_eta/F" ),
+#			TreeVariable.fromString( "l1_phi/F" ),
+#			),
+#		binning = [10,-3,3, 10,-pi,pi],
+#	  ))
 #	plots2D.append(Plot2D(
 #		name = "Data_MET_eta_vs_phi",
 #		texX  = 'MET #eta', texY = "MET #phi",
@@ -416,26 +392,26 @@ for index, mode in enumerate(allModes):
 #			),
 #		binning = [10,-3,3, 10,-pi,pi],
 #	  ))
-	#plots2D.append(Plot2D(
-	#	name = "Data_cosdphi_vs_Mt",
-	#	texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
-	#	stack = Stack ([data_sample]),
-	#	attribute = (
-	#		lambda event, sample: cos(event.l1_phi - event.met_phi),
-	#		TreeVariable.fromString( "mt/F" ),
-	#		),
-	#	binning = [20,-1,1, 40,0,300],
-	#  ))
-	#plots2D.append(Plot2D(
-	#	name = "MC_cosdphi_vs_Mt",
-	#	texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
-	#	stack = Stack (samples),
-	#	attribute = (
-	#		lambda event, sample: cos(event.l1_phi - event.met_phi),
-	#		TreeVariable.fromString( "mt/F" ),
-	#		),
-	#	binning = [20,-1,1, 40,0,300],
-	#  ))
+#	plots2D.append(Plot2D(
+#		name = "Data_cosdphi_vs_Mt",
+#		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
+#		stack = Stack ([data_sample]),
+#		attribute = (
+#			lambda event, sample: cos(event.l1_phi - event.met_phi),
+#			TreeVariable.fromString( "mt/F" ),
+#			),
+#		binning = [20,-1,1, 40,0,300],
+#	  ))
+#	plots2D.append(Plot2D(
+#		name = "MC_cosdphi_vs_Mt",
+#		texX  = 'cos(#Delta#phi(l_{1},E_{T}^{miss}))', texY = "M_{t} (GeV)",
+#		stack = Stack (samples),
+#		attribute = (
+#			lambda event, sample: cos(event.l1_phi - event.met_phi),
+#			TreeVariable.fromString( "mt/F" ),
+#			),
+#		binning = [20,-1,1, 40,0,300],
+#	  ))
 
 
 	plotting.fill(plots+plots2D, read_variables = read_variables, sequence = sequence)
@@ -448,17 +424,21 @@ for index, mode in enumerate(allModes):
 		  yields[mode][plot.stack[i][j].name] = h.GetBinContent(h.FindBin(0.5+index))
 		  h.GetXaxis().SetBinLabel(1, "#mu")
 		  h.GetXaxis().SetBinLabel(2, "e")
+	yields[mode]["MC"] = sum(yields[mode][s.name] for s in samples)
+	#dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+	## if plotting only MC
+	dataMCScale = 1
 
-	drawPlots(plots, mode)
+	drawPlots(plots, mode, dataMCScale)
 	
-#	for plot in plots2D:
-#		plotting.draw2D(
-#				plot=plot,
-#				plot_directory=os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode+"log",args.selection) ,
-#				logX = False, logY = False, logZ = True,
-#				drawObjects = drawObjects( True),
-#				)
-#
+	for plot in plots2D:
+		plotting.draw2D(
+				plot=plot,
+				plot_directory=os.path.join(plot_directory, 'analysisPlots', args.targetDir, args.era ,mode+"log",args.selection) ,
+				logX = False, logY = False, logZ = True,
+				drawObjects = drawObjects( True, float('nan')),
+				)
+
 	allPlots[mode] = plots
 
 # Add the different channels into all	
@@ -466,11 +446,13 @@ yields['all'] = {}
 for y in yields[allModes[0]]:
 	try:	yields['all'][y] = sum(yields[c][y] for c in (['mu','e']))
 	except: yields['all'][y] = 0
-
+#dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
+## if only plotting MC and data
+dataMCScale = 1
 for plot in allPlots['mu']:
 	for plot2 in (p for p in allPlots['e'] if p.name == plot.name): 
 		for i, j in enumerate(list(itertools.chain.from_iterable(plot.histos))):
 			for k, l in enumerate(list(itertools.chain.from_iterable(plot2.histos))):
 				if i==k:
 					j.Add(l)
-drawPlots(allPlots['mu'], 'all')
+drawPlots(allPlots['mu'], 'all', dataMCScale)

@@ -94,6 +94,7 @@ logger_rt = _logger_rt.get_logger(options.logLevel, logFile = logFile )
 isSingleLep        = options.skim.lower().startswith('singlelep')
 isMetSingleLep     = options.skim.lower().startswith('metsinglelep')
 isMet              = options.skim.lower().startswith('met')
+isFake             = options.skim.lower().startswith('fake')
 noSkim             = options.skim.lower().startswith('noskim')
 
 # Skim condition
@@ -105,6 +106,8 @@ elif isMetSingleLep:
     skimConds.append( "(Sum$(Electron_pt>5&&abs(Electron_eta)<2.5) + Sum$(Muon_pt>3.5&&abs(Muon_eta)<2.4)) >=1 && MET_pt>=100" )
 elif isMet:
     skimConds.append( "MET_pt>=100" )
+elif isFake:
+    skimConds.append( "MET_pt<=100" )
 elif noSkim:
     skimConds.append( "1" )
 #Samples: Load samples
@@ -532,7 +535,7 @@ new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', '
 new_variables += ["reweightHEM/F"]
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
-if isSingleLep or isMetSingleLep or isMet or noSkim:
+if isSingleLep or isMetSingleLep or isMet or isFake or noSkim:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
     new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I', 'l1_isPrompt/O', 'l1_dRgen/F', 'l1_HI/F' ,'l1_muLooseId/O'] )
     if isMC: 
@@ -898,7 +901,7 @@ def filler( event ):
     elif math.isnan(leadJet) and isnan(subLeadJet) == False:
     	    event.dPhiMetJet = subLeadJet
 	    event.metJet = 1
-    print "selected jet for dphi lead 0; sublead 1: ", event.metJet, "dphi of leadin jet w/ met: ", leadJet, "dphi of subleading jet w/ met: ", subLeadJet, "selected min dphi metJet: ", event.dPhiMetJet
+#    print "selected jet for dphi lead 0; sublead 1: ", event.metJet, "dphi of leadin jet w/ met: ", leadJet, "dphi of subleading jet w/ met: ", subLeadJet, "selected min dphi metJet: ", event.dPhiMetJet
 
 	    
     #if event.JetGood_pt[0]> 60:
@@ -1030,7 +1033,7 @@ def filler( event ):
 	#		print "sub-leading lepton prompt: ", leptons[1]['isPrompt']
 	    #if event.l1_isPrompt == 0:
 	    #	print "+" * 15
-    if isSingleLep or isMetSingleLep or isMet or noSkim:
+    if isSingleLep or isMetSingleLep or isMet or isFake or noSkim:
         event.nGoodMuons      = len(filter( lambda l:abs(l['pdgId'])==13, leptons))
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)

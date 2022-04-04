@@ -31,11 +31,13 @@ argParser.add_argument('--era',                		action='store',      default="R
 argParser.add_argument('--eos',                		action='store_true', 			help='change sample directory to location eos directory' )
 argParser.add_argument('--small',              		action='store_true', 			help='Run only on a small subset of the data?')#, default = True)
 argParser.add_argument('--targetDir',          		action='store',      default='v_UL01')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-dphimetjet0to0p5-jet3Veto-met200-ht300')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiMetJetsInv-jet3Veto-met200-ht300')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-dphimetjet0p5-jet3Veto-met200-ht300')
 argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
-#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-jet3Veto-met200-ht300')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-njet1-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50-mt100')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-lpt0to50')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-HEMElVetoWidePt')
+#argParser.add_argument('--selection',          		action='store',      default='nISRJets1p-ntau0-lepSel-deltaPhiJets-jet3Veto-met200-ht300-mt170')
 argParser.add_argument('--reweightPU',         		action='store',      default=None, 		  choices=['VDown', 'Down', 'Central', 'Up', 'VUp', 'VVUp'])
 argParser.add_argument('--badMuonFilters',     		action='store',      default="Summer2016",  	  help="Which bad muon filters" )
 argParser.add_argument('--noBadPFMuonFilter',           action='store_true', default=False)
@@ -97,20 +99,23 @@ elif args.era == "Run2016postVFP" and not args.eos:
     #if args.reweightPU:
     #	    nTrueInt_puRW = getReweightingFunction(data="PU_2016_35920_XSec%s"%args.reweightPU, mc="Summer16")
 elif  args.era == "Run2016" and not args.eos:
+    #from StopsCompressed.samples.nanoTuples_UL16_36fb_postProcessed import *
+    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_M50_LO_16, QCD_HT_16, VV_16, TTX_16]
+    #from StopsCompressed.samples.nanoTuples_RunUL16_36fb_postProcessed import *
+    #data_samples = [Run2016]
     from StopsCompressed.samples.nanoTuples_UL16_36fb_postProcessed_v2 import *
-    from StopsCompressed.samples.nanoTuples_UL16_36fb_FullSimSignal_postProcessed import *
     #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_M50_LO_16, QCD_HT_16, VV_16, WWToLNuQQ_16, TTX_16]
-    samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_M50_LO_16, QCD_HT_16, VV_16, TTX_16]
-    #samples = [QCD_HT_16]
-    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_M50_LO_16, QCD_HT_16, TTX_16]
-    data_sample = RunUL16_36fb
-    signals = [T2tt_500_470, T2tt_500_420]
-    #signals = [T2tt_500_420, T2tt_500_490]
+    #samples = [WJetsToLNu_HT_16, Top_pow_16, singleTop_16, ZInv_16, DY_HT_M50_LO_16, QCD_HT_16, VV_16, TTX_16]
+    samples = [QCD_HT_16]
+    #data_sample = RunUL16_36fb
+    data_sample = []
+    signals = []
+    print "here at combined 2016"
 elif "2017" in args.era and not args.eos:
     from StopsCompressed.samples.nanoTuples_UL17_postProcessed import *
-    #samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_LO_17,QCD_Ele_17,QCD_Mu_17, VV_17, TTX_17]
     #samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_LO_17, VV_17, TTX_17]
-    samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_M50_LO_17, QCD_HT_17, VV_17, TTX_17]
+    #samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_M50_LO_17, QCD_HT_17, VV_17, TTX_17]
+    samples = [QCD_HT_17]
     #from StopsCompressed.samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
     from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import *
     signals = []
@@ -128,6 +133,7 @@ elif "2018" in args.era and not args.eos:
 	#    nTrueInt_puRW = getReweightingFunction(data="PU_2018_58830_XSec%s"%args.reweightPU, mc="Autumn18")
 if args.era != "Run2016" and not args.eos:
 	try:
+	    print "era: ", args.era, "data_sample: ", eval(args.era)
 	    data_sample = eval(args.era)
 	except Exception as e:
 	    logger.error( "Didn't find %s", args.era )
@@ -159,21 +165,16 @@ def drawPlots(plots,mode, dataMCScale):
     for plot in plots:
       #print "data?? : ", plot.histos[1], "mc:?? ", plot.histos[0]
       #if not max(l[0].GetMaximum() for l in plot.histos): continue # Empty plot
-#      for l in plot.histos:
-#	if len(l)>1: print "samples list in plot histo", [ l[x].GetName() for x in range(len(l))]
-#	
-#	if len(l)>1: 
-#		mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) 
-#		print "integral: ", mc_integral
-#      print l[0].GetName()
-#      print "integral: ", l[0].Integral()
-
+      for l in plot.histos:
+	if len(l)>1: print "samples list in plot histo", [ l[x].GetName() for x in range(len(l))]
+	
+#	#if len(l)>1: mc_integral=  sum([ l[x].Integral() for x in range(len(l))]) 
       
       _drawObjects = []
       plotting.draw(plot,
         plot_directory = plot_directory_,
-	ratio = {'yRange':(0.1,1.9)},
-        #ratio = None,
+	#ratio = {'yRange':(0.1,1.9)},
+        ratio = None,
         logX = False, logY = log, sorting = False,
         yRange = (0.03, "auto") if log else (0.001, "auto"),
         scaling = {},
@@ -190,8 +191,8 @@ read_variables = [
             "Jet[pt/F, eta/F, phi/F, jetId/I]", 
             "met_pt/F", "met_phi/F","CT1/F", "HT/F","mt/F", 'l1_dxy/F', 'l1_dz/F', 'dphij0j1/F','ISRJets_pt/F', 'nISRJets/I','nSoftBJets/I','nHardBJets/I', "nBTag/I", "nJetGood/I", "PV_npvsGood/I","event/I","run/I", "Flag_BadPFMuonDzFilter/O"]
 read_variables += [
-            "nMuon/I","nElectron/I","nJet/I", "dPhiMetJet/F", "metJet/I",
-            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O]",
+            "nMuon/I","nElectron/I","nJet/I","GenPart[pt/F,eta/F,phi/F]","nGenPart/I","GenMET_pt/F",
+            "Muon[dxy/F,dxyErr/F,dz/F,dzErr/F,eta/F,ip3d/F,jetRelIso/F,mass/F,miniPFRelIso_all/F,miniPFRelIso_chg/F,pfRelIso03_all/F,pfRelIso03_chg/F,pfRelIso04_all/F,phi/F,pt/F,ptErr/F,segmentComp/F,sip3d/F,mvaTTH/F,charge/I,jetIdx/I,nStations/I,nTrackerLayers/I,pdgId/I,tightCharge/I,highPtId/b,inTimeMuon/O,isGlobal/O,isPFcand/O,isTracker/O,mediumId/O,mediumPromptId/O,miniIsoId/b,multiIsoId/b,mvaId/b,pfIsoId/b,softId/O,softMvaId/O,tightId/O,tkIsoId/b,triggerIdLoose/O,looseId/O,genPartIdx/I,genPartFlav/b]",
             ]
 #for s in samples:
 #    s.read_variables = ["genWeight/F",'reweightPU/F', 'Pileup_nTrueInt/F','reweightBTag_SF/F', 'GenMET_pt/F', 'GenMET_phi/F', 'Muon[genPartIdx/I,genPartFlav/b]', "GenPart[pt/F,eta/F,phi/F]", "nGenPart/I"]
@@ -208,56 +209,50 @@ def mtwithdphi(event, sample):
 		event.mtmod            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
 
 def muonSelecion (event, sample):
-	#event.l1_nTrackerLayers = -1
-	#event.l1_nStations 	= -1 
-	#event.l1_segmentComp	= float('nan')
-	#event.l1_isGlobal	= False
-	#if sample.isData:
-	#	event.l1_muIndex = -1
-	#	for i in range(event.nMuon):
-	#		if event.l1_pt==event.Muon_pt[i]:
-	#			event.l1_muIndex = i
-	#print "GenPart length: ", event.nGenPart
-	#if abs(event.l1_pdgId)==13 and event.l1_muIndex>=0 and sample.isData != True:
+	event.l1_muonGenPt 	= -999
+	event.l1_muonPt_ratio 	= -999
+	event.GenMET            = -999
+	event.MetPtRatio        = -999
+	#event.l1_nTrackerLayers = float('nan') 
+	#event.l1_nStations 	= float('nan') 
+	#event.l1_segmentComp	= float('nan') 
+	##if sample.isData:
+	##	event.l1_muIndex = -1
+	##	for i in range(event.nMuon):
+	##		if event.l1_pt==event.Muon_pt[i]:
+	##			event.l1_muIndex = i
+	##print "GenPart length: ", event.nGenPart
+	##if abs(event.l1_pdgId)==13 and event.l1_muIndex>=0 and sample.isData != True:
 	if abs(event.l1_pdgId)==13 and event.l1_muIndex>=0:
 		event.l1_nTrackerLayers = event.Muon_nTrackerLayers[event.l1_muIndex]
-		event.l1_nStations 	= event.Muon_nStations[event.l1_muIndex]
-		event.l1_segmentComp 	= event.Muon_segmentComp[event.l1_muIndex]
-		#print "muIndex: ", event.l1_muIndex
-		event.l1_isGlobal 	= event.Muon_isGlobal[event.l1_muIndex]
-		event.l1_isPF 	  	= event.Muon_isPFcand[event.l1_muIndex]
-		event.l1_isTrackr 	= event.Muon_isTracker[event.l1_muIndex]
-		#print "event.Muon_isGlobal: ", event.Muon_isGlobal[event.l1_muIndex]
+		event.l1_nStations = event.Muon_nStations[event.l1_muIndex]
+		event.l1_segmentComp = event.Muon_segmentComp[event.l1_muIndex]
+		event.l1_looseID = event.Muon_looseId[event.l1_muIndex]
+		if event.Muon_genPartIdx[event.l1_muIndex] >= 0 and event.Muon_genPartIdx[event.l1_muIndex]<100:
+			event.GenMET 		= event.GenMET_pt
+			event.MetPtRatio 	= event.met_pt / event.GenMET
+			event.l1_muonGenPt 	= event.GenPart_pt[event.Muon_genPartIdx[event.l1_muIndex]]
+			event.l1_muonPt_ratio   = event.l1_pt / event.l1_muonGenPt
+			#print "1_muonPT_ratio: ", event.l1_muonPt_ratio, "l1_pt: ", event.l1_pt, "genPt: ", event.l1_muonGenPt
+			#print "GenMET: ", event.GenMET, "ratio met/GenMET: ", event.l1_muonPt_ratio
+		#else:
+		#	event.l1_muonGenPt	= -999
+		#	event.l1_muonPt_ratio	= -999
+		#	event.GenMET            = -999
+		#	event.MetPtRatio        = -999
+		#	#print "GenMET in else : ", event.GenMET, "ratio met/GenMET: ", event.l1_muonPt_ratio
 	else:
-		event.l1_nTrackerLayers = -1
-		event.l1_nStations 	= -1
+		event.l1_nTrackerLayers = -999
+		event.l1_nStations 	= -999
 		event.l1_segmentComp	= -999
-		event.l1_isGlobal	= -1 
-		event.l1_isPF		= -1 
-		event.l1_isTrackr	= -1
+		event.l1_looseID	= -999
+	#print "GenMET in all : ", event.GenMET, event.GenMET_pt," ratio met/GenMET: ", event.l1_muonPt_ratio
 sequence.append(muonSelecion)
-
-def dphiMetJet( event, sample):
-	#event.dPhi = -1
-	#if event.nJetGood < 2:
-	#	event.dPhi = -1
-	#	#print "here for < 2 jets"
-	#else:
-	event.dPhiMetJets = []
-	for ij in range(event.nJetGood):
-		#print "length of jets: ", event.nJetGood, ij
-		event.dPhiMetJets.append(deltaPhi(event.met_phi, event.JetGood_phi[ij])) 
-	#print "deltaphis of met with all jets > 2: ", event.dPhiMetJet
-	#print "minimum angle selected for a jet:", min(event.dPhiMetJet)
-	event.dPhi = min(event.dPhiMetJets)
-	#print event.dPhi, "stored dPhi value"
-#sequence.append(dphiMetJet)
 
 def delR(event,sample):
 	event.dR = float("nan")
 	event.dR = sqrt(((deltaPhi(event.l1_phi,event.JetGood_phi[0])**2) + ((event.l1_eta - event.JetGood_eta[0])**2)))
-#sequence.append(delR)
-
+sequence.append(delR)
 
 def jetToLeptonRatio (event, sample):
 	event.cleanJets_pt  = float ('nan')
@@ -293,21 +288,23 @@ allModes = ['mu','e']
 for index, mode in enumerate(allModes):
 	yields[mode] = {}
 	if args.era == "Run2016":
-		data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-		lumi_scale                 = data_sample.lumi/1000
-		#print "lumi for each set: ", lumi_scale
-		data_sample.scale          = 1.
-		data_sample.style          = styles.errorStyle(ROOT.kBlack)
-		data_sample.name 	   = "data"
+		#data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+		#print data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+		#lumi_scale                 = data_sample.lumi/1000
+		#lumi_scale                 = 36
+		print "lumi for each set: ", lumi_scale
+		#data_sample.scale          = 1.
+		#data_sample.style          = styles.errorStyle(ROOT.kBlack)
+		#data_sample.name 	   = "data"
 	else:
-		#print "data: ", data_sample.name
+		print "data: ", data_sample.name
 		data_sample.setSelectionString([getFilterCut(isData=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 		if args.preHEM:
 			data_sample.addSelectionString("run<319077")
 		if args.postHEM:
 			data_sample.addSelectionString("run>=319077")
 		lumi_scale                 = data_sample.lumi/1000
-		#print "lumi: ", lumi_scale
+		print "lumi: ", lumi_scale
 		if args.preHEM:   lumi_scale *= 0.37
 		if args.postHEM:  lumi_scale *= 0.63
 		data_sample.scale          = 1.
@@ -315,8 +312,8 @@ for index, mode in enumerate(allModes):
 		data_sample.name 	   = "data"
 	if signals:
 	    T2tt_500_470.color = ROOT.kPink+6
-	    T2tt_500_420.color = ROOT.kCyan
-	    #T2tt_375_365.color = ROOT.kAzure+1
+	    #T2tt_500_420.color = ROOT.kCyan
+	    T2tt_375_365.color = ROOT.kAzure+1
 	
 	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
@@ -329,50 +326,59 @@ for index, mode in enumerate(allModes):
 			if "T2tt" in sample.name:
 				mStop= int(sample.name.split('_')[1])
 				mNeu= int(sample.name.split('_')[2])
+
 				#print sample.name.split('_')[1], sample.name.split('_')[2]
 				genEff = genFilter.getEff(mStop,mNeu)
 				#print "signal name: ",sample.name, "mStop: ", mStop, "mNeu: ", mNeu,"genEff: " ,genEff
-				#sample.read_variables += [ 'reweight_nISR/F']
-				sample.read_variables += [ 'year/I']
-				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightwPt * event.reweightLeptonSF * genEff * lumi_year[event.year]/1000
-				#sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire  * event.reweightLeptonSF 
+				sample.read_variables += [ 'reweight_nISR/F']
+				#sample.weight         = lambda event, sample: pu_getter(event) * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightnISR * event.reweightwPt * event.reweightLeptonSF * event.reweight_nISR * genEff
+				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire  * event.reweightLeptonSF 
 				sample.style = styles.errorStyle( color=sample.color, markerSize = 0.6)
-				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
-				#sample.scale = lumi_scale
-			##elif sample.name == "WWToLNuQQ":
-			#elif sample.name == "VV":
-			#	print sample.name, " using lumi %s"%lumi_scale
-			#	sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
-			#	sample.scale = lumi_scale 
-			#	sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True, skipULFilter= True), getLeptonSelection(mode)])
-			#	sample.style = styles.fillStyle(sample.color)
-
-			else:
-				sample.read_variables += ['year/I', ]
-				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt * lumi_year[event.year]/1000  
-				#sample.scale = lumi_scale 
+				sample.setSelectionString([getFilterCut(isData=False, isFastSim=True, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+				print "no reason to be here"
+				sample.scale = lumi_scale
+			#elif sample.name == "WWToLNuQQ":
+			elif sample.name == "VV":
+				print sample.name, " using lumi %s"%lumi_scale
+				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
+				sample.scale = lumi_scale 
 				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 				sample.style = styles.fillStyle(sample.color)
+
+			else:
+				print sample.name
+				sample.read_variables += ['year/I', ]
+				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt * lumi_year[event.year]/1000  
+				print "year: ", year
+				#sample.scale = lumi_scale 
+				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+				print getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)
+				sample.style = styles.fillStyle(sample.color)
+				##Attempt to get uncertainties of mc
+				#sample.style = styles.errorStyle(sample.color)
 		else:
+			print sample.name, args.era
 			sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
 			sample.scale = lumi_scale
-			sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
-			
+			sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
+			print getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)
 			sample.style = styles.fillStyle(sample.color)
 	#stack_ = Stack( samples, data_sample ) 
-	#stack_ = Stack( samples )
-	#stack_ = Stack( samples, T2tt_500_470, T2tt_500_420 )
-	stack_ = Stack( samples, data_sample, T2tt_500_470, T2tt_500_420 )
+	stack_ = Stack( samples )
+
+	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470, T2tt_500_420 )
+	#stack_ = Stack( samples, data_sample, T2tt_375_365, T2tt_500_470 )
 
 	if args.small:
-		for sample in samples + [data_sample] + signals:
+		#for sample in samples + [data_sample] + signals:
+		for sample in samples  + signals:
 			sample.normalization = 1.
-			sample.reduceFiles( factor = 40 )
+			sample.reduceFiles( factor = 30 )
 			#sample.scale /= sample.normalization
 
 	# Use some defaults
 	Plot.setDefaults(stack = stack_, weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection), addOverFlowBin='upper', histo_class=ROOT.TH1D)
-	#Plot2D.setDefaults( weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection) )
+	Plot2D.setDefaults( weight = (staticmethod(weight_)), selectionString = cutInterpreter.cutString(args.selection) )
 	plots   = []
 	plots2D = []
 
@@ -457,31 +463,31 @@ for index, mode in enumerate(allModes):
 	    binning=[15,0,15],
 	  ))
 	plots.append(Plot(
-	    texX = 'isGlobal', texY = 'Number of Events ',
-	    name = 'Muon_isGlobal', attribute = lambda event, sample: event.l1_isGlobal,
-	    binning=[2,0,2],
-	  ))
-	plots.append(Plot(
-	    texX = 'isPF', texY = 'Number of Events ',
-	    name = 'Muon_isPFCand', attribute = lambda event, sample: event.l1_isPF,
-	    binning=[2,0,2],
-	  ))
-	plots.append(Plot(
-	    texX = 'isTracker', texY = 'Number of Events ',
-	    name = 'Muon_isTracker', attribute = lambda event, sample: event.l1_isTrackr,
+	    texX = 'Muon_looseID', texY = 'Number of Events ',
+	    name = 'mu_looseID', attribute = lambda event, sample: event.l1_looseID,
 	    binning=[2,0,2],
 	  ))
 
-	#plots.append(Plot(
-	#    texX = 'Gen mu_p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
-	#    name = 'GenMuPt', attribute = lambda event, sample: event.l1_muonGenPt,
-	#    binning=[40,0,200],
-	#  ))
-	#plots.append(Plot(
-	#    texX = ' mu_p_{T}/ muGen_p_{T}', texY = 'Number of Events ',
-	#    name = 'RecoMuPtToGenMuPt', attribute = lambda event, sample: event.l1_muonPt_ratio,
-	#    binning=[40,0,2],
-	#  ))
+	plots.append(Plot(
+	    texX = 'Gen mu_p_{T}(l_{1}) (GeV)', texY = 'Number of Events ',
+	    name = 'GenMuPt', attribute = lambda event, sample: event.l1_muonGenPt,
+	    binning=[40,0,200],
+	  ))
+	plots.append(Plot(
+	    texX = ' mu_p_{T}/ muGen_p_{T}', texY = 'Number of Events ',
+	    name = 'RecoMuPtToGenMuPt', attribute = lambda event, sample: event.l1_muonPt_ratio,
+	    binning=[40,0,2],
+	  ))
+	plots.append(Plot(
+	    texX = ' met_p_{T}/ GenMET_p_{T}', texY = 'Number of Events ',
+	    name = 'RecoGenPtToGenMETPt', attribute = lambda event, sample: event.MetPtRatio,
+	    binning=[40,0,5],
+	  ))
+	plots.append(Plot(
+	    texX = 'GenMET (GeV)', texY = 'Number of Events ',
+	    name = 'GenMETpT', attribute = lambda event, sample: event.GenMET,
+	    binning=[40,200,1000],
+	  ))
 	##plots.append(Plot(
 	##    texX = 'M_{T} (GeV)', texY = 'Number of Events / 20 GeV',
 	##    name = 'mt_mod', attribute = lambda event, sample: event.mtmod,
@@ -523,11 +529,11 @@ for index, mode in enumerate(allModes):
 	    name = 'hybridIsolation', attribute = lambda event, sample: log(1+(event.l1_relIso03*(min(event.l1_pt,25))))/log(1+5),
 	    binning=[20,0,4],
 	  ))
-	#plots.append(Plot(
-	#    texX = 'dR between l1 and leading JetGood', texY = 'Number of Events ',
-	#    name = 'deltaR', attribute = lambda event, sample: event.dR,
-	#    binning=[10,-1,1],
-	#  ))
+	plots.append(Plot(
+	    texX = 'dR between l1 and leading JetGood', texY = 'Number of Events ',
+	    name = 'deltaR', attribute = lambda event, sample: event.dR,
+	    binning=[10,-1,1],
+	  ))
 	plots.append(Plot(
 	    texX = 'pt Ratio between l1 and leading JetGood', texY = 'Number of Events ',
 	    name = 'ptRatio', attribute = lambda event, sample: (event.JetGood_pt[0] / event.l1_pt),
@@ -553,37 +559,6 @@ for index, mode in enumerate(allModes):
 	#    name = 'nJetsClean', attribute = lambda event, sample: event.nJetsClean,
 	#    binning=[10,0,10],
 	#  ))
-	#plots.append(Plot(
-	#    texX = 'min(#Delta#phi(E_{T}^{miss},Jet)) (GeV)', texY = 'Number of Events ',
-	#    name = 'min(dphimetjet)', attribute = lambda event, sample: event.dPhi,
-	#    binning=[20,0,pi],addOverFlowBin = 'both',
-	#  ))
-	#plots.append(Plot(
-	#    texX = 'min(#Delta#phi(E_{T}^{miss},Jet)) (GeV)', texY = 'Number of Events ',
-	#    name = 'min(dphimetjet)npitopi', attribute = lambda event, sample: event.dPhi,
-	#    binning=[20,-pi,pi],addOverFlowBin = 'both',
-	#  ))
-	plots.append(Plot(
-	    texX = '#Delta#phi(E_{T}^{miss}, leading jet) (GeV)', texY = 'Number of Events ',
-	    name = 'dphimetj0', attribute = lambda event, sample: deltaPhi(event.met_phi, event.JetGood_phi[0]),
-	    binning=[20,0,pi],
-	  ))
-	plots.append(Plot(
-	    texX = '#Delta#phi(E_{T}^{miss}, sub-leading jet) (GeV)', texY = 'Number of Events ',
-	    name = 'dphimetj1', attribute = lambda event, sample: deltaPhi(event.met_phi, event.JetGood_phi[1]),
-	    binning=[20,0,pi],
-	  ))
-
-	plots.append(Plot(
-	    texX = 'min(#Delta#phi(E_{T}^{miss},Jet)) (GeV)', texY = 'Number of Events ',
-	    name = 'min(dPhiMetJet)', attribute = TreeVariable.fromString("dPhiMetJet/F"),
-	    binning=[20,0,pi], addOverFlowBin = 'both',
-	  ))
-	plots.append(Plot(
-	    texX = 'lead/subleadJet', texY = 'Number of Events ',
-	    name = 'whichJetformindphi', attribute = TreeVariable.fromString("metJet/I"),
-	    binning=[3,0,3], 
-	  ))
 	if args.selection.count('njet2'):
 		plots.append(Plot(
 		    texX = 'p_{T}(sub-leading jet) (GeV)', texY = 'Number of Events ',
@@ -724,9 +699,9 @@ for index, mode in enumerate(allModes):
 		  h.GetXaxis().SetBinLabel(1, "#mu")
 		  h.GetXaxis().SetBinLabel(2, "e")
 	yields[mode]["MC"] = sum(yields[mode][s.name] for s in samples)
-	dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+	#dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
 	## if plotting only MC
-	#dataMCScale = 1
+	dataMCScale = 1
 
 	drawPlots(plots, mode, dataMCScale)
 	
@@ -745,9 +720,9 @@ yields['all'] = {}
 for y in yields[allModes[0]]:
 	try:	yields['all'][y] = sum(yields[c][y] for c in (['mu','e']))
 	except: yields['all'][y] = 0
-dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
+#dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
 ## if only plotting MC and data
-#dataMCScale = 1
+dataMCScale = 1
 for plot in allPlots['mu']:
 	for plot2 in (p for p in allPlots['e'] if p.name == plot.name): 
 		for i, j in enumerate(list(itertools.chain.from_iterable(plot.histos))):

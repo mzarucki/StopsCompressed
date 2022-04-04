@@ -5,7 +5,7 @@ parser.add_option("--noMultiThreading",      dest="noMultiThreading",      defau
 parser.add_option("--noSystematics",         dest="noSystematics",         default = False,             action="store_true", help="no systematics?")
 parser.add_option("--selectEstimator",       dest="selectEstimator",       default=None,                action="store",      help="select estimator?")
 parser.add_option("--selectRegion",          dest="selectRegion",          default=None, type="int",    action="store",      help="select region?")
-parser.add_option("--year",                  dest="year",                  default=2016, type="int",    action="store",      help="Which year?")
+parser.add_option("--year",                  dest="year",                  default="2016postVFP", type="str",    action="store",      help="Which year?")
 parser.add_option("--nThreads",              dest="nThreads",              default=1, type="int",       action="store",      help="How many threads?")
 parser.add_option('--logLevel',              dest="logLevel",              default='INFO',              action='store',      help="log level?", choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'])
 #parser.add_option("--control",               dest="control",               default=None,                action='store',      choices=[None, "DY", "VV", "DYVV", "TTZ1", "TTZ2", "TTZ3", "TTZ4", "TTZ5", "CR1aX","CR1aY", "CR1bX", "CR1bY"], help="For CR region?")
@@ -18,6 +18,8 @@ parser.add_option("--extra_mT_cut",        action='store_true',            defau
 parser.add_option("--mT_cut_value",        action='store',                 default=95, choices=[95,100,105],   help="plot region plot background substracted")
 parser.add_option("--CT_cut_value",        action='store',                 default=400, type="int", help="plot region plot background substracted")
 parser.add_option("--isPrompt",            action='store_true',            default=False,   help="promplt leptons contributing to regions")
+#parser.add_option("--isdPhiMetJets",       action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), not on dPhiJets")
+#parser.add_option("--isdPhiComb",          action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), and on dPhiJets")
 
 
 
@@ -92,6 +94,12 @@ signals_T2tt = []
 
 if options.isPrompt:
 	setup.parameters["l1_prompt"] = True
+#if options.isdPhiMetJets:
+#	setup.parameters["dphiMetJets"] = True
+#	setup.parameters["dphiJets"] 	= False
+#if options.isdPhiComb:
+#	setup.parameters["dphiMetJets"] = True
+#	setup.parameters["dphiJets"] 	= True
 estimators = estimatorList(setup)
 #allEstimators = estimators.constructEstimatorList(['WJets','Top','ZInv','singleTop', 'VV', 'TTX', 'QCD'])
 allEstimators = estimators.constructEstimatorList(['WJets','Top','Others', 'ZInv', 'QCD'])

@@ -64,7 +64,7 @@ dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
 signalString = options.signal
 
-analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400/limits/T2tt/T2tt/'
+analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
 
@@ -79,7 +79,7 @@ else:
 print signalString, yearString
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
 #sppit CR
-plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400','FR_limitAll_2016')
+plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse','FR_limitAll_2016')
 #AN based binning
 #plotDir = os.path.join(plot_directory,'AN_sv2','FR_limitAll_2016')
 
@@ -488,7 +488,7 @@ outputname = os.path.join(plotDir, 'limit')
 #T2degdm
 fileIN = inputFile('SMS_limit_T2degdm.cfg')
 # classic temperature histogra
-xsecPlot = smsPlotXSEC(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, fileIN.LUMI, "", "asdf")
+xsecPlot = smsPlotXSEC(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, fileIN.LUMI, fileIN.PRELIMINARY, "asdf")
 #xsecPlot.Draw( lumi = lumi, zAxis_range = (10**-3,10**2) )
 xsecPlot.Draw()
 #if options.signal.startswith("T8"):

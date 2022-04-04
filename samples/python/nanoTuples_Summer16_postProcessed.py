@@ -21,7 +21,7 @@ try:
   postProcessing_directory_ = sys.modules['__main__'].postProcessing_directory
 except:
   from StopsCompressed.samples.default_locations import default_locations
-  postProcessing_directory_ = default_locations.mc_2016_postProcessing_directory 
+  postProcessing_directory_ = default_locations.mc_legacy16_postProcessing_directory 
 
 logger.info("Loading MC samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
@@ -79,6 +79,7 @@ dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
 dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200_comb", "WJetsToLNu_HT200to400_comb", "WJetsToLNu_HT400to600_comb", "WJetsToLNu_HT600to800_comb", "WJetsToLNu_HT800to1200_comb", "WJetsToLNu_HT1200to2500_comb", "WJetsToLNu_HT2500toInf_comb"]
 
+dirs['WWToLNuQQ']	= ["WWToLNuQQ"]
 dirs['WW']              = ["WWToLNuQQ", "WWTo2L2Nu"]
 dirs['WZ']              = ["WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q", "WZTo3LNu_comb"]
 dirs['ZZ']              = ["ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L" , "ZZTo2L2Nu_comb"]
@@ -111,6 +112,7 @@ TTZ_LO_16            	= Sample.fromDirectory(name="TTZ_LO",                  tre
 TTG_16            	= Sample.fromDirectory(name="TTG",                  treeName="Events", isData=False, color=color.TTG,              texName="t#bar{t}#gamma",                    directory=directories['TTG'])
 WJetsToLNu_HT_16  	= Sample.fromDirectory(name="WJetsToLNu_HT_",       treeName="Events", isData=False, color=color.WJetsToLNu,       texName="W(l,#nu) + Jets (HT)",              directory=directories['WJetsToLNu_HT'])
 VV_16           	= Sample.fromDirectory(name="VV",                   treeName="Events", isData=False, color=color.VV,              texName="VV ",                               directory=directories['VV'])
+WWToLNuQQ_16           	= Sample.fromDirectory(name="WWToLNuQQ",            treeName="Events", isData=False, color=color.VV,              texName="WWToLNuQQ",                          directory=directories['WWToLNuQQ'])
 QCD_HT_16  		= Sample.fromDirectory(name="QCD_HT",    	    treeName="Events", isData=False, color=color.QCD_HT,          texName="QCD (HT)",                 directory=directories['QCD_HT'])
 ZInv_16  		= Sample.fromDirectory(name="ZInv",    	    	    treeName="Events", isData=False, color=color.ZInv,           texName="Z(#nu,#nu + Jets)",                 directory=directories['ZInv'])
 Others_16                = Sample.fromDirectory(name="others",                treeName="Events", isData=False, color=color.others,           texName="Others",                 directory=directories['others'])    

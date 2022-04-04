@@ -12,7 +12,8 @@ if os.environ['USER'] in ['priya.hussain']:
     analysis_results                    = "/scratch/priya.hussain/StopsCompressed/results/"
     #cache_directory                     = "/mnt/hephy/cms/priya.hussain/StopsCompressed/"
     cache_directory                     = "/scratch/priya.hussain/StopsCompressed/cache/analysis/"
-    postProcessing_output_directory     = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
+    #postProcessing_output_directory     = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
+    postProcessing_output_directory     = "/scratch//priya.hussain/StopsCompressed/nanoTuples/"
     plot_directory                      = "/groups/hephy/cms/priya.hussain/www/StopsCompressed/"
     private_results_directory           = "/groups/hephy/cms/priya.hussain/"
 

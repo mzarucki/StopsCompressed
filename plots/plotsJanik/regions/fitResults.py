@@ -37,7 +37,7 @@ argParser.add_argument("--postFit",              action="store_true",           
 argParser.add_argument("--expected",             action="store_true",                            help="Run expected?")
 argParser.add_argument("--preliminary",          action="store_true", default=True,              help="preliminary?")
 argParser.add_argument("--systOnly",             action="store_true",                            help="correlation matrix with systematics only?")
-argParser.add_argument("--year",                 action="store",      type=int, default=2016,    help="Which year?")
+argParser.add_argument("--year",                 action="store",      type=str, default="2016preVFP",    help="Which year?")
 #argParser.add_argument("--carddir",              action='store',                default='control2016/cardFiles/T2tt/expected',      help="which cardfile directory?")
 # argParser.add_argument("--carddir",              action='store',                default='fitAllregion_test3/cardFiles/T2tt/expected',      help="which cardfile directory?")
 argParser.add_argument("--carddir",              action='store',                default='Sensitivity',      help="which cardfile directory?")
@@ -121,9 +121,10 @@ if args.plotChannels and "e"   in args.plotChannels: args.plotChannels += ["e"]
 if args.plotChannels and "mu"  in args.plotChannels: args.plotChannels += ["mu"]
 
 # define luminosity for the chosen year
-if   args.year == 2016: lumi_scale = 35.92
-elif args.year == 2017: lumi_scale = 41.53
-elif args.year == 2018: lumi_scale = 59.74
+if   args.year == "2016preVFP": lumi_scale = 19.5
+if   args.year == "2016postVFP": lumi_scale = 16.5
+elif args.year == "2017": lumi_scale = 41.53
+elif args.year == "2018": lumi_scale = 59.74
 
 
 
@@ -179,7 +180,7 @@ nBins     = len(crLabel)
 # region plot, sorted/not sorted, w/ or w/o +-1sigma changes in one nuisance
 def plotRegions( sorted=True ):
     
-    resHisto = (Results.getRegionHistos( postFit=args.postFit, plotBins=plotBins, nuisances=args.plotNuisances, addStatOnlyHistos=False, bkgSubstracted=args.bkgSubstracted, labelFormater=labelFormater ))
+    resHisto = (Results.getRegionHistos( postFit=args.postFit, plotBins=plotBins, nuisances=args.plotNuisances, addStatOnlyHistos=True, bkgSubstracted=args.bkgSubstracted, labelFormater=labelFormater ))
     
     F = ROOT.TFile("myfile.root", "recreate")
     for hist_name in resHisto["Bin0"].keys() :
@@ -205,9 +206,10 @@ def plotRegions( sorted=True ):
                 
         shift += regionMapping[j]+1#resHisto[creg][proc].GetNbinsX()
 
-    labels = [
-                str(k) for k in range(0,_NBINS)
-		      ]
+#    labels = [
+#                str(k) for k in range(0,_NBINS)
+#		      ]
+    labels = 2*(["VL","L","M","H","VH","CR"]*4+["L","M","H","VH","CR"]*4)
     for p in hists.keys() : 
     
         for i in range(hists[p].GetNbinsX()):

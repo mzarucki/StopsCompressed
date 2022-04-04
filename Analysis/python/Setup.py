@@ -33,9 +33,10 @@ default_lepVeto     = True
 default_jetVeto     = True
 default_MET         = (300, -999)
 default_prompt      = False
+default_dphiMetJets = False
 
 class Setup:
-    def __init__(self, year=2016):
+    def __init__(self, year="2016preVFP"):
 
         logger.info("Initializing Setup")
         self.analysis_results = analysis_results
@@ -54,31 +55,43 @@ class Setup:
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
             "l1_prompt":    default_prompt,
+	    "dphiMetJets":  default_dphiMetJets,
         }
 
 
         self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
         
-        for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/macros/*.C')) :
-            if R.gROOT.LoadMacro(macro): #compile it
-                raise OSError("Unable to load: {}".format(macro))
+        #for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/macros/*.C')) :
+        #    if R.gROOT.LoadMacro(macro): #compile it
+        #        raise OSError("Unable to load: {}".format(macro))
         
-        self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)", "reweightHEM"], "selectionModifier":None} 
+	#not using user-defined leptonSF from macro , remove "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)"
+	self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
         
         #if runOnLxPlus:
         #    # Set the redirector in the samples repository to the global redirector
         #    from Samples.Tools.config import redirector_global as redirector
-        if year == 2016 :
+        if year == "2016preVFP" :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
-
-            from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import Run2016
-            WJets        = WJetsToLNu_HT_16
-            Top          = Top_pow_16
-            QCD		 = QCD_HT_16
-            Others       = Others_16
-            ZInv    	 = ZInv_16
-            data         = Run2016
+            #from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
+            #from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import Run2016
+	    from StopsCompressed.samples.nanoTuples_UL16APV_postProcessed import Top_pow_16APV, ZInv_16APV, Others_16APV, WJetsToLNu_HT_16APV, QCD_HT_16APV 
+	    from StopsCompressed.samples.nanoTuples_RunUL16APV_postProcessed import Run2016preVFP  
+            WJets        = WJetsToLNu_HT_16APV 
+            Top          = Top_pow_16APV
+            QCD		 = QCD_HT_16APV
+            Others       = Others_16APV
+            ZInv    	 = ZInv_16APV
+            data         = Run2016preVFP
+	elif year == "2016postVFP" :
+	    from StopsCompressed.samples.nanoTuples_UL16_postProcessed import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
+	    from StopsCompressed.samples.nanoTuples_RunUL16_postProcessed import Run2016postVFP
+	    WJets        = WJetsToLNu_HT_16
+	    Top          = Top_pow_16
+	    QCD          = QCD_HT_16
+	    Others       = Others_16
+	    ZInv         = ZInv_16
+	    data         = Run2016postVFP
 
         elif year == 2017 :
             #define samples
@@ -108,15 +121,20 @@ class Setup:
 
 
 
-        if year == 2016:
-            self.lumi     = 35.92*1000
-            self.dataLumi = 35.92*1000
+        if year == "2016preVFP":
+            self.lumi     = 19.5*1000
+            self.dataLumi = 19.5*1000
+	    print "here in 2016preVFP year"
+        elif year == "2016postVFP":
+	    self.lumi     = 16.5*1000
+	    self.dataLumi = 16.5*1000
         elif year == 2017:
             self.lumi     = 41.53*1000
             self.dataLumi = 41.53*1000
         elif year == 2018:
             self.lumi     = 59.74*1000
             self.dataLumi = 59.74*1000
+
 
         mc           = [WJets, Top, Others, ZInv, QCD ]
         self.processes = {
@@ -140,6 +158,8 @@ class Setup:
         
         if (specificNameForSensitivityStudy) :
             cacheDir = os.path.join(cache_directory, str(self.year), "estimates_{}".format(specificNameForSensitivityStudy))
+            #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiMetJets_{}".format(specificNameForSensitivityStudy))
+            #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiComb_{}".format(specificNameForSensitivityStudy))
         else :
             cacheDir = os.path.join(cache_directory, str(self.year), "estimates") #switch of MCs (->v26)
         # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_mt100") #switch of MCs (->v26)
@@ -179,7 +199,8 @@ class Setup:
                         if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
                         if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
                         if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
-                        if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
+			if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
+                        #if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
 
 
                 else:
@@ -206,7 +227,8 @@ class Setup:
         logger.debug("Using cut-string: %s", cut)
         return cut
 
-    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto,l1_prompt,channel='all', isFastSim =False):
+    #def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto, l1_prompt, channel='all', isFastSim =False):
+    def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto, l1_prompt, dphiMetJets, channel='all', isFastSim =False):
         """Define full selection
            dataMC: "Data" or "MC"
            channel: "all", "e" or "mu"
@@ -235,6 +257,10 @@ class Setup:
         if dphiJets:
             res['prefixes'].append('deltaPhiJets')
             res['cuts'].append('dphij0j1<2.5')
+
+        if dphiMetJets:
+            res['prefixes'].append('deltaPhiMetJets')
+            res['cuts'].append('dPhiMetJet>=0.5')
 
         if tauVeto:
             res['prefixes'].append('tauveto')
@@ -317,7 +343,7 @@ class Setup:
 
 if __name__ == "__main__":
     print "executing now for 2016 - if you want a different year, this needs to be implemented"
-    setup = Setup( year=2016 )
+    setup = Setup( year="2016preVFP" )
 #    for name, dict in allRegions.items():
 #        if not "Iso" in name: continue
 #        print
