@@ -38,7 +38,7 @@ python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample TTZ_LO #SPLIT15 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample TTW_LO #SPLIT13 
 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample WW #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample WW #SPLIT20 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample WWTo2L2Nu #SPLIT2 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample ZZTo2L2Nu #SPLIT12 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample ZZTo4L #SPLIT46
@@ -50,12 +50,12 @@ python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT300to500 #SPLIT14 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT500to700 #SPLIT14 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT700to1000 #SPLIT12 
-# python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT1500to2000 #SPLIT4 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT1500to2000 #SPLIT4 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT2000toInf #SPLIT10 
 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT20 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT20 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT20 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT20 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT20 
-python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v3  --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT20 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT20 

@@ -30,6 +30,8 @@ DEFAULT_WALLTIME="08:00:00"
 DEFAULT_THROTTLE=10
 DEFAULT_DELAY=60
 
+NTUPLEPATH="/groups/hephy/cms/dietrich.liko/StopsCompressed/nanoTuples"
+
 def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
 
     log.debug("Reading %s ...", input)
@@ -44,6 +46,8 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
             splits.append(1)
         else:
             splits.append(int(match.group(3)))
+
+    commands, splits = filter_commands(commands, splits) 
 
     log.debug('Found %d commands', len(commands))
 
@@ -75,7 +79,6 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
                 cmds=zip(commands, splits),
                 cwd=os.getcwd(),
                 export=export,
-                proxy=proxy,
                 **kwargs
             ),
             file=job,
@@ -93,6 +96,50 @@ def main(input, name, jobdir, outdir, throttle, dryrun, **kwargs):
 
     with open('mysubmit.log','a') as joblog:
         print( "%s,%s,%s" % (match.group(1), name, fid), file=joblog )
+
+def getarg(cmd_array, arg):
+
+    try:
+        idx = cmd_array.index(arg)
+        return cmd_array[idx+1]
+    except ValueError:
+        print("Token %s is not in the list %s" % (arg, ' '.join(cmd_array)))
+        sys.exit()
+
+
+def filter_commands(commands, splits):
+
+    new_commands = []
+    new_splits = []
+    for command, split in zip(commands, splits):
+        cmd_array = command.split()
+        sample = getarg(cmd_array, '--sample')
+        era = getarg(cmd_array, '--processingEra')
+        skim = getarg(cmd_array, '--skim')
+        dir = os.path.join(NTUPLEPATH, era, skim, sample)
+        missing = []
+        if split == 1:
+            path = os.path.join(dir, '%s.root' % sample)
+            if not os.path.exists(path):
+                missing.append(0)
+        else:
+            for i in range(split):
+                path = os.path.join(dir, '%s_%d.root' % (sample, i))
+                if not os.path.exists(path):
+                    missing.append(i)
+
+        if not missing:
+            continue
+
+        if len(missing) == split:
+            new_commands.append(command)
+            new_splits.append(split)
+        else:
+            for j in missing:
+                new_commands.append('%s --nJobs %d --job %d' % (command, split, j))
+                new_splits.append(1)
+
+    return new_commands, new_splits
 
 def check_x509_proxy():
 
@@ -131,7 +178,7 @@ def check_privdir():
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", metavar="INPUT", help="Input File")
+    parser.add_argument("input", metavar="INPUT", help="Input File with job definitions")
     parser.add_argument("-v", "--verbose", action="store_true", default=False, help="Verbose output")
     parser.add_argument("-x", "--dryrun", action="store_true", default=False, help="Do not submit jobs")
     parser.add_argument("-N", "--name", default=None, help="Batch job name (default input filename)")

@@ -37,17 +37,20 @@ def main(jobid, name):
 
         try:
             output = subprocess.check_output( ['grep', 'nanoPostProcessing.py', joberr]).split()
-            if len(output) in [15, 16]:
-                dataset = output[-5]
-                number = output[-1]
-                files = output[-3]
+            dataset = getarg(output, '--sample')
+            nrjobs = getarg(output,'--nJobs')
+            if nrjobs is None:
+                nrjobs = 1
+                jobnr = 0
             else:
-                dataset = output[-1]
+                jobnr = getarg(output,'--job')
         except subprocess.CalledProcessError:
-                dataset = ""
+            dataset = ""
+            nrjobs = 0
+            jobnr = 0
 
         if state in ['RUNNING', 'FAILED']:
-            print( ': %s - %s/%s' % (dataset, number, files) )
+            print( ': %s - %s/%s' % (dataset, jobnr, nrjobs) )
             if state == 'FAILED':
                 print('     ', jobout)
                 print('     ', joberr)
@@ -60,9 +63,15 @@ def main(jobid, name):
         entries = ntp.Get('Events').GetEntries()
         ntp.Close()
 
-        print( ': %s - %s/%s : Entries: %d' % (dataset, number, files, entries) )
+        print( ': %s - %s/%s : Entries: %d' % (dataset, jobnr , nrjobs, entries) )
 
+def getarg(cmd_array, arg):
 
+    try:
+        idx = cmd_array.index(arg)
+        return cmd_array[idx+1]
+    except ValueError:
+        return None
 
 if __name__ == "__main__":
 
