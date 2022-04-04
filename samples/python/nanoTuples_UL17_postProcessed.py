@@ -62,8 +62,8 @@ dirs['Top_pow']          = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
 ##
 ##dirs['Top_pow']          = dirs['TTLep_pow']  
 ##
-dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "TBar_tch_pow"]#,"T_tch_pow",  "TToLeptons_tch_powheg", "TBarToLeptons_tch_powheg"]
-dirs['singleTop_tch']    = ["TBar_tch_pow"] #"T_tch_pow", 
+dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "TBar_tch_pow", "T_tch_pow"] #  "TToLeptons_tch_powheg", "TBarToLeptons_tch_powheg"]
+dirs['singleTop_tch']    = ["TBar_tch_pow", "T_tch_pow"] 
 #
 #
 dirs['TTZ_LO']         = ['TTZ_LO']
@@ -76,9 +76,9 @@ dirs['TTW']             = ['TTW_LO']
 dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
 ##added WJetsHT800T01200 from legacy as place holder to check the affect : compstops_2017_nano_v8
-dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf"] #, "WJetsToLNu_HT800to1200" 
+dirs['WJetsToLNu_HT']   = ["WJetsToLNu_HT70to100", "WJetsToLNu_HT100to200", "WJetsToLNu_HT200to400", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf",  "WJetsToLNu_HT800to1200"] 
 
-dirs['WW']              = ["WWTo2L2Nu"] #, "WWToLNuQQ" TTWToLNu_CP5
+dirs['WW']              = ["WW"] #, "WWToLNuQQ" TTWToLNu_CP5
 dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
 dirs['ZZ']              = ["ZZTo2L2Nu", "ZZTo4L" ] # "ZZTo2L2Q", "ZZTo2Q2Nu",
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
@@ -87,7 +87,7 @@ dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
 #dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
 #dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 
-dirs['QCD_HT'] 		= ["QCD_HT50to100",  "QCD_HT200to300","QCD_HT200to300", "QCD_HT300to500", "QCD_HT500to700", "QCD_HT700to1000" ,  "QCD_HT1500to2000",] #,"QCD_HT100to200","QCD_HT1000to1500",, "QCD_HT2000toInf"
+dirs['QCD_HT'] 		= ["QCD_HT50to100",  "QCD_HT200to300","QCD_HT200to300", "QCD_HT300to500", "QCD_HT500to700", "QCD_HT700to1000" ,  "QCD_HT1500to2000", "QCD_HT100to200","QCD_HT1000to1500", "QCD_HT2000toInf"]
 dirs['ZInv']            = ["DYJetsToNuNu_HT100to200", "DYJetsToNuNu_HT200to400", "DYJetsToNuNu_HT400to600", "DYJetsToNuNu_HT600to800", "DYJetsToNuNu_HT800to1200", "DYJetsToNuNu_HT1200to2500", "DYJetsToNuNu_HT2500toInf" ]
 
 dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']

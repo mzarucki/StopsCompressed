@@ -1,22 +1,25 @@
 # StopsCompressed
 ```
 cmsrel CMSSW_10_6_25
-cd CMSSW_10_6_25
+cd CMSSW_10_6_25/src
 cmsenv
-git cms-init
-git clone https://github.com/HephyAnalysisSW/StopsCompressed.git
-git clone https://github.com/HephyAnalysisSW/Samples.git
-git clone https://github.com/HephyAnalysisSW/RootTools.git
-git clone https://github.com/HephyAnalysisSW/Analysis.git
-cd StopsCompressed
-git checkout -b UltraLegacy 
-cd ../Samples 
-git checkout -b StopsCompressedUL
 
-git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
+# Download patched version of install_correctionslib.sh
+curl -sLO https://gist.githubusercontent.com/dietrichliko/96865aa4c47d7fabc7d746d163fc7cf5/raw/3cc1cb04dd0991b5dc920b3c45266a5b82baea0e/install_correctionslib.sh
+. ./install_correctionslib.sh
+rm install_correctionslib.sh
+
+# clone repositories
+git clone git@github.com:HephyAnalysisSW/StopsCompressed -b UltraLegacy
+git clone git@github.com:HephyAnalysisSW/Samples.git -b StopsCompressedUL
+git clone git@github.com:HephyAnalysisSW/RootTools.git -b StopCompressed
+git clone git@github.com:HephyAnalysisSW/Analysis.git -b StopsCompressed
+git clone git@github.com:priyasajid/nanoAOD-tools.git PhysicsTools/NanoAODTools
 
 #compile
 scram b -j9
+
+# to be verified ...
 
 # Get combine
 # Latest recommendations at https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#setting-up-the-environment-and-installation
@@ -35,10 +38,4 @@ cd $CMSSW_BASE/src
 wget https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-https.sh; source sparse-checkout-https.sh
 scram b -j 8
 
-# for correctionlib installation
-git clone --recursive git@github.com:cms-nanoAOD/correctionlib.git
-cd correctionlib
-make PYTHON=python2
-make install  # set PREFIX=... to change from default (./correctionlib)
-cp correctionlib Analysis/Tools/python/
 ```

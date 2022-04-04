@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+#SBATCH --job-name={{name}}
+#SBATCH --chdir={{cwd}}
+#SBATCH --output={{outdir}}/{{name}}-%A-%a.out
+#SBATCH --error={{outdir}}/{{name}}-%A-%a.err
+#SBATCH --export={{export}}
+{%- if ncpus %}
+#SBATCH  --cpus-per-task={{ncpus}}
+{% endif %}
+{%- if memory %}
+#SBATCH --memory-per-core={{memory}}G
+{% endif %}
+{%- if walltime %}
+#SBATCH --time {{walltime}}
+{% endif %}
+{%- if throttle > 0 %}
+#SBATCH --array={{first}}-{{last}}%{{throttle}}
+{%- else %}
+#SBATCH --array={{first}}-{{last}}
+{% endif %}
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+set -xeu -o pipefail
+shopt -s expand_aliases
+
+# Setup CMS environment
+cmsenv
+
+{% if proxy %}
+# check X509_PROXY
+voms-proxy-info --all
+
+{% endif -%}
+{% if krb5 %}
+# check kerberos token
+klist -f
+
+{% endif -%}
+
+sleep $(( $RANDOM % 180 ))
+
+{% set ns = namespace(icnt=0, if_var='if') %}
+{% for cmd, split in cmds %}
+{%- if split == 1 %}
+{{ ns.if_var }} [[ $SLURM_ARRAY_TASK_ID -eq {{ ns.icnt }} ]]
+then
+    {{ cmd }}
+{%- else -%}
+{{ ns.if_var }} [[ $SLURM_ARRAY_TASK_ID -lt {{ ns.icnt + split }} ]]
+then
+    {{ cmd }} --nJobs {{ split }} --job $(($SLURM_ARRAY_TASK_ID - {{ ns.icnt }} )) 
+{%- endif -%}
+{% set ns.icnt = ns.icnt + split %}
+{% set ns.if_var = 'elif' %}
+{%- endfor -%}
+else
+    echo "Unexpected value $id for SLURM_ARRAY_TASK_ID"
+    exit 1
+fi

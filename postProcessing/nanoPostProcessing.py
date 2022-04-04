@@ -140,9 +140,9 @@ elif options.year == "UL2016_preVFP":
 	from Samples.nanoAOD.Run2016APV_private_ULnanoAODv9    import allSamples as dataSamples
 	allSamples = mcSamples + dataSamples
 elif options.year == "UL2017":
-	from Samples.nanoAOD.UL17v9_private                     import allSamples as mcSamples
-    	from Samples.nanoAOD.Run2017_private_ULnanoAODv9    	import allSamples as dataSamples
-	allSamples = mcSamples + dataSamples
+    from Samples.nanoAOD.UL17v9_private                     import allSamples as mcSamples
+    from Samples.nanoAOD.Run2017_private_ULnanoAODv9        import allSamples as dataSamples
+    allSamples = mcSamples + dataSamples
     #from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
     #from Samples.nanoAOD.Fall17_14Dec2018   import allSamples as mcSamples
     #from Samples.nanoAOD.Run2017_nanoAODv6  import allSamples as dataSamples
