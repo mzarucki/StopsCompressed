@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+for path in $(find /groups/hephy/cms/dietrich.liko/www/StopsCompressed/ -type d)
+do
+    if [ ! -e "$path/index.php" ]
+    then
+        cp /groups/hephy/cms/Tools/php/index.php $path/
+    fi
+done
+
+rsync -av \
+    /groups/hephy/cms/dietrich.liko/www/StopsCompressed/ \
+    lxplus.cern.ch:/eos/user/l/liko/www/StopsCompressed/

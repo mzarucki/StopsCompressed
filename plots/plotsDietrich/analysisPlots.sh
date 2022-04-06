@@ -1,4 +1,5 @@
-python analysisPlots.py --era Run2016 --reweightPU Central --targetDir UL_v01 --small 
+#!/bin/sh
+python analysisPlots.py --era Run2017 --reweightPU Central --targetDir UL_v01 
 
 ## no preSelection cuts
 #python analysisPlots.py --era Run2016 --reweightPU Central --targetDir lowPtEl_v01 --selection '(1)' --small 
