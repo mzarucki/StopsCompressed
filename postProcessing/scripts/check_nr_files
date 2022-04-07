@@ -10,6 +10,8 @@ SAMPLES_FILES = {
     'MC2016' : 'UL16v9_private',
     'DATA2017' : 'Run2017_private_ULnanoAODv9',
     'MC2017' : 'UL17v9_private',
+    'DATA2018' : 'Run2018_private_ULnanoAODv9',
+    'MC2018' : 'UL18v9_private',
 }
 
 for sample in sorted(SAMPLES_FILES.keys()):
