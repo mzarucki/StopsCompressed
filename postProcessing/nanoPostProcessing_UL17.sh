@@ -50,6 +50,7 @@ python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT300to500 #SPLIT14 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT500to700 #SPLIT14 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT700to1000 #SPLIT12 
+python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT1000to1500 #SPLIT20 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT1500to2000 #SPLIT4 
 python nanoPostProcessing.py  --skim MetSingleLep --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT2000toInf #SPLIT10 
 
