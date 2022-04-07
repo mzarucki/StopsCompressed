@@ -129,28 +129,23 @@ if options.year == "UL2016":
     #from Samples.nanoAOD.Run2016_14Dec2018  import allSamples as dataSamples
 
     #UL changes
-    from Samples.nanoAOD.UL16v9_private 		import allSamples as mcSamples
-    from Samples.nanoAOD.Run2016_private_ULnanoAODv9    import allSamples as dataSamples
+    from Samples.nanoAOD.UL16v9_private 		    import allSamples as mcSamples
+    from Samples.nanoAOD.Run2016_private_ULnanoAODv9        import allSamples as dataSamples
 
     allSamples = mcSamples + dataSamples 
 
 elif options.year == "UL2016_preVFP":
 	#UL changes
-	from Samples.nanoAOD.UL16APVv9_private                 import allSamples as mcSamples
-	from Samples.nanoAOD.Run2016APV_private_ULnanoAODv9    import allSamples as dataSamples
-	allSamples = mcSamples + dataSamples
+    from Samples.nanoAOD.UL16APVv9_private                  import allSamples as mcSamples
+    from Samples.nanoAOD.Run2016APV_private_ULnanoAODv9     import allSamples as dataSamples
+    allSamples = mcSamples + dataSamples
 elif options.year == "UL2017":
     from Samples.nanoAOD.UL17v9_private                     import allSamples as mcSamples
     from Samples.nanoAOD.Run2017_private_ULnanoAODv9        import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
-    #from Samples.nanoAOD.Fall17_private_legacy_v1   import allSamples as mcSamples
-    #from Samples.nanoAOD.Fall17_14Dec2018   import allSamples as mcSamples
-    #from Samples.nanoAOD.Run2017_nanoAODv6  import allSamples as dataSamples
-    #from Samples.nanoAOD.Fall17_nanoAODv6   import allSamples as mcSamples
-    #allSamples = mcSamples + dataSamples
 elif options.year == "UL2018":
-    from Samples.nanoAOD.Autumn18_nanoAODv6 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2018_nanoAODv6  import allSamples as dataSamples
+    from Samples.nanoAOD.UL18v9_private 		    import allSamples as mcSamples
+    from Samples.nanoAOD.Run2018_private_ULnanoAODv9        import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 else:
     raise NotImplementedError
@@ -490,7 +485,7 @@ read_variables += [\
     TreeVariable.fromString('nMuon/I'),
     VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I,looseId/O]'),
     TreeVariable.fromString('nJet/I'),
-    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I,decayMode/I,idDeepTau2017v2p1VSjet/b,idMVAoldDM2017v2/b]'),
+    VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I,decayMode/I,idDeepTau2017v2p1VSjet/b]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]

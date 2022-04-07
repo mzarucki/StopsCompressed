@@ -345,9 +345,9 @@ def getGoodElectrons(c, collVars=electronVars, ele_selector = alwaysFalse):
     for l in getElectrons(c, collVars):
         if ele_selector(l):
             lep.append(l)
-        else:
-            #print "rejeted ele: " ,l
-	    print "bla"
+        #else:
+        #    #print "rejeted ele: " ,l
+	#    print "bla"
     return lep
     #return [l for l in getElectrons(c, collVars) if ele_selector(l)]
 
