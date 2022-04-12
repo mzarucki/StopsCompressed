@@ -11,20 +11,26 @@ NAMES = {
     'UL16APV': 'Monte Carlo 2016 APV',
     'Run16UL': 'Data 2016',
     'UL16': 'Monte Carlo 2016',
-    'RunUL17': 'Data 2017',
+    'Run17UL': 'Data 2017',
     'UL17': 'Monte Carlo 2017',
+    'Run18UL': 'Data 2018',
+    'UL18': 'Monte Carlo 2018',
 }
 
 EOSPATH="/eos/vbc/experiments/cms/store/user/liko/StopsCompressed/nanoTuples"
 
 def main():
 
+    it1 = 0
+    if1 = 0
     for name in sorted(NAMES.keys()):
         print("====> ", NAMES[name])
         filename = "nanoPostProcessing_%s.sh" % name
         with open(filename, 'r') as era:
             lines = era.read()
 
+        it2 = 0
+        if2 = 0
         for match in re.finditer("^\s*([^\#\s][^\#\n]*)(#SPLIT(\d+))?\s*$", lines, re.M):
             command = match.group(1).split()
             if match.group(3) is None:
@@ -46,7 +52,15 @@ def main():
                     if os.path.exists(path):
                         cnt += 1
             print("   %-30s: %d/%d" % (sample, cnt, split))
+            it1 += split
+            it2 += split
+            if1 += cnt
+            if2 += cnt
 
+        print('Total %s - %d/%d' % (name, if2,it2))
+
+
+    print('Total %d/%d' % (if1,it1))
 
 def getarg(cmd_array, arg):
 

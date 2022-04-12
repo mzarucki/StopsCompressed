@@ -122,7 +122,7 @@ elif "2018" in args.era and not args.eos:
     #samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, QCD_Ele_18, QCD_Mu_18, VV_18, TTX_18]
     #samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, VV_18, TTX_18]
     samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, QCD_HT_18, VV_18, TTX_18]
-    from StopsCompressed.samples.nanoTuples_Run2018_nanoAODv6_postProcessed import *
+    from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import *
     signals = []
     #if args.reweightPU:
 	#    nTrueInt_puRW = getReweightingFunction(data="PU_2018_58830_XSec%s"%args.reweightPU, mc="Autumn18")
