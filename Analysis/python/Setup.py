@@ -95,16 +95,14 @@ class Setup:
 
         elif year == 2017 :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Fall17_postProcessed  	    import DY_HT_LO_17, TTLep_pow_17 ,TTSingleLep_pow_17 , singleTop_17, singleTop_tch_17, TTX_17, WJetsToLNu_HT_17,VV_17
-            from StopsCompressed.samples.nanoTuples_Run2017_nanoAODv6_postProcessed import Run2017
-            DY           = DY_HT_LO_17
-            WJets       = WJetsToLNu_HT_17
-            TTLep        = TTLep_pow_17
-            TTSingleLep  = TTSingleLep_pow_17
-            singleTop    = singleTop_17 
-            VV           = VV_17 
-            TTX          = TTX_17
-            data        = Run2017
+            from StopsCompressed.samples.nanoTuples_UL17_postProcessed 	  import DY_HT_LO_17, TTLep_pow_17 ,TTSingleLep_pow_17 , singleTop_17, singleTop_tch_17, TTX_17, WJetsToLNu_HT_17,VV_17
+            from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import Run2017
+            WJets        = WJetsToLNu_HT_17
+	    Top          = Top_pow_17
+	    QCD          = QCD_HT_17
+	    Others       = Others_17
+	    ZInv         = ZInv_17
+            data         = Run2017
 
         elif year == 2018 :
             #define samples

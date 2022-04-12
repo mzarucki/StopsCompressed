@@ -389,7 +389,7 @@ btagEff = BTagEfficiency( fastSim = options.fastSim, year=options.year, tagger='
 #branches to be kept for data and MC
 
 branchKeepStrings_DATAMC = [\
-    "run", "luminosityBlock", "event", "fixedGridRhoFastjetAll", "PV_npvs", "PV_npvsGood",
+    "run", "luminosityBlock", "event", "fixedGridRhoFastjetAll", "PV_*", "SV_*",
     "MET_*", "RawMET_phi", "RawMET_pt", "RawMET_sumEt",
     "Flag_*",
     "nJet", "Jet_*",
