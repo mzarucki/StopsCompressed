@@ -54,9 +54,9 @@ python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstop
 python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT1500to2000 #SPLIT4 
 python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample QCD_HT2000toInf #SPLIT10 
 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT20 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT20 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT20 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT20 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT20 
-python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT20 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v5  --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT2 

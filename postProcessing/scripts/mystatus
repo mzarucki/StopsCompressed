@@ -49,7 +49,7 @@ def main(jobid, name):
             nrjobs = 0
             jobnr = 0
 
-        if state in ['RUNNING', 'FAILED']:
+        if state in ['RUNNING', 'FAILED', 'CANCELLED' ]:
             print( ': %s - %s/%s' % (dataset, jobnr, nrjobs) )
             if state == 'FAILED':
                 print('     ', jobout)
@@ -59,6 +59,9 @@ def main(jobid, name):
 
         output = subprocess.check_output( ['grep', 'Issue', joberr] )
         ntuple = output.split()[-1]
+	if not os.path.exists(ntuple):
+            print("File %s does not exists", ntuple)
+	    continue
         ntp = ROOT.TFile.Open(ntuple)
         entries = ntp.Get('Events').GetEntries()
         ntp.Close()

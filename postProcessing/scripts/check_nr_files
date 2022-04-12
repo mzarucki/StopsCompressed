@@ -6,7 +6,9 @@ import re
 import os
 
 SAMPLES_FILES = {
+    'DATA2016APV' : 'Run2016APV_private_ULnanoAODv9',
     'DATA2016' : 'Run2016_private_ULnanoAODv9',
+    'MC2016APV' : 'UL16APVv9_private',
     'MC2016' : 'UL16v9_private',
     'DATA2017' : 'Run2017_private_ULnanoAODv9',
     'MC2017' : 'UL17v9_private',
