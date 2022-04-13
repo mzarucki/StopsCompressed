@@ -113,17 +113,19 @@ elif "2017" in args.era and not args.eos:
     samples = [WJetsToLNu_HT_17, Top_pow_17, singleTop_17, ZInv_17, DY_HT_M50_LO_17, QCD_HT_17, VV_17, TTX_17]
     #from StopsCompressed.samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
     from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import *
-    signals = []
+    from StopsCompressed.samples.nanoTuples_UL17_FullSimSignal_postProcessed import *
+    signals = [T2tt_500_470, T2tt_500_420]
     #if args.reweightPU:
 	    # need sample based weights
     #	    pass
 elif "2018" in args.era and not args.eos:
-    from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import *
+    from StopsCompressed.samples.nanoTuples_UL18_postProcessed import *
     #samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, QCD_Ele_18, QCD_Mu_18, VV_18, TTX_18]
     #samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, VV_18, TTX_18]
-    samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_LO_18, QCD_HT_18, VV_18, TTX_18]
+    samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_M50_LO_18, QCD_HT_18, VV_18, TTX_18]
     from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import *
-    signals = []
+    from StopsCompressed.samples.nanoTuples_UL18_FullSimSignal_postProcessed import *
+    signals = [T2tt_500_470, T2tt_500_420]
     #if args.reweightPU:
 	#    nTrueInt_puRW = getReweightingFunction(data="PU_2018_58830_XSec%s"%args.reweightPU, mc="Autumn18")
 if args.era != "Run2016" and not args.eos:
@@ -328,7 +330,8 @@ for index, mode in enumerate(allModes):
 	    T2tt_500_420.color = ROOT.kCyan
 	    #T2tt_375_365.color = ROOT.kAzure+1
 	
-	weight_ = lambda event, sample: event.weight*event.reweightHEM
+	#weight_ = lambda event, sample: event.weight*event.reweightHEM
+	weight_ = lambda event, sample: event.weight
 
 	for sample in samples + signals:
 
@@ -369,10 +372,10 @@ for index, mode in enumerate(allModes):
 			sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
 			
 			sample.style = styles.fillStyle(sample.color)
-	stack_ = Stack( samples, data_sample ) 
+	#stack_ = Stack( samples, data_sample ) 
 	#stack_ = Stack( samples )
 	#stack_ = Stack( samples, T2tt_500_470, T2tt_500_420 )
-	#stack_ = Stack( samples, data_sample, T2tt_500_470, T2tt_500_420 )
+	stack_ = Stack( samples, data_sample, T2tt_500_470, T2tt_500_420 )
 
 	if args.small:
 		for sample in samples + [data_sample] + signals:
