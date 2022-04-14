@@ -1,13 +1,10 @@
 #!/bin/sh
-python analysisPlots.py --era Run2016preVFP --reweightPU Central --targetDir UL_v02  
-python analysisPlots.py --era Run2016postVFP --reweightPU Central     --targetDir UL_v02 
-python analysisPlots.py --era Run2017 --reweightPU Central     --targetDir UL_v02 
-python analysisPlots.py --era Run2018 --reweightPU Central     --targetDir UL_v02 
+for era in "Run2016" "Run2016preVFP" "Run2016postVFP" "Run2017" "Run2018"
+do
+    sbatch --job-name="plot_$era" \
+	   --output="$SCRATCHDIR/batch_output/analyis_plot_$era-%A.out" \
+	   --error="$SCRATCHDIR/batch_output/analyis_plot_$era-%A.err" \
+	   --time="01:00:00" \
+	   --wrap="python analysisPlots.py --era $era --reweightPU Central --targetDir UL_v02 --small"
+done
 
-## no preSelection cuts
-#python analysisPlots.py --era Run2016 --reweightPU Central --targetDir lowPtEl_v01 --selection '(1)' --small 
-## for submission of various eras
-#submit --title "pl16APV" 'python analysisPlots.py --era Run2016preVFP --reweightPU Central --targetDir v_UL06'
-#submit --title "pl16APV" 'python analysisPlots.py --era Run2016postVFP --reweightPU Central --targetDir v_UL06'
-#submit --title "preSel16" 'python analysisPlots.py --era Run2016 --reweightPU Central --targetDir v_UL06'
-#submit --title "preSel17" 'python analysisPlots.py --era Run2017 --reweightPU Central --targetDir v_UL12'

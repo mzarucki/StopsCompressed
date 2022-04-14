@@ -49,9 +49,9 @@ argParser.add_argument("--R2only",        action='store_true',           default
 
 args = argParser.parse_args()
 
-for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/python/run/testing/*.C')) :
-  if ROOT.gROOT.LoadMacro(macro): #compile it
-      raise OSError("Unable to load: {}".format(macro))
+# for macro in glob.glob(os.path.join(os.environ['CMSSW_BASE'], 'src/StopsCompressed/Analysis/python/run/testing/*.C')) :
+#   if ROOT.gROOT.LoadMacro(macro): #compile it
+#       raise OSError("Unable to load: {}".format(macro))
 
 
 removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False

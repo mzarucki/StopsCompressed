@@ -1,5 +1,7 @@
 # StopsCompressed
-```
+
+Installaion
+```bash
 cmsrel CMSSW_10_6_25
 cd CMSSW_10_6_25/src
 cmsenv
@@ -17,26 +19,26 @@ git clone git@github.com:HephyAnalysisSW/Analysis.git -b StopsCompressed
 git clone git@github.com:priyasajid/nanoAOD-tools.git PhysicsTools/NanoAODTools
 
 #compile
-scram b -j9
+scram b -j4
+```
 
-# to be verified ...
+Install [combine](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/) from HiggsAnalysis
 
-# Get combine
-# Latest recommendations at https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#setting-up-the-environment-and-installation
+```bash
 cd $CMSSW_BASE/src
-git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+git clone git@github.com:cms-analysis/HiggsAnalysis-CombinedLimit.git \
+    HiggsAnalysis/CombinedLimit -b v8.2.0
 cd HiggsAnalysis/CombinedLimit
-git fetch origin
-#git checkout v8.0.1
-##for UL recommendations changed, will get new version :
-git checkout v8.2.0
-scramv1 b clean; scramv1 b # always make a clean build
 
+scramv1 b clean # always make a clean build
+scramv1 b -j4 
+```
 
+For combine tools
 
-# for combineTools
-cd $CMSSW_BASE/src
-wget https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-https.sh; source sparse-checkout-https.sh
-scram b -j 8
+```bash
+cd $CMSSW_BASE/src/HiggsAnalysis
+bash <(curl -s https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-ssh.sh)
 
+scram b -j4
 ```
