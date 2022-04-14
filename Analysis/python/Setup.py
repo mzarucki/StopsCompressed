@@ -66,7 +66,8 @@ class Setup:
         #        raise OSError("Unable to load: {}".format(macro))
         
 	#not using user-defined leptonSF from macro , remove "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)"
-	self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
+	self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
+	#self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
         
         #if runOnLxPlus:
         #    # Set the redirector in the samples repository to the global redirector
@@ -93,9 +94,9 @@ class Setup:
 	    ZInv         = ZInv_16
 	    data         = Run2016postVFP
 
-        elif year == 2017 :
+        elif year == "2017" :
             #define samples
-            from StopsCompressed.samples.nanoTuples_UL17_postProcessed 	  import DY_HT_LO_17, TTLep_pow_17 ,TTSingleLep_pow_17 , singleTop_17, singleTop_tch_17, TTX_17, WJetsToLNu_HT_17,VV_17
+            from StopsCompressed.samples.nanoTuples_UL17_postProcessed 	  import WJetsToLNu_HT_17, Top_pow_17, Others_17, QCD_HT_17, ZInv_17
             from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import Run2017
             WJets        = WJetsToLNu_HT_17
 	    Top          = Top_pow_17
@@ -104,18 +105,16 @@ class Setup:
 	    ZInv         = ZInv_17
             data         = Run2017
 
-        elif year == 2018 :
+        elif year == "2018" :
             #define samples
-            from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed  import DY_HT_LO_18, TTLep_pow_18 ,TTSingleLep_pow_18 , singleTop_18, singleTop_tch_18, TTX_18, WJetsToLNu_HT_18,VV_18
-            #from StopsCompressed.samples.nanoTuples_Run2018_14Dec2018_postProcessed import Run2018
-            DY           = DY_HT_LO_18
-            WJets       = WJetsToLNu_HT_18
-            TTLep        = TTLep_pow_18
-            TTSingleLep  = TTSingleLep_pow_18
-            singleTop    = singleTop_18 
-            VV           = VV_18 
-            TTX          = TTX_18
-            #data        = Run2018
+            from StopsCompressed.samples.nanoTuples_UL18_postProcessed    import WJetsToLNu_HT_18, Top_pow_18, QCD_HT_18, Others_18, ZInv_18 
+            from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import Run2018
+            WJets        = WJetsToLNu_HT_18
+	    Top          = Top_pow_18
+	    QCD          = QCD_HT_18
+	    Others       = Others_18
+	    ZInv         = ZInv_18
+            data         = Run2018
 
 
 
@@ -127,11 +126,11 @@ class Setup:
 	    self.lumi     = 16.5*1000
 	    self.dataLumi = 16.5*1000
         elif year == 2017:
-            self.lumi     = 41.53*1000
-            self.dataLumi = 41.53*1000
+            self.lumi     = 41.5*1000
+            self.dataLumi = 41.5*1000
         elif year == 2018:
-            self.lumi     = 59.74*1000
-            self.dataLumi = 59.74*1000
+            self.lumi     = 59.83*1000
+            self.dataLumi = 59.83*1000
 
 
         mc           = [WJets, Top, Others, ZInv, QCD ]
@@ -155,7 +154,7 @@ class Setup:
     def defaultCacheDir(self,specificNameForSensitivityStudy=''):
         
         if (specificNameForSensitivityStudy) :
-            cacheDir = os.path.join(cache_directory, str(self.year), "estimates_{}".format(specificNameForSensitivityStudy))
+            cacheDir = os.path.join(cache_directory, str(self.year), "estimates{}".format(specificNameForSensitivityStudy))
             #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiMetJets_{}".format(specificNameForSensitivityStudy))
             #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiComb_{}".format(specificNameForSensitivityStudy))
         else :
@@ -195,7 +194,7 @@ class Setup:
                         if 'reweightBTag_SF_l_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
                         if 'reweightBTag_SF_FS_'+upOrDown         in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
                         if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
-                        if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
+                        #if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
                         if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
 			if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
                         #if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
