@@ -93,7 +93,7 @@ elif args.era == "Run2016postVFP" and not args.eos:
     #from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import *
     #signals = [T2tt_375_365,T2tt_500_470]
     #signals = [T2tt_375_365,T2tt_500_470, T2tt_500_420 ]
-    signals = []
+    signals = [T2tt_mStop_500_mLSP_420, T2tt_mStop_500_mLSP_470]
     #if args.reweightPU:
     #	    nTrueInt_puRW = getReweightingFunction(data="PU_2016_35920_XSec%s"%args.reweightPU, mc="Summer16")
 elif  args.era == "Run2016" and not args.eos:
@@ -114,7 +114,7 @@ elif "2017" in args.era and not args.eos:
     #from StopsCompressed.samples.nanoTuples_Run2017_14Dec2018_postProcessed import *
     from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import *
     from StopsCompressed.samples.nanoTuples_UL17_FullSimSignal_postProcessed import *
-    signals = [T2tt_500_470, T2tt_500_420]
+    signals = [T2tt_mStop_500_mLSP_420, T2tt_mStop_500_mLSP_470]
     #if args.reweightPU:
 	    # need sample based weights
     #	    pass
@@ -125,7 +125,7 @@ elif "2018" in args.era and not args.eos:
     samples =[WJetsToLNu_HT_18, Top_pow_18, singleTop_18, ZInv_18, DY_HT_M50_LO_18, QCD_HT_18, VV_18, TTX_18]
     from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import *
     from StopsCompressed.samples.nanoTuples_UL18_FullSimSignal_postProcessed import *
-    signals = [T2tt_500_470, T2tt_500_420]
+    signals = [T2tt_mStop_500_mLSP_420, T2tt_mStop_500_mLSP_470]
     #if args.reweightPU:
 	#    nTrueInt_puRW = getReweightingFunction(data="PU_2018_58830_XSec%s"%args.reweightPU, mc="Autumn18")
 if args.era != "Run2016" and not args.eos:

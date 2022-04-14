@@ -82,7 +82,7 @@ dirs['WJetsToLNu_HT']   = [
 
 dirs['WW']              = ["WW"] #, "WWToLNuQQ" TTWToLNu_CP5
 dirs['WZ']              = ["WZTo3LNu_amcatnlo", "WZTo1L1Nu2Q"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
-dirs['ZZ']              = ["ZZTo2L2Nu", "ZZTo4L", "ZZTo2Q2Nu" ] # "ZZTo2L2Q", "ZZTo2Q2Nu",
+dirs['ZZ']              = [ "ZZTo4L", "ZZTo2Q2Nu" ] # "ZZTo2L2Q", "ZZTo2Q2Nu","ZZTo2L2Nu",
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
 dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
