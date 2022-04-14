@@ -220,7 +220,7 @@ def wrapper(s):
     
     SFb     = 'SFb_%s'%year
     SFl     = 'SFl_%s'%year
-    nISR    = 'nISR_%s'%year
+#    nISR    = 'nISR_%s'%year
     wPt     = 'wPt_%s'%year
     JEC     = 'JEC_%s'%year
     JER     = 'JER_%s'%year
@@ -239,7 +239,7 @@ def wrapper(s):
 
     c.addUncertainty(SFb,          shapeString)
     c.addUncertainty(SFl,          shapeString)
-    c.addUncertainty(nISR,           shapeString)
+#    c.addUncertainty(nISR,           shapeString)
     c.addUncertainty(wPt,           shapeString)
     c.addUncertainty(JEC,          shapeString)
     c.addUncertainty(JER,          shapeString)
@@ -351,8 +351,8 @@ def wrapper(s):
                   c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
                   print "wpt sys: {}".format(e.wPtSystematic(         r, sysChannel, setup).val)
                   #pass #c.specifyUncertainty(Lumi, binname, name, 1)
-                elif name == "Top" :
-                  c.specifyUncertainty(nISR,       binname, name, 1 + e.nISRSystematic(         r, sysChannel, setup).val * uncScale )
+#                elif name == "Top" :
+#                  c.specifyUncertainty(nISR,       binname, name, 1 + e.nISRSystematic(         r, sysChannel, setup).val * uncScale )
                   #pass #c.specifyUncertainty(Lumi, binname, name, 1)
                 else :
                   c.specifyUncertainty(Lumi, binname, name, lumiUncertainty)
@@ -607,23 +607,23 @@ if args.signal == "T2tt":
       #postProcessing_directory    = 'compstops_2016_nano_v28/Met/'
       from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
   
-  elif year == 2017:
+  elif year == "2017":
     if args.fullSim:
-      from StopsDilepton.samples.nanoTuples_Fall17_FullSimSignal_postProcessed import signals_T2tt as jobs
+      from StopsCompressed.samples.nanoTuples_UL17_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
       data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
       postProcessing_directory    = 'stops_2017_nano_v0p22/dilep/'
-      from StopsDilepton.samples.nanoTuples_FastSim_Fall17_postProcessed import signals_T2tt as jobs
+      from StopsCompressed.samples.nanoTuples_FastSim_Fall17_postProcessed import signals_T2tt as jobs
   
-  elif year == 2018:
+  elif year == "2018":
     if args.fullSim:
       data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
       postProcessing_directory    = 'stops_2018_nano_v0p19/inclusive/'
-      from StopsDilepton.samples.nanoTuples_Autumn18_FullSimSignal_postProcessed import signals_T2tt as jobs
+      from StopsCompressed.samples.nanoTuples_UL18_FullSimSignal_postProcessed import signals_T2tt as jobs
     else:
       data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
       postProcessing_directory    = 'stops_2018_nano_v0p21/dilep/'
-      from StopsDilepton.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs
+      from StopsCompressed.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs
 
 
 if args.only is not None:
