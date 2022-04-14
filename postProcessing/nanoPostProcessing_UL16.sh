@@ -58,9 +58,9 @@ python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstop
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample QCD_HT2000toInf_madgraph #SPLIT6 
 
 ## SUSY Full Sim points
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT5 
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT5 
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT5 
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT5 
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT5 
-#python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_450 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_470 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT5 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --susySignal --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT5 

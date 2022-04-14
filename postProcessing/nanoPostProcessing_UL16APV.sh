@@ -62,7 +62,6 @@ python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra c
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v6  --sample QCD_HT1500to2000_madgraph #SPLIT20 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v6  --sample QCD_HT2000toInf #SPLIT20 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v6  --sample QCD_HT2000toInf_madgraph #SPLIT20 
-
 ##FullSim signal points
 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v6  --susySignal --sample SMS_T2tt_mStop_500_mLSP_420 #SPLIT5
