@@ -25,18 +25,18 @@ directories = { key : [ os.path.join( data_directory_, postProcessing_directory_
 #
 
 # FullSim signals
-T2tt_mStop_500_mLSP_420   = Sample.fromDirectory(name="T2tt_mStop_500_mLSP_420",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,420)",     directory=directories['T2tt_mStop_500_mLSP_420'])
-T2tt_mStop_500_mLSP_450   = Sample.fromDirectory(name="T2tt_mStop_500_mLSP_450",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,450)",     directory=directories['T2tt_mStop_500_mLSP_450'])
-T2tt_mStop_500_mLSP_470   = Sample.fromDirectory(name="T2tt_mStop_500_mLSP_470",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,470)",     directory=directories['T2tt_mStop_500_mLSP_470'])
+T2tt_500_420   = Sample.fromDirectory(name="T2tt_500_420",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,420)",     directory=directories['T2tt_mStop_500_mLSP_420'])
+T2tt_500_450   = Sample.fromDirectory(name="T2tt_500_450",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,450)",     directory=directories['T2tt_mStop_500_mLSP_450'])
+T2tt_500_470   = Sample.fromDirectory(name="T2tt_500_470",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,470)",     directory=directories['T2tt_mStop_500_mLSP_470'])
 
 signals_T2tt = [
-    T2tt_mStop_500_mLSP_420,
-    T2tt_mStop_500_mLSP_450,
-    T2tt_mStop_500_mLSP_470,
+    T2tt_500_420,
+    T2tt_500_450,
+    T2tt_500_470,
 ]
 
 for s in signals_T2tt:
-    t1, mStop, t2, mNeu = s.name.replace('T2tt_','').split('_')
+    mStop, mNeu = s.name.replace('T2tt_','').split('_')
     s.mStop = int(mStop)
     s.mNeu = int(mNeu)
     s.isFastSim = False
