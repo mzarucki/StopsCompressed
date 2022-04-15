@@ -1,0 +1,9 @@
+#!/bin/sh
+
+LOGPATH="/scratch-cbe/users/dietrich.liko/batch_output"
+
+for jobid in $(find $LOGPATH -name run_estimate-* -printf "%f\n" | cut -d- -f2 | sort -u)
+do
+	sample=$(grep  python "$LOGPATH/run_estimate-$jobid-0.err" | cut -d\  -f 7)
+	echo "$jobid: $sample"
+done	
