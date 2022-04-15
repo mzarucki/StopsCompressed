@@ -336,8 +336,8 @@ for index, mode in enumerate(allModes):
 	    T2tt_500_420.color = ROOT.kCyan
 	    #T2tt_375_365.color = ROOT.kAzure+1
 	
-	#weight_ = lambda event, sample: event.weight*event.reweightHEM
-	weight_ = lambda event, sample: event.weight
+	weight_ = lambda event, sample: event.weight*event.reweightHEM
+	#weight_ = lambda event, sample: event.weight
 
 	for sample in samples + signals:
 
