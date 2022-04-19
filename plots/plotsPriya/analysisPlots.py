@@ -333,11 +333,10 @@ for index, mode in enumerate(allModes):
 		data_sample.name 	   = "data"
 	if signals:
 	    T2tt_500_470.color = ROOT.kPink+6
-	    T2tt_500_420.color = ROOT.kCyan
+	    T2tt_500_420.color = ROOT.kCyan+2
 	    #T2tt_375_365.color = ROOT.kAzure+1
 	
-	#weight_ = lambda event, sample: event.weight*event.reweightHEM
-	weight_ = lambda event, sample: event.weight
+	weight_ = lambda event, sample: event.weight*event.reweightHEM
 
 	for sample in samples + signals:
 
@@ -373,11 +372,18 @@ for index, mode in enumerate(allModes):
 				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode)])
 				sample.style = styles.fillStyle(sample.color)
 		else:
-			sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
-			sample.scale = lumi_scale
-			sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
+			if "T2tt" in sample.name:
+				sample.style = styles.errorStyle( color=sample.color, markerSize = 0.6)
+				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
+				sample.scale = lumi_scale
+				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
+			else:
+
+				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
+				sample.scale = lumi_scale
+				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
 			
-			sample.style = styles.fillStyle(sample.color)
+				sample.style = styles.fillStyle(sample.color)
 	#stack_ = Stack( samples, data_sample ) 
 	#stack_ = Stack( samples )
 	#stack_ = Stack( samples, T2tt_500_470, T2tt_500_420 )
