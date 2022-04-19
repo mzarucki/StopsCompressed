@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import os
+import subprocess
+import sys
+import re
+
+def main(jobid):
+
+    output = subprocess.check_output(['sacct', '-j', "%d.batch" % jobid, '-n', '-P', '-o', 'jobid,state,cpu,maxrss'])   
+
+    re_jobid = re.compile('(\d+)_(\d+)\.batch')
+    for line in output[:-1].splitlines():
+        jid, state, cpu, maxrss = line.split('|')
+        match = re_jobid.match(jid)
+        if not match:
+            print('Invalid jobid', jid)
+            continue
+        sjid = int(match.group(2))
+        if maxrss=='0' or maxrss == "":
+            maxrss = 0
+        else:
+            maxrss = float(maxrss[:-1])/(1024*1024)
+        print( '%4d : %10s : %s : %5.2fG ' % (sjid, state, cpu, maxrss))
+
+
+
+if __name__ == "__main__":
+    jobid = int(sys.argv[1])
+    main(jobid)

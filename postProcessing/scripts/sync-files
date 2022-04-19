@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import os
+import subprocess
+
+NFSPATH="/groups/hephy/cms/dietrich.liko/StopsCompressed/nanoTuples"
+EOSPATH="/eos/vbc/experiments/cms/store/user/liko/StopsCompressed/nanoTuples"
+SCRATCHPATH="/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples"
+
+for root, dirs, files in os.walk(NFSPATH):
+
+    if len(files):
+        print('Checking %s ...' % root[len(NFSPATH)+1:])
+    
+    for name in files:
+        nfspath = os.path.join(root, name)
+        relative_path = nfspath[len(NFSPATH)+1:]
+        eospath = os.path.join(EOSPATH, relative_path)
+        scratchpath = os.path.join(SCRATCHPATH, relative_path)
+
+        # remove bad files
+
+        size = os.stat(nfspath).st_size
+        if os.path.exists(eospath):
+            if os.stat(eospath).st_size != size:
+                print('Size mismatch NFS-EOS. Removing EOS file %s' % relative_path)
+                os.remove(eospath)
+                if os.path.exists(scratchpath):
+                    print('Size mismatch NFS-EOS. Removing SCRATCH file %s' % relative_path)
+                    os.remove(scratchpath)
+        if os.path.exists(scratchpath):
+            if os.stat(scratchpath).st_size != size:
+                print('Size mismatch NFS-SCRATCH. Removing SCRATCH file %s' % scratchpath) 
+                os.remove(scratchpath)   
+
+        # copy files
+
+        if not os.path.exists(eospath):
+            print("Copying to EOS %s" % relative_path)
+            subprocess.check_call([
+                'xrdcp', 
+                '--nopbar',
+                '--retry', 
+                '3', 
+                nfspath, 
+                'root://eos.grid.vbc.ac.at/'+eospath
+            ])
+        if not os.path.exists(scratchpath):
+            print("Copying to SCRATCH %s" % relative_path)
+            subprocess.check_call([
+                'xrdcp', 
+                '--nopbar',
+                '--retry',
+                '3', 
+                'root://eos.grid.vbc.ac.at/'+eospath,
+                 scratchpath
+            ])
