@@ -16,4 +16,4 @@
 
 #python check_limit.py --fitAll --expected --only=T2tt_mStop_500_mLSP_420 --year '2016preVFP' --l1pT_CR_split --mT_cut_value 95 --extra_mT_cut --CT_cut_value 400 --skipFitDiagnostics --fullSim 
 #python check_limit.py --fitAll --expected --only=T2tt_mStop_500_mLSP_420 --year '2016postVFP' --l1pT_CR_split --mT_cut_value 95 --extra_mT_cut --CT_cut_value 400 --skipFitDiagnostics --fullSim
-python check_limit.py --fitAll --expected --only=T2tt_mStop_500_mLSP_420 --year '2017' --l1pT_CR_split --mT_cut_value 95 --extra_mT_cut --CT_cut_value 400 --skipFitDiagnostics --fullSim
+python check_limit.py --fitAll --expected --only=T2tt_500_420 --year '2017' --l1pT_CR_split --mT_cut_value 95 --extra_mT_cut --CT_cut_value 400 --skipFitDiagnostics --fullSim

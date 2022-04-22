@@ -89,10 +89,10 @@ dirs['WJetsToLNu_HT']   = [
 
 dirs['WW']              = ["WW"] #, "WWToLNuQQ" TTWToLNu_CP5
 dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
-dirs['ZZ']              = ["ZZTo2L2Nu", "ZZTo4L" ] # "ZZTo2L2Q", "ZZTo2Q2Nu",
+dirs['ZZ']              = ["ZZTo2L2Nu"] #, "ZZTo4L" ]  "ZZTo2L2Q", "ZZTo2Q2Nu",
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
-dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
+dirs['VV']              =  dirs['ZZ'] + dirs['WZ']  + dirs['WW'] 
 #dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
 #dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 

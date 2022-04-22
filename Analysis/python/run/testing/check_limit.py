@@ -250,9 +250,9 @@ def wrapper(s):
     if '2016' in year:
       lumiUncertainty = 1.025
       print "lumi unc for 2016 era, both pre/post"
-    elif year == 2017:
+    elif year == '2017':
       lumiUncertainty = 1.023
-    elif year == 2018:
+    elif year == '2018':
       lumiUncertainty = 1.025
 
 
@@ -378,15 +378,14 @@ def wrapper(s):
               signal = e.cachedEstimate(r, channel, signalSetup)
           else:
             signalSetup = setup.sysClone()
-	    if  '2016' in year:
-	      extra_pars = {} # use default parameters
-	      if (args.usePromptSignalOnly):
-	        extra_pars = {'l1_prompt':True}
-                signalSetup = setup.sysClone(sys={'reweight':[], 'remove':['reweight_nISR']},parameters=extra_pars)
-	        
-                signal = e.cachedEstimate(r, channel, signalSetup)
-	      else:
-	        signal = e.cachedEstimate(r, channel, signalSetup)
+	  extra_pars = {} # use default parameters
+	  if (args.usePromptSignalOnly):
+	    extra_pars = {'l1_prompt':True}
+            signalSetup = setup.sysClone(sys={'reweight':[], 'remove':['reweight_nISR']},parameters=extra_pars)
+            signal = e.cachedEstimate(r, channel, signalSetup)
+	    
+	  else:
+	    signal = e.cachedEstimate(r, channel, signalSetup)
 
           
           signal = signal * args.scale
