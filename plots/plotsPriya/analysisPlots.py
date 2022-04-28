@@ -305,6 +305,7 @@ def getLeptonSelection( mode ):
 	if   mode == 'mu': return "abs(l1_pdgId)==13"
 	elif mode == 'e' : return "abs(l1_pdgId)==11"
 
+
 yields   = {}
 allPlots = {}
 allModes = ['mu','e']
@@ -379,7 +380,7 @@ for index, mode in enumerate(allModes):
 				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
 			else:
 
-				sample.weight         = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
+				sample.weight = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightLeptonSF * event.reweightwPt
 				sample.scale = lumi_scale
 				sample.setSelectionString([getFilterCut(isData=False, year=year, skipBadPFMuon=args.noBadPFMuonFilter, skipBadChargedCandidate=args.noBadChargedCandidateFilter, skipVertexFilter = True), getLeptonSelection(mode),])
 			
@@ -748,14 +749,23 @@ for index, mode in enumerate(allModes):
 
 	#Get normalization yields from yield histogram
 	for plot in plots:
-	    if plot.name == "yield":
-	      for i, l in enumerate(plot.histos):
-		for j, h in enumerate(l):
-		  yields[mode][plot.stack[i][j].name] = h.GetBinContent(h.FindBin(0.5+index))
-		  h.GetXaxis().SetBinLabel(1, "#mu")
-		  h.GetXaxis().SetBinLabel(2, "e")
+		if plot.name == "yield":
+			for i, l in enumerate(plot.histos):
+				for j, h in enumerate(l):
+					yields[mode][plot.stack[i][j].name] = h.GetBinContent(h.FindBin(0.5+index))
+					h.GetXaxis().SetBinLabel(1, "#mu")
+					h.GetXaxis().SetBinLabel(2, "e")
+	for s in samples:
+		print "INFO: Yield for %s: %f" % (s.name, yields[mode][s.name])
 	yields[mode]["MC"] = sum(yields[mode][s.name] for s in samples)
-	dataMCScale        = yields[mode]["data"]/yields[mode]["MC"] if yields[mode]["MC"] != 0 else float('nan')
+	if isnan(yields[mode]["MC"]):
+		print "ERROR: MC Yield is nan"
+		dataMCScale = 1
+	elif yields[mode]["MC"] == 0:
+		print "ERROR: MC Yield is 0"
+		dataMCScale = 1
+	else:
+		dataMCScale        = yields[mode]["data"]/yields[mode]["MC"]
 	## if plotting only MC
 	#dataMCScale = 1
 
@@ -776,7 +786,16 @@ yields['all'] = {}
 for y in yields[allModes[0]]:
 	try:	yields['all'][y] = sum(yields[c][y] for c in (['mu','e']))
 	except: yields['all'][y] = 0
-dataMCScale = yields['all']["data"]/yields['all']["MC"] if yields['all']["MC"] != 0 else float('nan')
+
+if isnan(yields['all']["MC"]):
+	print "ERROR: MC Yield is nan"
+	dataMCScale = 1
+elif yields['all']["MC"] == 0:
+	print "ERROR: MC Yield is 0"
+	dataMCScale = 1
+else:
+	dataMCScale        = yields['all']["data"]/yields['all']["MC"]
+
 ## if only plotting MC and data
 #dataMCScale = 1
 for plot in allPlots['mu']:
