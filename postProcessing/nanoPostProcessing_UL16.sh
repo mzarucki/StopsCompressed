@@ -35,9 +35,12 @@ python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstop
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample TTWToLNu_CP5 #SPLIT3 
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample TTWToQQ
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample TTGJets #SPLIT2 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample TTW_LO #SPLIT12 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample TTZ_LO #SPLIT12 
 #
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample WWTo2L2Nu #SPLIT2 
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample ZZTo2L2Nu #SPLIT7 
+python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample ZZTo4L #SPLIT7 
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample WZTo3LNu_amcatnlo #SPLIT5 
 python nanoPostProcessing.py  --skim Met --year UL2016  --processingEra compstops_UL16v9_nano_v6  --sample WW #SPLIT21 
 
