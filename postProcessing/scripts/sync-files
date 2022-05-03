@@ -49,6 +49,9 @@ for root, dirs, files in os.walk(NFSPATH):
             ])
         if not os.path.exists(scratchpath):
             print("Copying to SCRATCH %s" % relative_path)
+	    scratchdir = os.path.dirname(scratchpath)
+	    if not os.path.exists(scratchdir):
+               os.makedirs(scratchdir)
             subprocess.check_call([
                 'xrdcp', 
                 '--nopbar',

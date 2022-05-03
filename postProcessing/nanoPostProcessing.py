@@ -187,9 +187,13 @@ if isData:
     era = extractEra(samples[0].name)[-1]
 ## Trigger selection
 if isData and options.triggerSelection:
-    from StopsCompressed.Tools.triggerSelector import triggerSelector
+    if isMetLepEnergy:
+        from StopsCompressed.Tools.triggerSelector import triggerSelectorMetLepEnergy as triggerSelector
+    else:
+        from StopsCompressed.Tools.triggerSelector import triggerSelector
     era = extractEra(samples[0].name)[-1]
     logger.info( "######### Era %s ########", era )
+
     ts = triggerSelector(options.year, era=era)
     triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
     treeFormulas = {"triggerDecision": {'string':triggerCond} }
