@@ -95,6 +95,7 @@ isSingleLep        = options.skim.lower().startswith('singlelep')
 isMetSingleLep     = options.skim.lower().startswith('metsinglelep')
 isMet              = options.skim.lower().startswith('met')
 isFake             = options.skim.lower().startswith('fake')
+isMetLepEnergy     = options.skim.lower().startswith('metlepenergy')
 noSkim             = options.skim.lower().startswith('noskim')
 
 # Skim condition
@@ -108,6 +109,11 @@ elif isMet:
     skimConds.append( "MET_pt>=100" )
 elif isFake:
     skimConds.append( "MET_pt<=100" )
+elif isMetLepEnergy:
+    skimConds.append( (
+        "(Sum$(Muon_mediumId) > 0 && MaxIf$(Muon_pt,Muon_mediumId) + MET_pt > 120) ||"
+        "(Sum$(Electron_cutBased >2) > 0 && MaxIf$(Electron_pt,Electron_cutBased > 2) + MET_pt > 120)"
+    ) )
 elif noSkim:
     skimConds.append( "1" )
 #Samples: Load samples
