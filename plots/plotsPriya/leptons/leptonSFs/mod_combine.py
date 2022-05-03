@@ -32,7 +32,8 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
         #"mu_IpIso_1D_priv":  {"tag":'IpIso_priv',   "hist_name":'muon_SF_IpIsoSpec_all',          "file_name":'hephy_scale_factors.root',                                "lep":'mu', 'dim':'1D'},
         
         # electrons
-        "el_VetoWP_2D_cent": {"tag":'VetoWP_cent',  "hist_name":'Run2018_CutBasedVetoNoIso94XV2', "file_name":'ElectronScaleFactors_Run2018.root',                            "lep":'el', 'dim':'2D'},
+        #"el_VetoWP_2D_cent": {"tag":'VetoWP_cent',  "hist_name":'Run2018_CutBasedVetoNoIso94XV2', "file_name":'ElectronScaleFactors_Run2018.root',                            "lep":'el', 'dim':'2D'},
+        "el_VetoWP_2D_cent": {"tag":'VetoWP_cent',  "hist_name":'Run2017_CutBasedVetoNoIso94XV2', "file_name":'ElectronScaleFactors_Run2017.root',                            "lep":'el', 'dim':'2D'},
         #"el_VetoWP_2D_cent": {"tag":'VetoWP_cent',  "hist_name":'Run2016_CutBasedVetoNoIso94XV2', "file_name":'ElectronScaleFactors_Run2016.root',                            "lep":'el', 'dim':'2D'},
         #"el_VetoWP_2D_priv": {"tag":'VetoWP_priv',  "hist_name":'ele_SF_IdSpec_all',               "file_name":'hephy_scale_factors.root',                                "lep":'el', 'dim':'1D'},
         #"el_IpIso_2D_priv":  {"tag":'IpIso_priv',   "hist_name":'ele_SF_IpIso_all',                "file_name":'hephy_scale_factors.root',                                "lep":'el', 'dim':'1D'},
@@ -58,7 +59,6 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
     }
     
     for hist in selectedHistDict:
-	    print hist
         selectedHistDict[hist]['file'] = ROOT.TFile(file_dir + selectedHistDict[hist]['file_name'])
 
         if selectedHistDict[hist]['hist_name'] not in [x.GetName() for x in selectedHistDict[hist]['file'].GetListOfKeys()]:
@@ -116,7 +116,7 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
         "binning":{}
     }
     
-    combinedHistName = "%s_SF_%s_%s_2018"%(selectedHistDict[baseHistName]['lep'], selectedHistDict[baseHistName]['dim'], combinedHistDict['tag'])
+    combinedHistName = "%s_SF_%s_%s_2017"%(selectedHistDict[baseHistName]['lep'], selectedHistDict[baseHistName]['dim'], combinedHistDict['tag'])
     combinedHistDict['hist_name'] = combinedHistName
     
     ny = len(combinedPtBins)-1
@@ -273,8 +273,8 @@ def combineSFs(baseHistName, updateHistName, updatePtRange, file_dir = './', sav
         c3.SaveAs("%s/root/%s.root"%(savedir, selectedHistDict[updateHistName]['hist_name']))
    
 if __name__ == '__main__':
-    savedir = "/mnt/hephy/cms/priya.hussain/www/StopsCompressed/leptonSFs/2018/noIso/combinedSFs"
+    savedir = "/groups/hephy/cms/priya.hussain/www/StopsCompressed/leptonSFs/2017/noIso/combinedSFs"
     #combineSFs(baseHistName = 'mu_LooseWP_2D_cent', updateHistName = 'mu_LooseWP_1D_priv', updatePtRange = [3.5, 10], file_dir = '/scratch/priya.hussain/StopsCompressed/results/2016_80X_v5/finalplots/mod/', savedir = savedir, drawOriginalSFs = True, verbose = True)
     #combineSFs(baseHistName = 'el_VetoWP_2D_cent',  updateHistName = 'el_VetoWP_2D_priv',  updatePtRange = [5, 10], file_dir = '/scratch/priya.hussain/StopsCompressed/results/2016_80X_v5/finalplots/legacy/', savedir = savedir, drawOriginalSFs = True, verbose = True)
-    #combineSFs(baseHistName = 'el_VetoWP_2D_cent',  updateHistName = 'el_VetoWP_2D_priv',  updatePtRange = [5, 10], file_dir = '/scratch/priya.hussain/StopsCompressed/results/2017_94X/finalplots/noIso/', savedir = savedir, drawOriginalSFs = True, verbose = True)
-    combineSFs(baseHistName = 'el_VetoWP_2D_cent',  updateHistName = 'el_VetoWP_2D_priv',  updatePtRange = [5, 10], file_dir = '/scratch/priya.hussain/StopsCompressed/results/2018_94_pre3/finalplots/noIso/', savedir = savedir, drawOriginalSFs = True, verbose = True)
+    combineSFs(baseHistName = 'el_VetoWP_2D_cent',  updateHistName = 'el_VetoWP_2D_priv',  updatePtRange = [5, 10], file_dir = '/groups/hephy/cms/priya.hussain/StopsCompressed/results/2017_94X/finalplots/noIso/', savedir = savedir, drawOriginalSFs = True, verbose = True)
+    #combineSFs(baseHistName = 'el_VetoWP_2D_cent',  updateHistName = 'el_VetoWP_2D_priv',  updatePtRange = [5, 10], file_dir = '/groups/hephy/cms/priya.hussain/StopsCompressed/results/2018_94_pre3/finalplots/noIso/', savedir = savedir, drawOriginalSFs = True, verbose = True)

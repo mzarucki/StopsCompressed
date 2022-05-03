@@ -16,7 +16,9 @@ def weightedAverage(v1,e1,v2,e2) :
     return v, e
 
 ######### ELECTRONS 
-for name, name2 in [("2016_el_sf","ele_SF_IpIso_2D"),("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016","el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016")] :
+#for name, name2 in [("2016_el_sf","ele_SF_IpIso_2D"),("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016","el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2016")] :
+for name, name2 in [("2017_el_sf","ele_SF_IpIso_2D"),("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017","el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017")] :
+#for name, name2 in [("2017_el_sf","ele_SF_IpIso_2D"),("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018","el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018")] :
     
     _file = ROOT.TFile("{}.root".format(name))
     TH2F = _file.Get("{}".format(name2))
@@ -51,7 +53,9 @@ for name, name2 in [("2016_el_sf","ele_SF_IpIso_2D"),("el_SF_2D_VetoWP_cent_Veto
     test.Close()
 
 ############ MUONS ######################
-for name, name2 in [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10","mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10"), ("2016_mu_sf","muon_SF_IpIsoSpec_2D")] :
+#for name, name2 in [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10","mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-10"), ("2016_mu_sf","muon_SF_IpIsoSpec_2D")] :
+for name, name2 in [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20","mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20"), ("2017_mu_sf","muon_SF_IpIsoSpec_2D")] :
+#for name, name2 in [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018","mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018"), ("2018_mu_sf","muon_SF_IpIsoSpec_2D")] :
 
 
     _file = ROOT.TFile("{}.root".format(name))
