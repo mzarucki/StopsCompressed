@@ -30,21 +30,21 @@ class leptonSF:
                          ("2016_el_sf.root",       "ele_SF_IpIso_2D") 
 			 ]
         elif '2017' in year:
-            keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20.root",         "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20"),
-                        ("2017_mu_sf.root",  "muon_SF_IpIsoSpec_2D")]
+            keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_merged.root",         "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_merged"),
+                        ("2017_mu_sf_merged.root",  "muon_SF_IpIsoSpec_2D_merged")]
             self.ele_x_is_pt = False 
             self.ele_abs_eta = False 
             self.ele_max_pt  = 500
-            keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017"),
-                        ("2017_el_sf.root", "ele_SF_IpIso_2D")]
+            keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017_merged.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2017_merged"),
+                        ("2017_el_sf_merged.root", "ele_SF_IpIso_2D_merged")]
         elif '2018' in year:
-            keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018.root",           "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018"),
-                        ("2018_mu_sf.root",  "muon_SF_IpIsoSpec_2D")] # 2017 Iso SF are recommended
+            keys_mu  = [("mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018_merged.root",           "mu_SF_2D_LooseWP_cent_LooseWP_priv_3p5-20_2018_merged"),
+                        ("2018_mu_sf_merged.root",  "muon_SF_IpIsoSpec_2D_merged")] # 2017 Iso SF are recommended
             self.ele_x_is_pt = False 
             self.ele_abs_eta = False 
             self.ele_max_pt  = 500
-            keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018"),
-                        ("2018_el_sf.root", "ele_SF_IpIso_2D")]
+            keys_ele = [("el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018_merged.root", "el_SF_2D_VetoWP_cent_VetoWP_priv_5-10_2018_merged"),
+                        ("2018_el_sf_merged.root", "ele_SF_IpIso_2D_merged")]
         
         self.dataDir = "$CMSSW_BASE/src/StopsCompressed/Tools/data/leptonSFData/"
 
