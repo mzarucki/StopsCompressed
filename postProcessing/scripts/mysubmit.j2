@@ -14,6 +14,9 @@
 {%- if walltime %}
 #SBATCH --time {{walltime}}
 {% endif %}
+{%- if qos %}
+#SBATCH --qos {{qos}}
+{% endif %}
 {%- if throttle > 0 %}
 #SBATCH --array={{first}}-{{last}}%{{throttle}}
 {%- else %}

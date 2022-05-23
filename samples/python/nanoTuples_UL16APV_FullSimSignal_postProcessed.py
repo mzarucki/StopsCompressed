@@ -8,8 +8,9 @@ logger = logging.getLogger(__name__)
 
 from StopsCompressed.samples.color import color
 
-data_directory_ = '/scratch/priya.hussain/StopsCompressed/nanoTuples/'
-postProcessing_directory_ = 'compstops_UL16APVv9_nano_v5/MetSingleLep/'
+from StopsCompressed.samples.default_locations import default_locations
+data_directory_ = default_locations.mc_2017_data_directory
+postProcessing_directory_ = default_locations.mc_2017_postProcessing_directory
 
 logger.info("Loading MC samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 

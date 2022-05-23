@@ -5,6 +5,6 @@ do
 	   --output="$SCRATCHDIR/batch_output/analyis_plot_$era-%A.out" \
 	   --error="$SCRATCHDIR/batch_output/analyis_plot_$era-%A.err" \
 	   --time="03:00:00" \
-	   --wrap="python analysisPlots.py --era $era --reweightPU Central --targetDir UL_v02"
+	   --wrap="python analysisPlots.py --era $era --reweightPU Central --targetDir UL_v03"
 done
 

@@ -33,7 +33,9 @@ for root, dirs, files in os.walk(NFSPATH):
         if os.path.exists(scratchpath):
             if os.stat(scratchpath).st_size != size:
                 print('Size mismatch NFS-SCRATCH. Removing SCRATCH file %s' % scratchpath) 
-                os.remove(scratchpath)   
+                os.remove(scratchpath)
+	    else:
+                os.utime(scratchpath, None)
 
         # copy files
 
@@ -60,3 +62,4 @@ for root, dirs, files in os.walk(NFSPATH):
                 'root://eos.grid.vbc.ac.at/'+eospath,
                  scratchpath
             ])
+	    os.utime(scratchpath, None)

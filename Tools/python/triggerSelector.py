@@ -1,6 +1,6 @@
 class triggerSelector:
     def __init__(self, year, era=None):
-        if year == "UL2016" or "UL2016_preVFP":
+        if year in ["UL2016", "UL2016_preVFP"]:
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_Mu3_PFJet40", "HLT_Mu8", "HLT_Mu17", "HLT_Mu27"]
             self.jet     = ["HLT_PFJet40"]
@@ -64,7 +64,7 @@ class triggerSelector:
 
 class triggerSelectorMetLepEnergy:
     def __init__(self, year, era=None):
-        if year == "UL2016" or "UL2016_preVFP":
+        if year in ["UL2016", "UL2016_preVFP"]:
             self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
             self.m       = ["HLT_IsoMu24", "HLT_IsoTkMu24"]
             self.jet     = ["HLT_PFJet40"]
