@@ -60,3 +60,13 @@ python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstop
 python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample SMS_T2tt_LL_mStop_400_mLSP_380 #SPLIT2 
 python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample SMS_T2tt_LL_mStop_350_mLSP_335 #SPLIT2 
 python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample SMS_T2tt_LL_mStop_300_mLSP_290 #SPLIT2 
+
+##new diBoson and DYM4-50 samples
+
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample WWTo1L1Nu2Q 
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample ZZTo2Q2L
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample ZZTo2Nu2Q
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample WZTo1L3Nu
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample WZTo1L1Nu2Q
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample WZTo2Q2L
+python nanoPostProcessing.py  --skim Met --year UL2017  --processingEra compstops_UL17v9_nano_v7  --sample DYJetsToLL_M4to50_HT100to200
