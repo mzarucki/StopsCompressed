@@ -25,13 +25,13 @@ except:
 
 logger.info("Loading MC samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
-#DY_M5to50_HT = [
-#                ##"DYJetsToLL_M5to50_HT70to100",   ## not in samples list of 2016 Analysis
-#                "DYJetsToLL_M5to50_HT100to200_comb",
-#                "DYJetsToLL_M5to50_HT200to400_comb",
-#                "DYJetsToLL_M5to50_HT400to600_comb",
-#                "DYJetsToLL_M5to50_HT600toInf"
-#                ] 
+DY_M4to50_HT = [
+#                ##"DYJetsToLL_M4to50_HT70to100",   ## not in samples list of 2016 Analysis
+                "DYJetsToLL_M4to50_HT100to200",
+#                "DYJetsToLL_M4to50_HT200to400",
+#                "DYJetsToLL_M4to50_HT400to600",
+#                "DYJetsToLL_M4to50_HT600toInf"
+                ] 
 
 DY_M50_HT =[
             "DYJetsToLL_M50_HT70to100",
@@ -46,36 +46,25 @@ DY_M50_HT =[
 
 
 dirs = {}
-#dirs['DY_HT_LO']         =  DY_M50_HT + DY_M5to50_HT
+dirs['DY_HT_LO']         =  DY_M50_HT + DY_M4to50_HT
 dirs['DY_HT_M50_LO']     =  DY_M50_HT 
-#dirs['DY_HT_M5to50_LO']  =  DY_M5to50_HT 
+dirs['DY_HT_M4to50_LO']  =  DY_M4to50_HT 
 #
 dirs['TTLep_pow']        = ["TTLep_pow_CP5"]
 dirs['TTSingleLep_pow']  = ["TTSingleLep_pow_CP5"]
 dirs['Top_pow']          = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
-#
-##dirs['TTbar']            	     = ["TTbar"]
-###dirs['TTJets_DiLept']                = ["TTJets_DiLept"]
-#dirs['TTJets_SingleLeptonFromT']     = ["TTJets_SingleLeptonFromT"]
-#dirs['TTJets_SingleLeptonFromTbar']  = ["TTJets_SingleLeptonFromTbar"]
-#dirs['TTJets_SingleLepton']	     = dirs['TTJets_SingleLeptonFromT'] + dirs['TTJets_SingleLeptonFromTbar']
-##
-##dirs['Top_pow']          = dirs['TTLep_pow']  
-##
+
 dirs['singleTop']        = ["TBar_tWch_ext", "T_tWch_ext" , "TBar_tch_pow", "T_tch_pow"] #  "TToLeptons_tch_powheg", "TBarToLeptons_tch_powheg"]
 dirs['singleTop_tch']    = ["TBar_tch_pow", "T_tch_pow"] 
-#
-#
+
 dirs['TTZ_LO']         = ['TTZ_LO']
-##
+
 dirs['TTG']             = ["TTGJets"]
-##
-#dirs['TTW']             = ['TTWToLNu_CP5', 'TTWToQQ']
+
 dirs['TTW']             = ['TTW_LO']
 
 dirs['TTX']             = dirs['TTW'] + dirs['TTG'] + dirs['TTZ_LO']
 
-##added WJetsHT800T01200 from legacy as place holder to check the affect : compstops_2017_nano_v8
 dirs['WJetsToLNu_HT']   = [
           "WJetsToLNu_HT70to100", 
           "WJetsToLNu_HT100to200", 
@@ -87,9 +76,9 @@ dirs['WJetsToLNu_HT']   = [
           "WJetsToLNu_HT2500toInf"  
           ] 
 
-dirs['WW']              = ["WW"] #, "WWToLNuQQ" TTWToLNu_CP5
-dirs['WZ']              = ["WZTo3LNu_amcatnlo"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
-dirs['ZZ']              = ["ZZTo2L2Nu"] #, "ZZTo4L" ]  "ZZTo2L2Q", "ZZTo2Q2Nu",
+dirs['WW']              = ["WWTo1L1Nu2Q" , "WWTo2L2Nu"]
+dirs['WZ']              = ["WZTo3LNu_amcatnlo", "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2Q2L"]
+dirs['ZZ']              = ["ZZTo2L2Nu" , "ZZTo4L" ,"ZZTo2Q2L", "ZZTo2Nu2Q"]
 #dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
 
 dirs['VV']              =  dirs['ZZ'] + dirs['WZ']  + dirs['WW'] 
@@ -110,7 +99,7 @@ dirs['QCD_HT'] 		= [
 
 dirs['ZInv']            = ["DYJetsToNuNu_HT100to200", "DYJetsToNuNu_HT200to400", "DYJetsToNuNu_HT400to600", "DYJetsToNuNu_HT600to800", "DYJetsToNuNu_HT800to1200", "DYJetsToNuNu_HT1200to2500", "DYJetsToNuNu_HT2500toInf" ]
 
-dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
+dirs['others']           = dirs['DY_HT_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 
 #dirs['others']           = dirs['DY_HT_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 #dirs['fakes'] 		= dirs['DY_HT_LO'] + dirs['Top_pow'] + dirs['singleTop'] + dirs['TTX'] + dirs['WJetsToLNu_HT'] + dirs['VV'] + dirs['QCD_HT'] +dirs['ZInv']
@@ -118,8 +107,8 @@ dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
 
 
-#DY_HT_LO_17             = Sample.fromDirectory(name="DY_HT_LO",             treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan",                      directory=directories['DY_HT_LO'])
-DY_HT_M50_LO_17         = Sample.fromDirectory(name="DY_HT_M50_LO",         treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan_M50",                    directory=directories['DY_HT_M50_LO'])
+DY_HT_LO_17             = Sample.fromDirectory(name="DY_HT_LO",             treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan",                      directory=directories['DY_HT_LO'])
+#DY_HT_M50_LO_17         = Sample.fromDirectory(name="DY_HT_M50_LO",         treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan_M50",                    directory=directories['DY_HT_M50_LO'])
 Top_pow_17              = Sample.fromDirectory(name="Top_pow",              treeName="Events", isData=False, color=color.Top_pow,         texName="t#bar{t}",                     directory=directories['Top_pow'])
 TTLep_pow_17            = Sample.fromDirectory(name="TTLep_pow",            treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",                       directory=directories['TTLep_pow'])
 #TTJets_1l_17      = Sample.fromDirectory(name="TTJets_SingleLepton",      treeName="Events", isData=False, color=color.TTJets_1l,       texName="t#bar{t} (1l)",                  directory=directories['TTJets_SingleLepton'])

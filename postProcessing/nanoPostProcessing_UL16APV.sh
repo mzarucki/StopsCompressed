@@ -1,4 +1,4 @@
-# python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v7  --sample WJetsToLNu_HT70to100 #SPLIT10 
+python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v7  --sample WJetsToLNu_HT70to100 #SPLIT10 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v7  --sample WJetsToLNu_HT100to200 #SPLIT10 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v7  --sample WJetsToLNu_HT200to400 #SPLIT10 
 python nanoPostProcessing.py  --skim Met --year UL2016_preVFP  --processingEra compstops_UL16APVv9_nano_v7  --sample WJetsToLNu_HT400to600 #SPLIT20

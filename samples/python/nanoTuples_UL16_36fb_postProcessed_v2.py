@@ -17,7 +17,8 @@ import StopsCompressed.samples.nanoTuples_UL16APV_postProcessed  as UL16preVFP
 import StopsCompressed.samples.nanoTuples_UL16_postProcessed 	 as UL16postVFP
 #import StopsCompressed.samples.nanoTuples_Summer16_postProcessed as legacy16
 
-DY_HT_M50_LO_16        	= Sample.combine( "DY_HT_M50_LO", [UL16preVFP.DY_HT_M50_LO_16APV, UL16postVFP.DY_HT_M50_LO_16])
+#DY_HT_M50_LO_16        	= Sample.combine( "DY_HT_M50_LO", [UL16preVFP.DY_HT_M50_LO_16APV, UL16postVFP.DY_HT_M50_LO_16])
+DY_HT_LO_16        	= Sample.combine( "DY_HT_LO", 	  [UL16preVFP.DY_HT_LO_16APV, UL16postVFP.DY_HT_LO_16])
 Top_pow_16              = Sample.combine( "Top_pow", 	  [UL16preVFP.Top_pow_16APV ,   UL16postVFP.Top_pow_16])
 singleTop_16            = Sample.combine( "singleTop",    [UL16preVFP.singleTop_16APV , UL16postVFP.singleTop_16])
 TTX_16              	= Sample.combine( "TTX",	  [UL16preVFP.TTX_16APV , 	UL16postVFP.TTX_16])

@@ -130,7 +130,7 @@ elif args.year == "2018": lumi_scale = 59.74
 
 
 
-plotDirectory = os.path.join( plot_directory, "fit", str(args.year),"nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only), args.cardfile, args.carddir.split("/")[-1] )
+plotDirectory = os.path.join( plot_directory, "fit", str(args.year), "dPhiJets", "nbins{}_mt{}_extramT{}_CT{}_R1only{}_R2only{}".format(_NBINS,args.mT_cut_value,args.extra_mT_cut,args.CT_cut_value,args.R1only,args.R2only), args.cardfile, args.carddir.split("/")[-1] )
 cardFile      = os.path.join( analysis_results,str(args.year), args.carddir,   args.cardfile+".txt" )
 cardFileShape = os.path.join( analysis_results,str(args.year), args.carddir,   args.cardfile+"_shapeCard.txt" )
 logger.info("Plotting from cardfile %s"%cardFile)
@@ -226,7 +226,7 @@ def plotRegions( sorted=True ):
 
     
     
-    hists["signal"].style        = styles.lineStyle( ROOT.kRed, width=5 )
+    hists["signal"].style        = styles.lineStyle( ROOT.kYellow, width=5 )
     hists["signal"].legendText   = "signal ({})".format(args.cardfile) if not args.bkgSubstracted else "signal"
     hists["signal"].legendOption = "ep" if args.bkgSubstracted else "ep"
 

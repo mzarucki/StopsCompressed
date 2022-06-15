@@ -25,13 +25,13 @@ except:
 
 logger.info("Loading MC samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
-#DY_M5to50_HT = [
-#                ##"DYJetsToLL_M5to50_HT70to100",   ## not in samples list of 2016 Analysis
-#                "DYJetsToLL_M5to50_HT100to200_comb",
-#                "DYJetsToLL_M5to50_HT200to400_comb",
-#                "DYJetsToLL_M5to50_HT400to600_comb",
-#                "DYJetsToLL_M5to50_HT600toInf"
-#                ] 
+DY_M4to50_HT = [
+#                ##"DYJetsToLL_M4to50_HT70to100",   ## not in samples list of 2016 Analysis
+                "DYJetsToLL_M4to50_HT100to200",
+#                "DYJetsToLL_M4to50_HT200to400",
+#                "DYJetsToLL_M4to50_HT400to600",
+                "DYJetsToLL_M4to50_HT600toInf"
+                ] 
 
 DY_M50_HT =[
             "DYJetsToLL_M50_HT70to100",
@@ -46,7 +46,7 @@ DY_M50_HT =[
 
 
 dirs = {}
-#dirs['DY_HT_LO']         =  DY_M50_HT + DY_M5to50_HT
+dirs['DY_HT_LO']         =  DY_M50_HT + DY_M4to50_HT
 dirs['DY_HT_M50_LO']     =  DY_M50_HT 
 #dirs['DY_HT_M5to50_LO']  =  DY_M5to50_HT 
 #
@@ -80,14 +80,11 @@ dirs['WJetsToLNu_HT']   = [
           "WJetsToLNu_HT2500toInf"  
           ] 
 
-dirs['WW']              = ["WW"] #, "WWToLNuQQ" TTWToLNu_CP5
-dirs['WZ']              = ["WZTo3LNu_amcatnlo", "WZTo1L1Nu2Q"] # "WZTo1L1Nu2Q",  "WZTo1L3Nu", "WZTo2L2Q",
-dirs['ZZ']              = [ "ZZTo4L", "ZZTo2Q2Nu" ] # "ZZTo2L2Q", "ZZTo2Q2Nu","ZZTo2L2Nu",
-#dirs['VVTo2L2Nu']       = ["VVTo2L2Nu_comb"]
+dirs['WW']              = ["WWTo1L1Nu2Q", "WWTo2L2Nu"] 
+dirs['WZ']              = ["WZTo3LNu_amcatnlo", "WZTo1L1Nu2Q", "WZTo2Q2L"] # ,"WZTo1L3Nu"
+dirs['ZZ']              = [ "ZZTo4L", "ZZTo2Nu2Q", "ZZTo2Q2L", "ZZTo2L2Nu"]
 
 dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
-#dirs['diBoson']         = dirs['WW'] + dirs['WZ'] + dirs['ZZ']+ dirs['VVTo2L2Nu']
-#dirs['diBosonInc']    = ["WW", "WZ", "ZZ"]
 
 dirs['QCD_HT'] 		= [
     "QCD_HT50to100",
@@ -110,7 +107,7 @@ dirs['ZInv']            = [
   "DYJetsToNuNu_HT2500toInf" 
 ]
 
-dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
+dirs['others']           = dirs['DY_HT_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 
 #dirs['others']           = dirs['DY_HT_LO'] + dirs['singleTop'] + dirs['TTX'] + dirs['VV']
 #dirs['fakes'] 		= dirs['DY_HT_LO'] + dirs['Top_pow'] + dirs['singleTop'] + dirs['TTX'] + dirs['WJetsToLNu_HT'] + dirs['VV'] + dirs['QCD_HT'] +dirs['ZInv']
@@ -118,8 +115,8 @@ dirs['others']           = dirs['DY_HT_M50_LO'] + dirs['singleTop'] + dirs['TTX'
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
 
 
-#DY_HT_LO_18             = Sample.fromDirectory(name="DY_HT_LO",             treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan",                      directory=directories['DY_HT_LO'])
-DY_HT_M50_LO_18         = Sample.fromDirectory(name="DY_HT_M50_LO",         treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan_M50",                    directory=directories['DY_HT_M50_LO'])
+DY_HT_LO_18             = Sample.fromDirectory(name="DY_HT_LO",             treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan",                      directory=directories['DY_HT_LO'])
+#DY_HT_M50_LO_18         = Sample.fromDirectory(name="DY_HT_M50_LO",         treeName="Events", isData=False, color=color.DY,              texName="Drell-Yan_M50",                    directory=directories['DY_HT_M50_LO'])
 Top_pow_18              = Sample.fromDirectory(name="Top_pow",              treeName="Events", isData=False, color=color.Top_pow,         texName="t#bar{t}",                     directory=directories['Top_pow'])
 TTLep_pow_18            = Sample.fromDirectory(name="TTLep_pow",            treeName="Events", isData=False, color=color.TTJets,          texName="t#bar{t}",                       directory=directories['TTLep_pow'])
 #TTJets_1l_18      = Sample.fromDirectory(name="TTJets_SingleLepton",      treeName="Events", isData=False, color=color.TTJets_1l,       texName="t#bar{t} (1l)",                  directory=directories['TTJets_SingleLepton'])
@@ -129,7 +126,7 @@ singleTop_18      	= Sample.fromDirectory(name="singleTop",            treeName=
 singleTop_tch_18  	= Sample.fromDirectory(name="singleTop_tch",        treeName="Events", isData=False, color=color.singleTop,         texName="single top tch",                    directory=directories['singleTop_tch'])
 TTX_18            	= Sample.fromDirectory(name="TTX",                  treeName="Events", isData=False, color=color.TTX,               texName="t#bar{t}G/W/Z",                     directory=directories['TTX'])
 TTW_LO_18            	= Sample.fromDirectory(name="TTW_LO",                  treeName="Events", isData=False, color=color.TTW,              texName="t#bar{t}W",                         directory=directories['TTW'])
-TTZ_LO_18            	= Sample.fromDirectory(name="TTZ_LO",               treeName="Events", isData=False, color=color.TTZ,              texName="t#bar{t}Z",                         directory=directories['TTZ_LO'])
+#TTZ_LO_18            	= Sample.fromDirectory(name="TTZ_LO",               treeName="Events", isData=False, color=color.TTZ,              texName="t#bar{t}Z",                         directory=directories['TTZ_LO'])
 TTG_18            	= Sample.fromDirectory(name="TTG",                  treeName="Events", isData=False, color=color.TTG,              texName="t#bar{t}#gamma",                    directory=directories['TTG'])
 WJetsToLNu_HT_18  	= Sample.fromDirectory(name="WJetsToLNu_HT_",       treeName="Events", isData=False, color=color.WJetsToLNu,       texName="W(l,#nu) + Jets (HT)",              directory=directories['WJetsToLNu_HT'])
 VV_18           	= Sample.fromDirectory(name="VV",                   treeName="Events", isData=False, color=color.VV,              texName="VV ",                               directory=directories['VV'])
