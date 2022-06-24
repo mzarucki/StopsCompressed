@@ -20,6 +20,9 @@ dirs = {}
 dirs['T2tt_mStop_500_mLSP_420']  = ['SMS_T2tt_mStop_500_mLSP_420']
 dirs['T2tt_mStop_500_mLSP_450']  = ['SMS_T2tt_mStop_500_mLSP_450']
 dirs['T2tt_mStop_500_mLSP_470']  = ['SMS_T2tt_mStop_500_mLSP_470']
+dirs['T2tt_LL_mStop_300_mLSP_290']  = ['SMS_T2tt_LL_mStop_300_mLSP_290']
+dirs['T2tt_LL_mStop_400_mLSP_380']  = ['SMS_T2tt_LL_mStop_400_mLSP_380']
+dirs['T2tt_LL_mStop_350_mLSP_335']  = ['SMS_T2tt_LL_mStop_350_mLSP_335']
 
 directories = { key : [ os.path.join( data_directory_, postProcessing_directory_, dir) for dir in dirs[key]] for key in dirs.keys()}
 
@@ -29,15 +32,24 @@ directories = { key : [ os.path.join( data_directory_, postProcessing_directory_
 T2tt_500_420   = Sample.fromDirectory(name="T2tt_500_420",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,420)",     directory=directories['T2tt_mStop_500_mLSP_420'])
 T2tt_500_450   = Sample.fromDirectory(name="T2tt_500_450",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,450)",     directory=directories['T2tt_mStop_500_mLSP_450'])
 T2tt_500_470   = Sample.fromDirectory(name="T2tt_500_470",    treeName="Events", isData=False, color=color.DY,     texName="T2tt(500,470)",     directory=directories['T2tt_mStop_500_mLSP_470'])
+T2tt_LL_300_290   = Sample.fromDirectory(name="T2tt_LL_300_290",    treeName="Events", isData=False, color=color.DY,     texName="T2tt_LL(300,290)",     directory=directories['T2tt_LL_mStop_300_mLSP_290'])
+T2tt_LL_350_335   = Sample.fromDirectory(name="T2tt_LL_350_335",    treeName="Events", isData=False, color=color.DY,     texName="T2tt_LL(350,335)",     directory=directories['T2tt_LL_mStop_350_mLSP_335'])
+T2tt_LL_400_380   = Sample.fromDirectory(name="T2tt_LL_400_380",    treeName="Events", isData=False, color=color.DY,     texName="T2tt_LL(400,380)",     directory=directories['T2tt_LL_mStop_400_mLSP_380'])
 
 signals_T2tt = [
     T2tt_500_420,
     T2tt_500_450,
     T2tt_500_470,
+    T2tt_LL_300_290,
+    T2tt_LL_400_380,
+    T2tt_LL_350_335,
 ]
 
 for s in signals_T2tt:
-    mStop, mNeu = s.name.replace('T2tt_','').split('_')
+    if s.name.startswith('T2tt_LL_'):
+	    mStop, mNeu = s.name.replace('T2tt_LL_','').split('_')
+    else:
+	    mStop, mNeu = s.name.replace('T2tt_','').split('_')
     s.mStop = int(mStop)
     s.mNeu = int(mNeu)
     s.isFastSim = False

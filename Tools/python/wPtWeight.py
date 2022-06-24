@@ -59,13 +59,13 @@ class wPtWeight:
 		#w = (norm*corr_fact)+(self.sys*sigma)
 
 		if sigma==0:
-			print (norm*corr_fact)
+			#print (norm*corr_fact)
 			return (norm*corr_fact)
 		elif sigma <0:
-			print ((norm*corr_fact)**2)
+			#print ((norm*corr_fact)**2)
 			return ((norm*corr_fact)**2)
 		elif sigma>0:
-			print 1
+			#print 1
 			return 1
 		##up=no weight, nom=weighted, down= (reweight)^2
 		#print "weight calculated in function: ", w 

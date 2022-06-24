@@ -59,6 +59,9 @@ def get_parser():
     argParser.add_argument('--processingEra', action='store',       nargs='?',  type=str, default='postProcessed_80X_v22',              help="Name of the processing era" )
     argParser.add_argument('--runOnLxPlus',   action='store_true',                                                                      help="Change the global redirector of samples to run on lxplus")
     argParser.add_argument('--looseHybridIso',   action='store_true',                                                                   help="Use loose hybrid isolation for fake rate studies")
+    argParser.add_argument('--noDxyDz',   action='store_true',                                                                   	help="loosen the dxy & dz cuts for additional SR study")
+    argParser.add_argument('--noDxy',   action='store_true',                                                                     	help="loosen only dxy cut for additional SR study")
+    argParser.add_argument('--noDz',   action='store_true',                                                                      	help="loosen only dz cut to see PU effect")
     argParser.add_argument('--skim',        action='store',         nargs='?',  type=str, default='singleLep',                          help="Skim conditions to be applied for post-processing" )
     argParser.add_argument('--LHEHTCut',    action='store',         nargs='?',  type=int, default=-1,                                   help="LHE cut." )
     argParser.add_argument('--year',        action='store',                     type=str,                                               help="Which year?" )
@@ -302,8 +305,15 @@ directory        = os.path.join( options.targetDir, options.processingEra )
 output_directory = os.path.join( '/tmp/%s'%os.environ['USER'], str(uuid.uuid4()) ) 
 if options.looseHybridIso:
 	targetPath       = os.path.join( directory, options.skim, "looseHybridIso", sampleName )
+elif options.noDxyDz:
+	targetPath       = os.path.join( directory, options.skim, "noDxyDz", sampleName )
+elif options.noDxy:
+	targetPath       = os.path.join( directory, options.skim, "noDxy", sampleName )
+elif options.noDz:
+	targetPath       = os.path.join( directory, options.skim, "noDz", sampleName )
 else:
 	targetPath       = os.path.join( directory, options.skim, sampleName )
+
 if not os.path.exists( targetPath ):
     try:    os.makedirs( targetPath ) 
     except: pass
@@ -633,6 +643,15 @@ reader = sample.treeReader( \
 if options.looseHybridIso:
 	eleSelector_ = eleSelector( "looseHybridIso", year = options.year )
 	muSelector_  = muonSelector("looseHybridIso", year = options.year )
+elif options.noDxyDz:
+	eleSelector_ = eleSelector( "noDxyDz", year = options.year )
+	muSelector_  = muonSelector("noDxyDz", year = options.year )
+elif options.noDxy:
+	eleSelector_ = eleSelector( "noDxy", year = options.year )
+	muSelector_  = muonSelector("noDxy", year = options.year )
+elif options.noDz:
+	eleSelector_ = eleSelector( "noDz", year = options.year )
+	muSelector_  = muonSelector("noDz", year = options.year )
 else:
 	# using hybridIsolation as defined in 2016 AN 
 	eleSelector_ = eleSelector( "hybridIso", year = options.year )

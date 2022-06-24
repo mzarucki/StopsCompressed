@@ -90,8 +90,8 @@ dirs['VV']              = dirs['WW'] + dirs['WZ'] + dirs['ZZ']
 
 dirs['QCD_HT'] 		= [
 			   #"QCD_HT50to100", 
-			   "QCD_HT100to200", 
-			   "QCD_HT100to200_madgraph",
+			   #"QCD_HT100to200", 
+			   #"QCD_HT100to200_madgraph",
 			   "QCD_HT200to300",
 			   "QCD_HT200to300_madgraph",
 			   "QCD_HT300to500",
