@@ -29,7 +29,8 @@ import StopsCompressed.Tools.user as user
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
 
 # use a cacheDir that's read/writable for all of us
-cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
+cacheDir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/"
+#cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
 #cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
 
 def get_parser():
@@ -72,11 +73,14 @@ elif options.year == 2017:
     from Samples.nanoAOD.Run2017_31Mar2018_private  import allSamples as dataSamples
     allSamples = bkgSamples + dataSamples
 elif options.year == 2018:
-    from Samples.nanoAOD.Spring18_private           import allSamples as HEMSamples
-    from Samples.nanoAOD.Run2018_26Sep2018_private  import allSamples as HEMDataSamples
-    from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as bkgSamples
-    from Samples.nanoAOD.Run2018_17Sep2018_private  import allSamples as dataSamples
-    allSamples = HEMSamples + HEMDataSamples + bkgSamples + dataSamples
+    from Samples.nanoAOD.Autumn18_nanoAODv6 import allSamples as mcSamples
+    from Samples.nanoAOD.Run2018_nanoAODv6  import allSamples as dataSamples
+    allSamples = mcSamples + dataSamples
+    #from Samples.nanoAOD.Spring18_private           import allSamples as HEMSamples
+    #from Samples.nanoAOD.Run2018_26Sep2018_private  import allSamples as HEMDataSamples
+    #from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as bkgSamples
+    #from Samples.nanoAOD.Run2018_17Sep2018_private  import allSamples as dataSamples
+    #allSamples = HEMSamples + HEMDataSamples + bkgSamples + dataSamples
 else:
     raise NotImplementedError
 

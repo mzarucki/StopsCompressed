@@ -26,6 +26,14 @@ class ISRweight:
     weights = [ w+(sigma*self.weights_syst[i]) for i, w in enumerate(self.weights)]
     return norm*self.norm*weights[nISRJets] if nISRJets <= self.njet_max else self.norm*weights[self.njet_max]
 
-  def getISRWeight(self, r, norm=1, sigma=0):
+  def getISRWeight(self, r, norm=1, sigma=0, isFast=False):
     weights = [ w+(sigma*self.weights_syst[i]) for i, w in enumerate(self.weights)]
-    return norm*self.norm*weights[r.nISR] if r.nISR <= self.njet_max else self.norm*weights[self.njet_max]
+    if isFast:
+	    mStop = int(r.GenSusyMStop)
+	    #print (6.974e-05* mStop + 1.086)*weights[r.nISR]
+	    #print "no normISR: ", norm*self.norm*weights[r.nISR]
+	    return (6.974e-05* mStop + 1.086)*weights[r.nISR] if r.nISR <= self.njet_max else (6.974e-05* mStop + 1.086)*weights[self.njet_max]
+    else:
+	    #print "here normISR: ", norm
+	    return norm*self.norm*weights[r.nISR] if r.nISR <= self.njet_max else self.norm*weights[self.njet_max]
+

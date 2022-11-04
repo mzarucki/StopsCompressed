@@ -177,8 +177,8 @@ if isData and options.triggerSelection:
 
     logger.info("Sample will have the following trigger skim: %s"%triggerCond)
     skimConds.append( triggerCond )
-elif isData and not options.triggerSelection:
-    raise Exception( "Data should have a trigger selection" )
+#elif isData and not options.triggerSelection:
+#    raise Exception( "Data should have a trigger selection" ) # NOTE: can be done at cut level
 
 #triggerEff          = triggerEfficiency(options.year)
 
@@ -196,15 +196,15 @@ else:
 
 # Add scale etc. friends
 has_susy_weight_friend = False
-if options.susySignal and options.fastSim:
-    # Make friend sample
-    friend_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
-    if os.path.exists( friend_dir ):
-        weight_friend = Sample.fromDirectory( "weight_friend", directory = [friend_dir] ) 
-        if weight_friend.chain.BuildIndex("luminosityBlock", "event")>0:
-            has_susy_weight_friend = True
-    else:
-        raise RuntimeError( "We need the LHE weight friend tries. Not found in: %s" % friend_dir )
+#if options.susySignal and options.fastSim: # NOTE: LHE weights not needed
+#    # Make friend sample
+#    friend_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/signalWeights/%s/%s"% (options.year, sample.name )
+#    if os.path.exists( friend_dir ):
+#        weight_friend = Sample.fromDirectory( "weight_friend", directory = [friend_dir] ) 
+#        if weight_friend.chain.BuildIndex("luminosityBlock", "event")>0:
+#            has_susy_weight_friend = True
+#    else:
+#        raise RuntimeError( "We need the LHE weight friend trees. Not found in: %s" % friend_dir )
 
 if options.reduceSizeBy > 1:
     logger.info("Sample size will be reduced by a factor of %s", options.reduceSizeBy)
@@ -294,7 +294,6 @@ targetFilePath  = os.path.join( targetPath, sample.name + '.root' )
 filename, ext   = os.path.splitext( os.path.join(output_directory, sample.name + '.root') )
 #fileNumber      = options.job if options.job is not None else 0
 outfilename     = filename+ext
-
 if os.path.exists(output_directory) and options.overwrite:
     if options.nJobs > 1:
         logger.warning( "NOT removing directory %s because nJobs = %i", output_directory, options.nJobs )
@@ -313,14 +312,14 @@ nEvents = sample.getYieldFromDraw(weightString="1", selectionString=sel)['val']
 
 # checking overwrite or file exists
 if not options.overwrite:
-    if os.path.isfile(outfilename):
-        logger.info( "Output file %s found.", outfilename)
-        if checkRootFile( outfilename, checkForObjects=["Events"] ) and deepCheckRootFile( outfilename ) and deepCheckWeight( outfilename ):
+    if os.path.isfile(targetFilePath):
+        logger.info( "Output file %s found.", targetFilePath)
+        if checkRootFile( targetFilePath, checkForObjects=["Events"] ) and deepCheckRootFile( targetFilePath ) and deepCheckWeight( targetFilePath ):
             logger.info( "File already processed. Source: File check ok! Skipping." ) # Everything is fine, no overwriting
             sys.exit(0)
         else:
             logger.info( "File corrupt. Removing file from target." )
-            os.remove( outfilename )
+            os.remove( targetFilePath )
             logger.info( "Reprocessing." )
     else:
         logger.info( "Sample not processed yet." )
@@ -476,8 +475,9 @@ new_variables += [\
 # Add weight branches for susy signal samples from friend tree
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
+cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018"
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
-cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISR2016"
+#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISR2016"
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/gen_v7_2016"
 renormISR = False
 if options.susySignal:
@@ -547,7 +547,7 @@ if not options.skipNanoTools:
     from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop       import Module
    
     ### ISRCounter is in the StopsDilepton branch in the HephyAnalysisSW fork of NanoAODTools
-    from PhysicsTools.NanoAODTools.postprocessing.modules.common.mod_ISRcounter        import ISRcounter
+    from PhysicsTools.NanoAODTools.postprocessing.modules.common.ISRcounter import ISRcounter
     
     logger.info("Preparing nanoAOD postprocessing")
     logger.info("Will put files into directory %s", output_directory)
