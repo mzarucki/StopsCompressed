@@ -25,12 +25,12 @@ except:
 logger.info("Loading data samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
 dirs = {}
-for (run, version) in [('A',''), ('B',''),('C',''),('D','')]: 
-    runTag = 'Run2018' + run + '_UL' + version
-#    dirs["JetHT_Run2017"         	+ run + version ] = ["JetHT_"             + runTag ]
-    dirs["MET_Run2018"       	 	+ run + version ] = ["MET_"	          + runTag ]
-#    dirs["SingleElectron_Run2017"   	+ run + version ] = ["SingleElectron_"    + runTag ]
-#    dirs["SingleMuon_Run2017"       	+ run + version ] = ["SingleMuon_"        + runTag ]
+for pd in ['MET', 'SingleMuon', 'SingleElectron','JetHT']:
+    for (run, version) in [('A','25Oct2019'),('B','25Oct2019'),('C','25Oct2019'),('D','25Oct2019')]:
+    #for (run, version) in [('A',''), ('B',''),('C',''),('D','')]: 
+        runTag = "Run2018" + run
+        versionTag = "%s_%s"%(runTag, version)
+        dirs["%s_%s"%(pd, runTag) ] = ["%s_%s"%(pd, versionTag)]
 
 def merge(pd, totalRunName, listOfRuns):
     dirs[pd + '_' + totalRunName] = []

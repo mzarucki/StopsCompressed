@@ -2,13 +2,17 @@ class default_locations:
 
     #mc_2016_data_directory = "/mnt/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
     #mc_2016_data_directory = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
-    mc_2016_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
-    mc_2016_postProcessing_directory = "compstops_UL16v9_nano_v7/Met/"
+    mc_2016_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
+    #mc_2016_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/" # latest
+    mc_2016_postProcessing_directory = "compstops_UL16v9_nano_v6/Met/" # EOS
+    #mc_2016_postProcessing_directory = "compstops_UL16v9_nano_v7/Met/" # latest
     mc_legacy16_postProcessing_directory = "compstops_2016_nano_v28/Met/"
 
-    #data_2016_data_directory = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
-    data_2016_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
-    data_2016_postProcessing_directory = "compstops_UL16v9_nano_v7/Met/"
+    #data_2016_data_directory = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/" # latest
+    data_2016_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
+    #data_2016_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
+    data_2016_postProcessing_directory = "compstops_UL16v9_nano_v6/Met/" # EOS
+    #data_2016_postProcessing_directory = "compstops_UL16v9_nano_v7/Met/" # latest
 
     #mc_2016APV_data_directory = "/groups/hephy/cms/priya.hussain/StopsCompressed/nanoTuples/"
     mc_2016APV_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
@@ -97,8 +101,15 @@ class default_locations:
     data_2017_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
     data_2017_postProcessing_directory = "compstops_UL17v9_nano_v7/Met"
 
-    mc_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
-    mc_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/"
+    mc_2018_data_directory = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" # EOS
+    signal_2018_postProcessing_directory = "stops_2018_nano_v1/Met/"
+    #mc_2018_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
+    #mc_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/" # latest
+    mc_2018_postProcessing_directory = "stops_2018_nano_v1/Met/" # private
+    #mc_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/" # latest
 
-    data_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/"
-    data_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/"
+    data_2018_data_directory = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" # private
+    #data_2018_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
+    #data_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/" # latest
+    data_2018_postProcessing_directory = "stops_2018_nano_v1/Met/" # private
+    #data_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/" # latest

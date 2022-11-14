@@ -1,6 +1,6 @@
 #Standard import
 import copy
-import os
+import os, sys
 import ROOT as R
 import glob 
 # RootTools
@@ -55,9 +55,8 @@ class Setup:
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
             "l1_prompt":    default_prompt,
-	    "dphiMetJets":  default_dphiMetJets,
+	        "dphiMetJets":  default_dphiMetJets,
         }
-
 
         self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
         
@@ -65,88 +64,92 @@ class Setup:
         #    if R.gROOT.LoadMacro(macro): #compile it
         #        raise OSError("Unable to load: {}".format(macro))
         
-	#not using user-defined leptonSF from macro , remove "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)"
-	self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
-	#self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
+	    #not using user-defined leptonSF from macro , remove "reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)"
+        self.sys = {
+            "weight":"weight", 
+            "reweight":[ self.puWeight, "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], 
+            "selectionModifier":None
+        }
+ 
+	    #self.sys = {"weight":"weight", "reweight":[ self.puWeight, "reweightnISR", "reweightwPt","reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF", "reweightHEM"], "selectionModifier":None} 
         
         #if runOnLxPlus:
         #    # Set the redirector in the samples repository to the global redirector
         #    from Samples.Tools.config import redirector_global as redirector
-        if year == "2016preVFP" :
-            #define samples
+
+        #define samples
+        if year == "2016preVFP":
             #from StopsCompressed.samples.nanoTuples_Summer16_postProcessed 	     import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
             #from StopsCompressed.samples.nanoTuples_Run2016_17July2018_postProcessed import Run2016
-	    from StopsCompressed.samples.nanoTuples_UL16APV_postProcessed import Top_pow_16APV, ZInv_16APV, Others_16APV, WJetsToLNu_HT_16APV, QCD_HT_16APV 
-	    from StopsCompressed.samples.nanoTuples_RunUL16APV_postProcessed import Run2016preVFP  
+            from StopsCompressed.samples.nanoTuples_UL16APV_postProcessed import Top_pow_16APV, ZInv_16APV, Others_16APV, WJetsToLNu_HT_16APV, QCD_HT_16APV 
+            from StopsCompressed.samples.nanoTuples_RunUL16APV_postProcessed import Run2016preVFP  
             WJets        = WJetsToLNu_HT_16APV 
             Top          = Top_pow_16APV
-            QCD		 = QCD_HT_16APV
+            QCD 		 = QCD_HT_16APV
             Others       = Others_16APV
             ZInv    	 = ZInv_16APV
             data         = Run2016preVFP
-	elif year == "2016postVFP" :
-	    from StopsCompressed.samples.nanoTuples_UL16_postProcessed import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
-	    from StopsCompressed.samples.nanoTuples_RunUL16_postProcessed import Run2016postVFP
-	    WJets        = WJetsToLNu_HT_16
-	    Top          = Top_pow_16
-	    QCD          = QCD_HT_16
-	    Others       = Others_16
-	    ZInv         = ZInv_16
-	    data         = Run2016postVFP
-
-        elif year == "2017" :
-            #define samples
+        elif year == "2016postVFP": #define samples
+            from StopsCompressed.samples.nanoTuples_UL16_postProcessed import Top_pow_16 , ZInv_16, Others_16, WJetsToLNu_HT_16, QCD_HT_16
+            from StopsCompressed.samples.nanoTuples_RunUL16_postProcessed import Run2016postVFP
+            WJets        = WJetsToLNu_HT_16
+            Top          = Top_pow_16
+            QCD          = QCD_HT_16
+            Others       = Others_16
+            ZInv         = ZInv_16
+            data         = Run2016postVFP
+        elif year == "2017":
             from StopsCompressed.samples.nanoTuples_UL17_postProcessed 	  import WJetsToLNu_HT_17, Top_pow_17, Others_17, QCD_HT_17, ZInv_17
             from StopsCompressed.samples.nanoTuples_RunUL17_postProcessed import Run2017
             WJets        = WJetsToLNu_HT_17
-	    Top          = Top_pow_17
-	    QCD          = QCD_HT_17
-	    Others       = Others_17
-	    ZInv         = ZInv_17
+            Top          = Top_pow_17
+            QCD          = QCD_HT_17
+            Others       = Others_17
+            ZInv         = ZInv_17
             data         = Run2017
-
-        elif year == "2018" :
-            #define samples
-            from StopsCompressed.samples.nanoTuples_UL18_postProcessed    import WJetsToLNu_HT_18, Top_pow_18, QCD_HT_18, Others_18, ZInv_18 
-            from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import Run2018
-            WJets        = WJetsToLNu_HT_18
-	    Top          = Top_pow_18
-	    QCD          = QCD_HT_18
-	    Others       = Others_18
-	    ZInv         = ZInv_18
+        elif year == "2018":
+            from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import WJets_18, TTJets_18, ZInv_18, QCD_18, Others_18
+            from StopsCompressed.samples.nanoTuples_Run2018_postProcessed import Run2018
+            #from StopsCompressed.samples.nanoTuples_RunUL18_postProcessed import Run2018 # Note: UL not ready
+            #from StopsCompressed.samples.nanoTuples_UL18_postProcessed    import WJetsToLNu_HT_18, Top_pow_18, QCD_HT_18, Others_18, ZInv_18 # Note: UL not ready 
+            WJets        = WJets_18
+            Top          = TTJets_18
+            ZInv         = ZInv_18
+            QCD          = QCD_18
+            Others       = Others_18
             data         = Run2018
-
-
-
+        else:
+            print "Year %s not in choices. Exiting."%year
+            sys.exit(0)
+        
         if year == "2016preVFP":
             self.lumi     = 19.5*1000
             self.dataLumi = 19.5*1000
-	    print "here in 2016preVFP year"
+            print "here in 2016preVFP year"
         elif year == "2016postVFP":
-	    self.lumi     = 16.5*1000
-	    self.dataLumi = 16.5*1000
-        elif year == 2017:
+            self.lumi     = 16.5*1000
+            self.dataLumi = 16.5*1000
+        elif year == "2017":
             self.lumi     = 41.5*1000
             self.dataLumi = 41.5*1000
-        elif year == 2018:
+        elif year == "2018":
             self.lumi     = 59.83*1000
             self.dataLumi = 59.83*1000
-
-
-        mc           = [WJets, Top, Others, ZInv, QCD ]
+        
+        
+        mc           = [WJets, Top, ZInv, QCD, Others]
         self.processes = {
-
             'WJets'     : WJets,
             'Top'       : Top,
             'Others'    : Others,        
-	    'ZInv'      : ZInv,
-	    'QCD'       : QCD
+            'ZInv'      : ZInv,
+            'QCD'       : QCD
         }
         self.processes["Data"] = data
-
+        
         self.lumi     = data.lumi
         self.dataLumi = data.lumi # get from data samples later
-        
+    
 
     def prefix(self, channel="all"):
         return "_".join(self.prefixes+[self.preselection("MC", channel=channel)["prefix"]])
@@ -154,19 +157,9 @@ class Setup:
     def defaultCacheDir(self,specificNameForSensitivityStudy=''):
         
         if (specificNameForSensitivityStudy) :
-            cacheDir = os.path.join(cache_directory, str(self.year), "estimates{}".format(specificNameForSensitivityStudy))
-            #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiMetJets_{}".format(specificNameForSensitivityStudy))
-            #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_dphiComb_{}".format(specificNameForSensitivityStudy))
-        else :
-            cacheDir = os.path.join(cache_directory, str(self.year), "estimates") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_mt100") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "check_wPt_syst") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_promptNewWpt") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30_NewWpt") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb_sigv30") #switch of MCs (->v26)
-        # cacheDir = os.path.join(cache_directory, str(self.year), "estimates_AN_comb")
-        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_splitCR")
-        #cacheDir = os.path.join(cache_directory, str(self.year), "estimates_split_erCR")
+            cacheDir = os.path.join(cache_directory, "sensitivity", str(self.year), "estimates_{}".format(specificNameForSensitivityStudy))
+        else :                                                                      
+            cacheDir = os.path.join(cache_directory, "sensitivity", str(self.year), "estimates")
         logger.info("Default cache dir is: %s", cacheDir)
 
         return cacheDir
@@ -332,15 +325,21 @@ class Setup:
 #        if dataMC=="Data" and self.year == 2018:
 #            res["cuts"].append("reweightHEM>0")
 
+        if type(self.year) == type("") and len(self.year) > 4: # temporary fix for 2016
+            year_ = int(self.year[:4])
+        else:
+            year_ = int(self.year)
+            
         if dataMC != "DataMC":
-            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year , skipVertexFilter = True) )
+            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=year_, skipVertexFilter = True) ) # temporary fix for 2016
+            #res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year , skipVertexFilter = True) )
             res["cuts"].extend(self.externalCuts)
 
         return {'cut':"&&".join(res['cuts']), 'prefix':'-'.join(res['prefixes']), 'weightStr': self.weightString()}
 
 if __name__ == "__main__":
     print "executing now for 2016 - if you want a different year, this needs to be implemented"
-    setup = Setup( year="2016preVFP" )
+    setup = Setup( year="2016postVFP" )
 #    for name, dict in allRegions.items():
 #        if not "Iso" in name: continue
 #        print

@@ -23,6 +23,7 @@ class MCBasedEstimate(SystematicEstimator):
         logger.debug( "MC prediction for %s channel %s" %(self.name, channel) )
         if channel=='all':
             # 'all' is the total of all contributions
+            logger.debug("Estimate:", sum([self.cachedEstimate(region, c, setup) for c in lepChannels]))
             return sum([self.cachedEstimate(region, c, setup) for c in lepChannels])
 
         else:
@@ -31,5 +32,5 @@ class MCBasedEstimate(SystematicEstimator):
             weight = preSelection['weightStr']
 
             logger.debug( "Using cut %s and weight %s"%(cut, weight) )
-	    print "MC yield: ", setup.lumi/1000.*u_float(**self.sample.getYieldFromDraw(selectionString = cut, weightString = weight) )
+    	    print "MC yield: ", setup.lumi/1000.*u_float(**self.sample.getYieldFromDraw(selectionString = cut, weightString = weight) )
             return setup.lumi/1000.*u_float(**self.sample.getYieldFromDraw(selectionString = cut, weightString = weight) )

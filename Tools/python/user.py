@@ -1,5 +1,12 @@
 import os
 
+if os.environ['USER'] in ['mzarucki']:
+    cache_directory                     = "/eos/user/m/mzarucki/StopsCompressed/"
+    analysis_results                    = "/eos/user/m/mzarucki/StopsCompressed/sensitivity/"
+    postProcessing_output_directory     = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" 
+    plot_directory                      = "/eos/user/m/mzarucki/www/2022/StopsCompressed/"
+    private_results_directory           = "/eos/user/m/mzarucki/StopsCompressed/private/"
+
 if os.environ['USER'] in ['phussain']:
     cache_directory                     = "/afs/hephy.at/data/cms10/StopsCompressed/"
     analysis_results                    = "/afs/hephy.at/data/cms10/StopsCompressed/"

@@ -64,14 +64,16 @@ class SystematicEstimator:
 
     def cachedEstimate(self, region, channel, setup, save=True, overwrite=False):
         key =  self.uniqueKey(region, channel, setup)
-        if (self.cache and self.cache.contains(key)) and not overwrite and not (channel == 'SF' or channel == 'all') :
+        if (self.cache and self.cache.contains(key)) and not overwrite:# and not (channel == 'SF' or channel == 'all') : # FIXME: why overwrite dependent on channel?
             res = self.cache.get(key)
-            logger.debug( "Loading cached %s result for %r : %r"%(self.name, key, res) )
+            logger.info("Loading cached %s result"%self.name)
+            logger.debug("Loading cached %s result for %r: %r"%(self.name, key, res))
         elif self.cache:
-            logger.debug( "Calculating %s result for %r"%(self.name, key) )
+            logger.info("Calculating %s result"%self.name)
             res = self._estimate( region, channel, setup)
             _res = self.cache.add( key, res, overwrite=True)
-            logger.debug( "Adding cached %s result for %r : %r" %(self.name, key, res) )
+            logger.info("Adding cached %s result" %self.name)
+            logger.debug("Adding cached %s result for %r: %r" %(self.name, key, res))
         else:
             res = self._estimate( region, channel, setup)
         return res if res > 0 else u_float(0,0)
