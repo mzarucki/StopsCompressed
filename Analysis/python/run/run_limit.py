@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#regionsLegacytest1
 import ROOT
 import os, sys
 import math
@@ -40,22 +39,22 @@ removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False
 
 sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse" # FIXME: hard-coded
 
-year = int(args.year)
+year = str(args.year)
 
 # Logging
 import StopsCompressed.Tools.logger as logger
-logger = logger.get_logger(args.logLevel, logFile = "log.txt" )
+logger = logger.get_logger(args.logLevel, logFile = None) # "log_%s.txt"%sensitivityStudyName
 import Analysis.Tools.logger as logger_an
-logger_an = logger_an.get_logger(args.logLevel, logFile = None )
+logger_an = logger_an.get_logger(args.logLevel, logFile = None)
 import RootTools.core.logger as logger_rt
-logger_rt = logger_rt.get_logger('INFO', logFile = None )
+logger_rt = logger_rt.get_logger('INFO', logFile = None)
 
 from RootTools.core.standard import *
 from StopsCompressed.Tools.user            import cache_directory 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
 from StopsCompressed.Analysis.estimators   import *
-from StopsCompressed.Analysis.regions      import signalRegions, controlRegions # NOTE: 2016 analysis regions
+from StopsCompressed.Analysis.regions      import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
 from StopsCompressed.Analysis.MCBasedEstimate import MCBasedEstimate
 from StopsCompressed.Analysis.DataObservation import DataObservation
 from StopsCompressed.Analysis.Cache           import Cache
@@ -68,7 +67,7 @@ genFilter = genFilter(year=year)
 ##https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSYSignalSystematicsRun2
 from Analysis.Tools.cardFileWriter import cardFileWriter
 
-setup = Setup(year=str(year))
+setup = Setup(year=year)
 
 # Define CR
 # Define channels for CR
@@ -93,7 +92,7 @@ setups = [setup]
 
 if args.control2016:    subDir = 'controlRegions_AN_comb_v1'
 elif args.signal2016:   subDir = 'signalRegions_AN_comb_v1'
-elif args.fitAll:	    subDir = 'fitAll_AN_comb_v1_test2'
+elif args.fitAll:	    subDir = 'fitAll_AN_comb_v1'
 else:                   subDir += 'signalOnly'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
@@ -145,7 +144,7 @@ def wrapper(s):
     xSecScale = 1
     #print "mStop: ", s.mStop, "mNeu: ", s.mNeu
     genEff = genFilter.getEff(s.mStop,s.mNeu)
-    if genEff ==0 :
+    if genEff == 0:
 	    print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
 	    genEff = 0.48 # FIXME: hard-coded value
     #print "genEff: ", genEff
@@ -162,39 +161,61 @@ def wrapper(s):
 
     cardFileName = os.path.join(limitDir, s.name+'.txt')
     if not os.path.exists(cardFileName) or overWrite:
-        counter=0
+        counter = 0
         c.reset()
         c.setPrecision(3)
+
         shapeString = 'lnN' if args.useTxt else 'shape'
-        # experimental
+        
+        Lumi    = 'Lumi_%s'%year
+        PU      = 'PU_%s'%year
+
         SFb     = 'SFb_%s'%year
         SFl     = 'SFl_%s'%year
-#        trigger = 'trigger_%s'%year
-        JEC     = 'JEC_%s'%year
-#        unclEn  = 'unclEn_%s'%year
-        JER     = 'JER_%s'%year
-        PU      = 'PU_%s'%year
-        Lumi    = 'Lumi_%s'%year
-        leptonSF    = 'leptonSF_%s'%year
         nISR    = 'nISR_%s'%year
-        wPt    = 'wPt_%s'%year
-        
+        wPt     = 'wPt_%s'%year
+        JEC     = 'JEC_%s'%year
+        JER     = 'JER_%s'%year
+        leptonSF    = 'leptonSF_%s'%year
+        #leptonSFsignal = 'leptonSFsignal_%s'%year
+
+        #leptonSFsyst   = 'leptonSFsyst_%s'%year
+
+#        trigger = 'trigger_%s'%year
+#        unclEn  = 'unclEn_%s'%year
+
+        c.addUncertainty(Lumi,         'lnN')
         c.addUncertainty(PU,           shapeString)
-        c.addUncertainty(nISR,           shapeString)
-        c.addUncertainty(wPt,           shapeString)
-#        c.addUncertainty('topPt',      shapeString)
-        c.addUncertainty(JEC,          shapeString)
-#        c.addUncertainty(unclEn,       shapeString)
-        c.addUncertainty(JER,          shapeString)
+        
         c.addUncertainty(SFb,          shapeString)
         c.addUncertainty(SFl,          shapeString)
-        c.addUncertainty(Lumi,          shapeString)
+        c.addUncertainty(nISR,         shapeString)
+        c.addUncertainty(wPt,          shapeString)
+        c.addUncertainty(JEC,          shapeString)
+        c.addUncertainty(JER,          shapeString)
+        
+        c.addUncertainty(leptonSF,       shapeString)
+        #c.addUncertainty(leptonSFsignal, 'lnN')
+        #c.addUncertainty(leptonSFsyst,   'lnN')
+
+#        c.addUncertainty('topPt',      shapeString)
+#        c.addUncertainty(unclEn,       shapeString)
 #        c.addUncertainty(trigger,      shapeString)
-        c.addUncertainty(leptonSF,   shapeString)
 #        c.addUncertainty('leptonHit0SF',   shapeString)
 #        c.addUncertainty('leptonSIP3DSF',   shapeString)
-        if year == 2016 or year == 2017:
+
+        if "2016" in year or year == "2017":
             c.addUncertainty('L1prefire',  shapeString)
+
+        if "2016" in year:
+            lumiUncertainty = 1.025
+        elif year == "2017":
+            lumiUncertainty = 1.023
+        elif year == "2018":
+            lumiUncertainty = 1.025
+        
+        c.addCR(controlRegions)
+        c.addSR(signalRegions)
 
         for setup in setups:
           eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
@@ -211,50 +232,33 @@ def wrapper(s):
                 counter += 1
                 total_exp_bkg = 0
                 c.addBin(binname, [e.name.split('-')[0] for e in setup.estimators ], niceName)
+
                 for e in setup.estimators:
                     name = e.name.split('-')[0]
                     #print name
+
                     expected = e.cachedEstimate(r, channel, setup)
-                    #print "Expected value for MC: ", expected
-                    expected = expected * args.scale
-                    total_exp_bkg += expected.val
                     logger.info("Expectation for process %s: %s", e.name, expected.val)
+
+                    expected = expected * args.scale
+                    logger.info("Expectation for process %s after scaling: %s", e.name, expected.val)
+
+                    total_exp_bkg += expected.val
+                    #print "Expected value for MC: ", expected
                     if e.name.count('WJets'):
-                        c.specifyExpectation(binname, 'WJets',  expected.val)
-#                        W_SF = 1
-#                        if W_SF != 1: logger.warning("Scaling WJets background by %s", W_SF)
-#                        c.specifyExpectation(binname, 'WJets',  expected.val * W_SF)
-                    elif e.name.count("DY"):
-                        DY_SF = 1
-                        c.specifyExpectation(binname, name, expected.val*DY_SF)
-                        if DY_SF != 1: logger.warning("Scaling DY background by %s", DY_SF)
-                    elif e.name.count("Top"):
-                        Top_SF = 1
-                        c.specifyExpectation(binname, name, expected.val*Top_SF)
-                        if Top_SF != 1: logger.warning("Scaling Top background by %s", Top_SF)
-                    elif e.name.count("singleTop"):
-                        singleTop_SF = 1
-                        c.specifyExpectation(binname, name, expected.val*singleTop_SF)
-                        if singleTop_SF != 1: logger.warning("Scaling singleTop background by %s", singleTop_SF)
-                    elif e.name.count("VV"):
                         c.specifyExpectation(binname, name, expected.val)
+                        #W_SF = 1
+                        #if W_SF != 1: logger.warning("Scaling WJets background by %s", W_SF)
+                        #c.specifyExpectation(binname, 'WJets',  expected.val * W_SF)
+                    elif e.name.count("Top"):
+                        c.specifyExpectation(binname, name, expected.val)
+                        #Top_SF = 1
+                        #c.specifyExpectation(binname, name, expected.val*Top_SF)
+                        #if Top_SF != 1: logger.warning("Scaling Top background by %s", Top_SF)
                     elif e.name.count("ZInv"):
                         c.specifyExpectation(binname, name, expected.val)
-                    elif e.name.count("TTX"):
-                        TTX_SF = 1
-#                        TTX_expected = TTX.cachedEstimate(r, channel, setup)
-#                        logger.info("TTX expected %s", expected.val)
-#                        expected = expected+TZX_expected
-#                        logger.info("TTX expected %s", expected.val)
-                        c.specifyExpectation(binname, name, expected.val*TTX_SF)
-                        if TTX_SF != 1: logger.warning("Scaling TTX background by %s", TTX_SF)
                     elif e.name.count("QCD"):
                         c.specifyExpectation(binname, name, expected.val)
-#                        #c.specifyUncertainty("TTX", binname, name, 1.10)
-#                    elif e.name.count("TZX"):
-#                        logger.info("TZX has been added to TTZ")
-#                    elif e.name.count("TTXNoZ") or e.name.count("rare"):
-#                        c.specifyExpectation(binname, name, expected.val)
                     elif e.name.count("Others"):
                         Others_SF = 1
                         c.specifyExpectation(binname, name, expected.val*Others_SF)
@@ -265,154 +269,108 @@ def wrapper(s):
                         for name in names:
                             sysChannel = 'all' # could be channel as well
                             uncScale = 1
-                            c.specifyUncertainty(PU,   binname, name, 1 + e.PUSystematic(  r, sysChannel, setup).val * uncScale )
-                            c.specifyUncertainty(nISR, binname, name, 1 + e.nISRSystematic(r, sysChannel, setup).val * uncScale )
-                            c.specifyUncertainty(wPt,  binname, name, 1 + e.wPtSystematic( r, sysChannel, setup).val * uncScale )
-#                            if not e.name.count("TTJets") and not niceName.count('controlTTBar'):
-#                                if not args.useTxt:
-#                                    c.specifyUncertainty(JEC,        binname, name, e.JECSystematicAsym(        r, sysChannel, setup) )
-#                                    c.specifyUncertainty(unclEn,     binname, name, e.unclusteredSystematicAsym(r, sysChannel, setup) )
-#                                    c.specifyUncertainty(JER,        binname, name, e.JERSystematicAsym(        r, sysChannel, setup) )
-#                                else:
-#                                    c.specifyUncertainty(JEC,        binname, name, e.JECSystematicAsym(        r, sysChannel, setup)[1] )
-#                                    c.specifyUncertainty(unclEn,     binname, name, e.unclusteredSystematicAsym(r, sysChannel, setup)[1] )
-#                                    c.specifyUncertainty(JER,        binname, name, e.JERSystematicAsym(        r, sysChannel, setup)[1] )
-#
-#                            c.specifyUncertainty('topPt',    binname, name, 1 + e.topPtSystematic(      r, channel, setup).val * uncScale )
-                            if JEC > 0.0005:
-                                c.specifyUncertainty(JEC,        binname, name, 1 + e.JECSystematic(        r, sysChannel, setup).val )
-                            ###c.specifyUncertainty(unclEn,     binname, name, e.unclusteredSystematicAsym(r, sysChannel, setup)[1] )
-                            if JER > 0.0005:
-                                c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(        r, sysChannel, setup).val)
-                            c.specifyUncertainty(SFb,        binname, name, 1 + e.btaggingSFbSystematic(r, channel, setup).val * uncScale )
-                            c.specifyUncertainty(SFl,        binname, name, 1 + e.btaggingSFlSystematic(r, channel, setup).val * uncScale )
-                            c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
-#                            c.specifyUncertainty('leptonSIP3DSF', binname, name, 1 + e.leptonSIP3DSFSystematic(   r, channel, setup).val * uncScale ) 
-#                            c.specifyUncertainty('leptonHit0SF', binname, name, 1 + e.leptonHit0SFSystematic(   r, channel, setup).val * uncScale ) 
-                            if year == 2016 or year == 2017:
-                                c.specifyUncertainty('L1prefire', binname, name, 1 + e.L1PrefireSystematic(   r, channel, setup).val * uncScale ) 
-
-                            #MC bkg stat (some condition to neglect the smaller ones?)
+                            
+                            # MC bkg stat (some condition to neglect the smaller ones?)
                             uname = 'Stat_'+binname+'_'+name
                             c.addUncertainty(uname, 'lnN')
                             c.specifyUncertainty(uname, binname, name, 1 + (expected.sigma/expected.val) * uncScale if expected.val>0 else 1)
 
-#                          if not e.name.count("TTJets") and not niceName.count('controlTTBar'):
-#                              c.specifyUncertainty(trigger,    binname, name, 1 + e.triggerSystematic(    r, channel, setup).val * uncScale )
-#
-#                          if e.name.count('TTJets'):
-#                              c.specifyUncertainty('scaleTT', binname, name, 1 + getScaleUnc('Top_pow', r, niceName, channel))
-#                              logger.info("Scale uncertainty for top: %s", getScaleUnc('Top_pow', r, niceName, channel))
-#                              c.specifyUncertainty('PDF',     binname, name, 1 + getPDFUnc('TTLep_pow', r, niceName, channel))
-#                              logger.info("PDF uncertainty for top: %s", getPDFUnc('Top_pow', r, niceName, channel))
-#
-#                          if name == 'TTJets':
-#                              c.specifyUncertainty('topFakes',  binname, name, fakeUncertainty)
-#                              c.specifyUncertainty('topNonGauss',  binname, name, nonGaussUncertainty)
-#                              c.specifyUncertainty('topXSec',  binname, name, normUncertainty)
-#
-#                          if e.name.count('multiBoson'):
-#                              if r in setup.regions and niceName.count("DYVV")==0 and niceName.count("TTZ")==0 and niceName.count("TTBar")==0:
-#                                      c.specifyUncertainty("MB_SR", binname, name, 1.25)
-#
-#                          if e.name.count('DY'):
-#                              if r in regionsHiMT2ll:
-#                                  c.specifyUncertainty(DY_add,         binname, name, 1.50)
-#                                  logger.info("Applying additional DY uncertainty, 50%")
-#                              elif r in regionsMiMT2ll:
-#                                  c.specifyUncertainty(DY_add,         binname, name, 1.25)
-#                                  logger.info("Applying additional DY uncertainty, 25%")
-#                              elif r in regionsLoMT2ll:
-#                                  c.specifyUncertainty(DY_add,         binname, name, 1.05)
-#                                  logger.info("Applying additional DY uncertainty, 5%")
-#                                  
-#                              if r in setup.regions and niceName.count("DYVV")==0 and niceName.count("TTZ")==0 and niceName.count("TTBar")==0:
-#                                  c.specifyUncertainty("DY_SR", binname, name, 1.25)
-#
-#                          if e.name.count('TTZ'):
-#                              c.specifyUncertainty('scaleTTZ',binname, name, 1 + getScaleUnc('TTZ', r, niceName, channel)) 
-#                              logger.info("Scale uncertainty for ttZ: %s", getScaleUnc(name, r, niceName, channel))
-#                              c.specifyUncertainty('PDF',     binname, name, 1 + getPDFUnc('TTZ', r, niceName, channel))
-#                              logger.info("PDF uncertainty for ttZ: %s", getPDFUnc('TTZ', r, niceName, channel))
-#
-#                              if r in setup.regions and niceName.count("DYVV")==0 and niceName.count("TTZ")==0 and niceName.count("TTBar")==0:
-#                                  c.specifyUncertainty("ttZ_SR", binname, name, 1.20)
-#
-#                          if e.name.count('TTXNoZ'):      c.specifyUncertainty('rare',      binname, name, 1.25)
-                          #if e.name.count('TZX'):      c.specifyUncertainty('TZX',      binname, name, 1.25)
+                            c.specifyUncertainty(SFb,        binname, name, 1 + e.btaggingSFbSystematic(r, channel, setup).val * uncScale )
+                            c.specifyUncertainty(SFl,        binname, name, 1 + e.btaggingSFlSystematic(r, channel, setup).val * uncScale )
+                            c.specifyUncertainty(PU,   binname, name, 1 + e.PUSystematic(  r, sysChannel, setup).val * uncScale )
+                            c.specifyUncertainty(nISR, binname, name, 1 + e.nISRSystematic(r, sysChannel, setup).val * uncScale )
+                            c.specifyUncertainty(wPt,  binname, name, 1 + e.wPtSystematic( r, sysChannel, setup).val * uncScale )
+                            #if JEC > 0.0005:
+                            c.specifyUncertainty(JEC,        binname, name, 1 + e.JECSystematic(        r, sysChannel, setup).val )
+                            #if JER > 0.0005:
+                            c.specifyUncertainty(JER,        binname, name, 1 + e.JERSystematic(        r, sysChannel, setup).val)
+                            c.specifyUncertainty(leptonSF, binname, name, 1 + e.leptonSFSystematic(   r, channel, setup).val * uncScale ) 
+                            #c.specifyUncertainty(leptonSFsyst, binname, name, 1.01)
 
+                            
+                            if name == "WJets":
+                                c.specifyUncertainty(wPt,        binname, name, 1 + e.wPtSystematic(         r, sysChannel, setup).val * uncScale )
+                                print "wpt sys: {}".format(e.wPtSystematic(         r, sysChannel, setup).val)
+                            #elif name == "Top":
+                            #    c.specifyUncertainty(nISR,       binname, name, 1 + e.nISRSystematic(         r, sysChannel, setup).val * uncScale ) # FIXME: why commented?
+                            #else:
+                            c.specifyUncertainty(Lumi, binname, name, lumiUncertainty) # FIXME: should not replace wPt/tt-ISR unc?
+                            if "2016" in year or year == "2017":
+                                c.specifyUncertainty('L1prefire', binname, name, 1 + e.L1PrefireSystematic(   r, channel, setup).val * uncScale ) 
+
+
+                c.addMap(regionMapping)
 
                 # signal
 
                 eSignal.isSignal = True
                 e = eSignal
-                #genEff = 0.3
-                
+            
                 if fastSim:
-#                    if args.signal == 'T2tt': # change this for next round. small impact
-#                        signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR', 'reweightLeptonFastSimSF']})
-#                    else:
-#                        signalSetup = setup.sysClone(sys={'reweight':[ 'reweightLeptonFastSimSF'], 'remove':[]})
-                    signalSetup = setup.sysClone()
-                    if year == 2016:
-                        #signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup.sysClone({'selectionModifier':'GenMET'})))
-                        signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup))
+                    if "2016" in year:
+                        extra_pars = {} # use default parameters
+
+                        if (args.usePromptSignalOnly):
+                            extra_pars = {'l1_prompt':True}
+                        
+                        signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]},parameters=extra_pars) 
+
+                        #signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup.sysClone({'selectionModifier':'GenMET'}))) # FIXME: what is this?
+                        #signal = 0.5 * (e.cachedEstimate(r, channel, signalSetup) + e.cachedEstimate(r, channel, signalSetup)) # FIXME: what is this?
                     else:
-                        signal = e.cachedEstimate(r, channel, signalSetup)
-                else:
-                    signalSetup = setup.sysClone(sys={'reweight':['reweight_nISR'], 'remove':[]}) 
-                    signal = e.cachedEstimate(r, channel, signalSetup)
+                        signalSetup = setup.sysClone()
+
+                else: # NOTE: looks like this else was needed
+                    extra_pars = {} # use default parameters
+
+                    if (args.usePromptSignalOnly):
+                        extra_pars = {'l1_prompt':True}
+                        signalSetup = setup.sysClone(sys={'reweight':[], 'remove':['reweight_nISR']},parameters=extra_pars)
+                    else:
+                        signalSetup = setup.sysClone()
+                
+                signal = e.cachedEstimate(r, channel, signalSetup)
 
                 signal = signal * args.scale
 
-                if signal.val < 0.01 and niceName.count("control") == 0:
+                if signal.val < 0.01: # and niceName.count("control") == 0:
                     signal.val = 0.001
                     signal.sigma = 0.001
-                #if niceName.count('controlTTZ') and signal.val<0.01: signal.val = 0.001 # to avoid failing of the fit
-                #if niceName.count('controlDY') and signal.val<0.01: signal.val = 0.001 # to avoid failing of the fit
-                #c.specifyExpectation(binname, 'signal', signal.val*xSecScale )
-                c.specifyExpectation(binname, 'signal', signal.val*xSecScale*genEff )
+                
+                c.specifyExpectation(binname, 'signal', signal.val*xSecScale*genEff)
+                logger.info("Signal expectation: %s",   signal.val*xSecScale*genEff)
 
-
-                #logger.info("Signal expectation: %s", signal.val*xSecScale)
-                logger.info("Signal expectation: %s", signal.val*xSecScale*genEff)
+                logger.info("Adding lumi uncertainty for signal")
+                c.specifyUncertainty(Lumi, binname, 'signal', lumiUncertainty)
+                #c.specifyUncertainty(leptonSFsignal, binname, 'signal', 1.01)
+                #c.specifyUncertainty(leptonSFsyst, binname, 'signal', 1.01)
+          
 
                 if signal.val > 0.001:
-                    if not fastSim:
-                        c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
-                        logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
-#                        if args.signal == "ttHinv":
-#                            # x-sec uncertainties for ttH: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBSMAt13TeV#ttH_Process
-#                            c.specifyUncertainty('xsec_QCD',      binname, 'signal', 1.092)
-#                            c.specifyUncertainty('xsec_PDF',      binname, 'signal', 1.036)
-                    c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
-                    if not args.useTxt:
-                        c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
-#                        c.specifyUncertainty(unclEn,          binname, 'signal', e.unclusteredSystematicAsym(r, channel, signalSetup) )
-                        c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
-                    else:
-                        c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
-#                        c.specifyUncertainty(unclEn,          binname, 'signal', e.unclusteredSystematicAsym(r, channel, signalSetup)[1] )
-                        c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
                     c.specifyUncertainty(SFb,             binname, 'signal', 1 + e.btaggingSFbSystematic(r, channel, signalSetup).val )
                     c.specifyUncertainty(SFl,             binname, 'signal', 1 + e.btaggingSFlSystematic(r, channel, signalSetup).val )
-#                    c.specifyUncertainty(trigger,         binname, 'signal', 1 + e.triggerSystematic(    r, channel, signalSetup).val )
-                    c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
-#                    c.specifyUncertainty('leptonSIP3DSF', binname, 'signal', 1 + e.leptonSIP3DSFSystematic(   r, channel, signalSetup).val )
-#                    c.specifyUncertainty('leptonHit0SF',  binname, 'signal', 1 + e.leptonHit0SFSystematic(   r, channel, signalSetup).val )
-#                    c.specifyUncertainty('scale',         binname, 'signal', 1 + getScaleUnc(eSignal.name, r, niceName, channel))
-#                    logger.info("Scale uncertainty for signal is: %s", getScaleUnc(eSignal.name, r, niceName, channel))
-                    if year == 2016 or year == 2017:
-                        c.specifyUncertainty('L1prefire',     binname, 'signal', 1 + e.L1PrefireSystematic(   r, channel, setup).val * uncScale )
-#
-                    if fastSim: 
-#                        c.specifyUncertainty('leptonFS', binname, 'signal', 1 + e.leptonFSSystematic(    r, channel, signalSetup).val )
-                        c.specifyUncertainty('btagFS',   binname, 'signal', 1 + e.btaggingSFFSSystematic(r, channel, signalSetup).val )
-#                        if year==2016 and False:
-#                            c.specifyUncertainty('FSmet',    binname, 'signal', 1 + e.fastSimMETSystematic(  r, channel, signalSetup).val )
-#                        if args.signal == 'T2tt':
-#                            c.specifyUncertainty('isr',      binname, 'signal', 1 + e.nISRSystematic( r, channel, signalSetup).val)
-#
+                    c.specifyUncertainty(JEC,             binname, 'signal', 1 + e.JECSystematic(        r, channel, signalSetup).val )
+                    c.specifyUncertainty(JER,             binname, 'signal', 1 + e.JERSystematic(        r, channel, signalSetup).val )
+                    # c.specifyUncertainty(leptonSF,      binname, 'signal', 1 + e.leptonSFSystematic(   r, channel, signalSetup).val )
+                    
+                    c.specifyUncertainty(PU,              binname, 'signal', 1 + e.PUSystematic(         r, channel, signalSetup).val )
+
+                      
+                    #if fastSim: 
+                    #    c.specifyUncertainty('leptonFS', binname, 'signal', 1 + e.leptonFSSystematic(    r, channel, signalSetup).val )
+                    #    c.specifyUncertainty('btagFS',   binname, 'signal', 1 + e.btaggingSFFSSystematic(r, channel, signalSetup).val )
+                    #    if args.signal == 'T2tt':
+                    #        c.specifyUncertainty('isr',      binname, 'signal', 1 + e.nISRSystematic( r, channel, signalSetup).val)
+                   
+
+                    #if not fastSim:
+                    #   c.specifyUncertainty('PDF',      binname, 'signal', 1 + getPDFUnc(eSignal.name, r, niceName, channel))
+                    #   logger.info("PDF uncertainty for signal is: %s", getPDFUnc(eSignal.name, r, niceName, channel))
+                 
+                    #if "2016" in year or year == "2017":
+                    #    c.specifyUncertainty('L1prefire',     binname, 'signal', 1 + e.L1PrefireSystematic(   r, channel, setup).val * uncScale )
+
+
                     uname = 'Stat_'+binname+'_signal'
                     c.addUncertainty(uname, 'lnN')
                     c.specifyUncertainty(uname, binname, 'signal', 1 + signal.sigma/signal.val if signal.val>0 else 1 )
@@ -423,9 +381,11 @@ def wrapper(s):
                     c.specifyUncertainty(uname, binname, 'signal', 1 )
                 
                 logger.info("Done with MC. Now working on observation.")
+
+
                 ## Observation ##
+                
                 # expected
-                #if (args.expected or (not args.unblind and not niceName.count('control'))) and not args.signalInjection:
                 if args.expected:
                     c.specifyObservation(binname, int(round(total_exp_bkg,0)))
                     logger.info("Expected observation: %s", int(round(total_exp_bkg,0)))
@@ -438,24 +398,16 @@ def wrapper(s):
                 else:
                     c.specifyObservation(binname, int(args.scale*observation.cachedObservation(r, channel, setup).val))
                     logger.info("Observation: %s", int(args.scale*observation.cachedObservation(r, channel, setup).val))
-                
-                # Muting (maybe obsolete??)
-#                if not args.controlDYVV and (signal.val<=0.01 and total_exp_bkg<=0.01 or total_exp_bkg<=0):# or (total_exp_bkg>300 and signal.val<0.05):
-#                  if verbose: print "Muting bin %s. Total sig: %f, total bkg: %f"%(binname, signal.val, total_exp_bkg)
-#                  c.muted[binname] = True
-#                else:
-#                  if verbose: print "NOT Muting bin %s. Total sig: %f, total bkg: %f"%(binname, signal.val, total_exp_bkg)
-
-        if year == 2016:
-            lumiUncertainty = 1.025
-        elif year == 2017:
-            lumiUncertainty = 1.023
-        elif year == 2018:
-            lumiUncertainty = 1.025
         
-        c.specifyFlatUncertainty(Lumi, lumiUncertainty)
-        cardFileNameTxt     = c.writeToFile(cardFileName)
-        cardFileNameShape   = c.writeToShapeFile(cardFileName.replace('.txt', '_shape.root'))
+
+        c.addRateParameter('WJetsAndTop',1,'[0.,3.]')
+        # c.addRateParameter('WJets',1,'[0.,3.]')
+        # c.addRateParameter('Top',1,'[0.,3.]')
+        
+        #c.specifyFlatUncertainty(Lumi, lumiUncertainty) # FIXME: alternative?
+
+        cardFileNameTxt     = c.writeToFile(cardFileName, noMCStat=False)
+        cardFileNameShape   = c.writeToShapeFile(cardFileName.replace('.txt', '_shape.root'), noMCStat=False)
         cardFileName = cardFileNameTxt if args.useTxt else cardFileNameShape
     else:
         print "File %s found. Reusing."%cardFileName
@@ -512,79 +464,20 @@ def wrapper(s):
             for proc in estList: 
 	            print proc, "-prefit" ,  preFitResults[proc]
 	            print proc, "-postfit", postFitResults[proc]
-            
-            #top_prefit  = preFitResults['Top']
-            #top_postfit = postFitResults['Top']
-            #top_prefit_SR_err   = ROOT.Double()
-            #top_postfit_SR_err  = ROOT.Double()
-
-            #WJ_prefit  = preFitResults['WJets']
-            #WJ_postfit = postFitResults['WJets']
-            #WJ_prefit_SR_err   = ROOT.Double()
-            #WJ_postfit_SR_err  = ROOT.Double()
-            ##
-            #TTX_prefit  = preFitResults['TTX']
-            #TTX_postfit = postFitResults['TTX']
-
-            ##ttZ_prefit_SR_err   = ROOT.Double()
-            ##ttZ_postfit_SR_err  = ROOT.Double()
-            ##ttZ_prefit_SR  = preFitShapes['TTZ'].IntegralAndError(iBinTTZLow, iBinTTZHigh, ttZ_prefit_SR_err)
-            ##ttZ_postfit_SR = postFitShapes['TTZ'].IntegralAndError(iBinTTZLow, iBinTTZHigh, ttZ_postfit_SR_err)
-            ##
-            #DY_prefit  = preFitResults['DY']
-            #DY_postfit = postFitResults['DY']
-
-            #DY_prefit_SR_err   = ROOT.Double()
-            #DY_postfit_SR_err  = ROOT.Double()
-            ##
-            #MB_prefit  = preFitResults['VV']
-            #MB_postfit = postFitResults['VV']
-            ##
-            ##MB_prefit_SR_err   = ROOT.Double()
-            ##MB_postfit_SR_err  = ROOT.Double()
-            ##MB_prefit_SR  = preFitShapes['multiBoson'].IntegralAndError(iBinDYLow, iBinDYHigh, MB_prefit_SR_err)
-            ##MB_postfit_SR = postFitShapes['multiBoson'].IntegralAndError(iBinDYLow, iBinDYHigh, MB_postfit_SR_err)
-
-            ##other_prefit  = preFitResults['TTXNoZ']
-            ##other_postfit = postFitResults['TTXNoZ']
-
-            ##other_prefit_SR_err   = ROOT.Double()
-            ##other_postfit_SR_err  = ROOT.Double()
-            ##other_prefit_SR  = preFitShapes['TTXNoZ'].IntegralAndError(iBinOtherLow, iBinOtherHigh, other_prefit_SR_err)
-            ##other_postfit_SR = postFitShapes['TTXNoZ'].IntegralAndError(iBinOtherLow, iBinOtherHigh, other_postfit_SR_err)
-
-            print
-            print "## Scale Factors for backgrounds, integrated over ALL regions: ##"
+           
+            proc_prefit_SR_err   = ROOT.Double()
+            proc_postfit_SR_err  = ROOT.Double()
+ 
+            print "\n## Scale Factors for backgrounds, integrated over ALL regions: ##"
             for proc in estList: 
                 print "{:20}{:4.2f}{:3}{:4.2f}".format('%s:'%proc,   (postFitResults[proc]/preFitResults[proc]).val, '+/-',  postFitResults[proc].sigma/postFitResults[proc].val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('top:',          (top_postfit/top_prefit).val, '+/-',  top_postfit.sigma/top_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ:',          (WJ_postfit/WJ_prefit).val, '+/-',  WJ_postfit.sigma/WJ_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('TTX:',          (TTX_postfit/TTX_prefit).val, '+/-',  TTX_postfit.sigma/TTX_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan:',    (DY_postfit/DY_prefit).val,   '+/-',  DY_postfit.sigma/DY_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('multiBoson:',   (MB_postfit/MB_prefit).val,   '+/-',  MB_postfit.sigma/MB_postfit.val)
-            #print "{:20}{:4.2f}{:3}{:4.2f}".format('other:',        (other_postfit/other_prefit).val, '+/-',  other_postfit.sigma/other_postfit.val)
-            for i in range(1,13): # AN and split CR have different binning, of course
-            #for i in range(1,25):
-            #for i in range(1,37):
-                #top_prefit_SR  =  preFitShapes['Top'].IntegralAndError(i, i+1, top_prefit_SR_err)
-                #top_postfit_SR = postFitShapes['Top'].IntegralAndError(i, i+1, top_postfit_SR_err)
-                #WJ_prefit_SR  =  preFitShapes['WJets'].IntegralAndError(i, i+1, WJ_prefit_SR_err)
-                #WJ_postfit_SR = postFitShapes['WJets'].IntegralAndError(i, i+1, WJ_postfit_SR_err)
-                #DY_prefit_SR  = preFitShapes['DY'].IntegralAndError(i, i+1, DY_prefit_SR_err)
-                #DY_postfit_SR = postFitShapes['DY'].IntegralAndError(i, i+1, DY_postfit_SR_err)
-                
-                print
-                print "## Scale Factors for backgrounds, integrated over dedicated control regions: ##" if not args.fitAll else "## Scale Factors for backgrounds, integrated over the signal regions: ##"
-                print "region %i"%i
-                for proc in estList: 
-                    proc_prefit_SR  =  preFitShapes[proc].IntegralAndError(i, i+1, proc_prefit_SR_err)
-                    proc_postfit_SR = postFitShapes[proc].IntegralAndError(i, i+1, proc_postfit_SR_err)
-                    print "{:20}{:4.2f}{:3}{:4.2f}".format('%s: CR: '%proc,          (proc_postfit_SR/proc_prefit_SR), '+/-',  proc_postfit_SR_err/proc_postfit_SR)
-                #print "{:20}{:4.2f}{:3}{:4.2f}".format('top: CR: ',          (top_postfit_SR/top_prefit_SR), '+/-',  top_postfit_SR_err/top_postfit_SR)
-                #print "{:20}{:4.2f}{:3}{:4.2f}".format('WJ: CR : ',          (WJ_postfit_SR/WJ_prefit_SR), '+/-',  WJ_postfit_SR_err/WJ_postfit_SR)
-                #print "{:20}{:4.2f}{:3}{:4.2f}".format('Drell-Yan: CR: ',    (DY_postfit_SR/DY_prefit_SR),   '+/-',  DY_postfit_SR_err/DY_postfit_SR)
-                #print "{:20}{:4.2f}{:3}{:4.2f}".format('multiBoson:',   (MB_postfit_SR/MB_prefit_SR),   '+/-',  MB_postfit_SR_err/MB_postfit_SR)
-                #print "{:20}{:4.2f}{:3}{:4.2f}".format('other:',        (other_postfit_SR/other_prefit_SR), '+/-',  other_postfit_SR_err/other_postfit_SR)
+            #for i in range(1,13): # AN and split CR have different binning, of course
+            #    print "\n## Scale Factors for backgrounds, integrated over dedicated control regions: ##" if not args.fitAll else "## Scale Factors for backgrounds, integrated over the signal regions: ##"
+            #    print "region %i"%i
+            #    for proc in estList: 
+            #        proc_prefit_SR  =  preFitShapes[proc].IntegralAndError(i, i+1, proc_prefit_SR_err)  # FIXME: proc_prefit_SR_err
+            #        proc_postfit_SR = postFitShapes[proc].IntegralAndError(i, i+1, proc_postfit_SR_err) # FIXME: proc_postfit_SR_err
+            #        print "{:20}{:4.2f}{:3}{:4.2f}".format('%s: CR: '%proc,          (proc_postfit_SR/proc_prefit_SR), '+/-',  proc_postfit_SR_err/proc_postfit_SR)
 
     if xSecScale != 1:
         for k in res:
@@ -621,7 +514,7 @@ def wrapper(s):
 ######################################
 
 if args.signal == "T2tt":
-    if year == 2016:
+    if "2016" in year:
         if args.fullSim:
              from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
         else:
@@ -630,14 +523,14 @@ if args.signal == "T2tt":
             postProcessing_directory    = 'compstops_2016_nano_v21/MetSingleLep/'
             #postProcessing_directory    = 'compstops_2016_nano_v11/MetSingleLep/'
             from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt as jobs
-    elif year == 2017:
+    elif year == "2017":
         if args.fullSim:
              from StopsDilepton.samples.nanoTuples_Fall17_FullSimSignal_postProcessed import signals_T2tt as jobs
         else:
             data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             postProcessing_directory    = 'stops_2017_nano_v0p22/dilep/'
             from StopsDilepton.samples.nanoTuples_FastSim_Fall17_postProcessed import signals_T2tt as jobs
-    elif year == 2018:
+    elif year == "2018":
         if args.fullSim:
             data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             postProcessing_directory    = 'stops_2018_nano_v0p19/inclusive/'
@@ -647,8 +540,6 @@ if args.signal == "T2tt":
             #data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             #postProcessing_directory    = 'stops_2018_nano_v0p21/dilep/'
             #from StopsDilepton.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs
-
-#jobs = jobs[100:105] # FIXME
 
 if args.only is not None:
     if args.only.isdigit():

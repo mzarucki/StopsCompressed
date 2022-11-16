@@ -42,8 +42,8 @@ dirs['TTBar_pow'] = dirs['TTLep_pow'] + dirs['TTSingleLep_pow']
 #dirs['TTJets_SingleLeptonFromTbar'] = ["TTJets_SingleLeptonFromTbar"]
 #dirs['TTJets_SingleLepton']         = dirs['TTJets_SingleLeptonFromT'] + dirs['TTJets_SingleLeptonFromTbar']
 
-dirs['TTJets'] = dirs['TTBar']
-#dirs['TTJets'] = dirs['TTBar_pow'] # NOTE: alternative
+#dirs['TTJets'] = dirs['TTBar']
+dirs['TTJets'] = dirs['TTBar_pow'] # NOTE: alternative
 
 
 ### WJets ###

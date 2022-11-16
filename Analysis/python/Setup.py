@@ -55,7 +55,7 @@ class Setup:
             "jetVeto":      default_jetVeto,
             "MET":          default_MET,
             "l1_prompt":    default_prompt,
-	        "dphiMetJets":  default_dphiMetJets,
+            "dphiMetJets":  default_dphiMetJets,
         }
 
         self.puWeight = "reweightPUVUp" if self.year == 2018 else "reweightPU"
@@ -85,7 +85,7 @@ class Setup:
             from StopsCompressed.samples.nanoTuples_RunUL16APV_postProcessed import Run2016preVFP  
             WJets        = WJetsToLNu_HT_16APV 
             Top          = Top_pow_16APV
-            QCD 		 = QCD_HT_16APV
+            QCD          = QCD_HT_16APV
             Others       = Others_16APV
             ZInv    	 = ZInv_16APV
             data         = Run2016preVFP
@@ -122,21 +122,6 @@ class Setup:
             print "Year %s not in choices. Exiting."%year
             sys.exit(0)
         
-        if year == "2016preVFP":
-            self.lumi     = 19.5*1000
-            self.dataLumi = 19.5*1000
-            print "here in 2016preVFP year"
-        elif year == "2016postVFP":
-            self.lumi     = 16.5*1000
-            self.dataLumi = 16.5*1000
-        elif year == "2017":
-            self.lumi     = 41.5*1000
-            self.dataLumi = 41.5*1000
-        elif year == "2018":
-            self.lumi     = 59.83*1000
-            self.dataLumi = 59.83*1000
-        
-        
         mc           = [WJets, Top, ZInv, QCD, Others]
         self.processes = {
             'WJets'     : WJets,
@@ -149,6 +134,20 @@ class Setup:
         
         self.lumi     = data.lumi
         self.dataLumi = data.lumi # get from data samples later
+        
+        #if year == "2016preVFP":
+        #    self.lumi     = 19.5*1000
+        #    self.dataLumi = 19.5*1000
+        #    print "here in 2016preVFP year"
+        #elif year == "2016postVFP":
+        #    self.lumi     = 16.5*1000
+        #    self.dataLumi = 16.5*1000
+        #elif year == "2017":
+        #    self.lumi     = 41.5*1000
+        #    self.dataLumi = 41.5*1000
+        #elif year == "2018":
+        #    self.lumi     = 59.83*1000
+        #    self.dataLumi = 59.83*1000
     
 
     def prefix(self, channel="all"):
@@ -189,17 +188,15 @@ class Setup:
                         if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
                         #if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
                         if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
-			if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
+                        if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
                         #if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
-
-
                 else:
                     res.sys[k] = sys[k]
 
         if parameters:
             for k in parameters.keys():
-		print "key: ", k
-		res.parameters[k] = parameters[k]
+                print "key: ", k
+                res.parameters[k] = parameters[k]
         return res
 
     def defaultParameters(self, update={} ):
@@ -331,9 +328,14 @@ class Setup:
             year_ = int(self.year)
             
         if dataMC != "DataMC":
-            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=year_, skipVertexFilter = True) ) # temporary fix for 2016
-            #res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=self.year , skipVertexFilter = True) )
+            res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=year_, skipVertexFilter = True, skipULFilter = True ) ) # NOTE: skipping UL filter
             res["cuts"].extend(self.externalCuts)
+
+        if dataMC in ["DataMC", "Data"]: 
+            for weight in [self.puWeight, "reweightwPt", "reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF"]: # not present as branches in data
+                if weight in self.sys["reweight"]:
+                    self.sys["reweight"].remove(weight)
+            
 
         return {'cut':"&&".join(res['cuts']), 'prefix':'-'.join(res['prefixes']), 'weightStr': self.weightString()}
 

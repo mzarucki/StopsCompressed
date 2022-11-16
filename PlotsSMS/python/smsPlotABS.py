@@ -85,7 +85,7 @@ class smsPlotABS(object):
         self.c.graphWhite = graphWhite
        	CMS_lumi.writeExtraText = 0
         CMS_lumi.extraText = "Preliminary"
-        CMS_lumi.lumi_13TeV="35.9 fb^{-1}"
+        CMS_lumi.lumi_13TeV="%s fb^{-1}"%self.lumi
 
         CMS_lumi.lumi_sqrtS = "13TeV"  
         iPos=0

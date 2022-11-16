@@ -64,22 +64,19 @@ dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
 signalString = options.signal
 
-analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
+#analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
+analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_AN_comb_v1/limits/T2tt/T2tt/'
+
+sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse" # FIXME: hard-coded
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
 
-if options.year == 2016:
-    lumi    = 35.9
-elif options.year == 2017:
-    lumi    = 41.5
-elif options.year == 2018:
-    lumi    = 59.7 
-else:
-    lumi = 137
 print signalString, yearString
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
 #sppit CR
-plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse','FR_limitAll_2016')
+plotDir = os.path.join(plot_directory,'limits', yearString, signalString, sensitivityStudyName, 'FR_limitAll_' + yearString)
+#plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse','FR_limitAll_'+yearString)
+
 #AN based binning
 #plotDir = os.path.join(plot_directory,'AN_sv2','FR_limitAll_2016')
 
@@ -475,7 +472,7 @@ from StopsCompressed.PlotsSMS.smsPlotBrazil import smsPlotBrazil
 
 
 # read input arguments
-analysisLabel = "SUS-17-001"
+analysisLabel = "SUS-17-005"
 outputname = os.path.join(plotDir, 'limit')
 
 # read the config file
@@ -487,8 +484,23 @@ outputname = os.path.join(plotDir, 'limit')
 #fileIN = inputFile('SMS_limit.cfg')
 #T2degdm
 fileIN = inputFile('SMS_limit_T2degdm.cfg')
+
+if options.year == 2016:
+    lumi    = 35.9
+elif options.year == 2017:
+    lumi    = 41.5
+elif options.year == 2018:
+    lumi    = 59.7 
+else:
+    lumi = 137
+
+if True:
+    lumi_ = lumi
+else:
+    lumi_ = fileIN.LUMI
+
 # classic temperature histogra
-xsecPlot = smsPlotXSEC(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, fileIN.LUMI, fileIN.PRELIMINARY, "asdf")
+xsecPlot = smsPlotXSEC(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, lumi_, fileIN.PRELIMINARY, "")
 #xsecPlot.Draw( lumi = lumi, zAxis_range = (10**-3,10**2) )
 xsecPlot.Draw()
 #if options.signal.startswith("T8"):
@@ -502,12 +514,12 @@ xsecPlot.c.Write("cCONT_XSEC")
 temp.Close()
 
 # only lines
-contPlot = smsPlotCONT(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, fileIN.LUMI, fileIN.PRELIMINARY, "")
+contPlot = smsPlotCONT(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, lumi_, fileIN.PRELIMINARY, "")
 contPlot.Draw()
 contPlot.Save("%sCONT" %outputname)
 
 # brazilian flag (show only 1 sigma)
-brazilPlot = smsPlotBrazil(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, fileIN.LUMI, fileIN.PRELIMINARY, "")
+brazilPlot = smsPlotBrazil(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.EXPECTED, fileIN.ENERGY, lumi_, fileIN.PRELIMINARY, "")
 brazilPlot.Draw()
 brazilPlot.Save("%sBAND" %outputname)
 
