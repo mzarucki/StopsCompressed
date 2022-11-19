@@ -14,6 +14,7 @@ parser.add_option("--all",                   dest="all",                   defau
 parser.add_option("--control",               dest="control",               default=False,               action='store_true',  help="For CR region?")
 parser.add_option("--useGenMet",             dest="useGenMet",             default=False,               action='store_true',  help="use genMET instead of recoMET, used for signal studies")
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true',  help="overwrite existing results?")
+parser.add_option("--lowMETregion",        action='store_true',            default=False,                                     help="Add low MET region")
 parser.add_option("--l1pT_CR_split",       action='store_true',            default=False,                                     help="lepton pT CR split")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
 parser.add_option("--extra_mT_cut",        action='store_true',            default=False,                                     help="extra mT cut of 130")
@@ -45,7 +46,11 @@ if (options.l1pT_CR_split) :
     elif (options.mT_cut_value == 105):
         print "Using regions_mt105_splitCR.py for definition of regions."
         from StopsCompressed.Analysis.regions_mt105_splitCR	                   import controlRegions, signalRegions, regionMapping
-else :
+elif options.lowMETregion:
+    _NBINS = 80
+    print "Using regions_lowMET.py for definition of regions."
+    from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping
+else:
     _NBINS = 56
     if (options.mT_cut_value == 95):
         print "Using regions.py for definition of regions."
@@ -58,7 +63,7 @@ else :
         from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
 
 
-sensitivityStudyName = "{}_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}".format(options.sensitivityStudyName, _NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value,options.isPrompt)
+sensitivityStudyName = "{}_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}_lowMETregion{}".format(options.sensitivityStudyName, _NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value,options.isPrompt,options.lowMETregion)
 
 # signal
 if options.year == "2016":

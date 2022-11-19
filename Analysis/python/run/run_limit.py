@@ -5,18 +5,18 @@ import math
 import pickle
 import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
+argParser.add_argument("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 argParser.add_argument('--logLevel',       action='store', default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'],             help="Log level for logging")
 argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv"], help="which signal?")
 argParser.add_argument("--only",           action='store', default=None,            nargs='?',                                                                                           help="pick only one masspoint?")
 argParser.add_argument("--scale",          action='store', default=1.0, type=float, nargs='?',                                                                                           help="scaling all yields")
 argParser.add_argument("--overwrite",      default = False, action = "store_true", help="Overwrite existing output files")
 argParser.add_argument("--keepCard",       default = False, action = "store_true", help="Overwrite existing output files")
-argParser.add_argument("--control2016",    default = False, action = "store_true", help="Fits for DY/VV/TTZ CR")
-argParser.add_argument("--signal2016",     default = False, action = "store_true", help="Fits for DY/VV/TTZ CR")
+argParser.add_argument("--signalOnly",     default = False, action = "store_true", help="Fits for DY/VV/TTZ CR")
 argParser.add_argument("--controlDYVV",    default = False, action = "store_true", help="Fits for DY/VV CR")
 argParser.add_argument("--controlTTZ",     default = False, action = "store_true", help="Fits for TTZ CR")
 argParser.add_argument("--controlTT",      default = False, action = "store_true", help="Fits for TT CR (MT2ll<100)")
-argParser.add_argument("--controlAll",     default = False, action = "store_true", help="Fits for all CRs")
+argParser.add_argument("--controlOnly",    default = False, action = "store_true", help="Fits for all CRs")
 argParser.add_argument("--fitAll",         default = False, action = "store_true", help="Fits SR and CR together")
 argParser.add_argument("--fitAllNoTT",     default = False, action = "store_true", help="Fits SR and CR together")
 argParser.add_argument("--aggregate",      default = False, action = "store_true", help="Use aggregated signal regions")
@@ -35,15 +35,22 @@ argParser.add_argument("--year",           default=2016,    action="store",     
 argParser.add_argument("--dpm",            default= False,  action="store_true",help="Use dpm?",)
 args = argParser.parse_args()
 
-removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False
+if args.sensitivityStudyName == "baseline":
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+    from StopsCompressed.Analysis.regions import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
+elif args.sensitivityStudyName == "baselinePlusLowMET":
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET import signalRegions, controlRegions, regionMapping
+else:
+    raise NotImplementedError
 
-sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse" # FIXME: hard-coded
+removeSR = [ int(r) for r in args.removeSR ] if len(args.removeSR)>0 else False
 
 year = str(args.year)
 
 # Logging
 import StopsCompressed.Tools.logger as logger
-logger = logger.get_logger(args.logLevel, logFile = None) # "log_%s.txt"%sensitivityStudyName
+logger = logger.get_logger(args.logLevel, logFile = None)
 import Analysis.Tools.logger as logger_an
 logger_an = logger_an.get_logger(args.logLevel, logFile = None)
 import RootTools.core.logger as logger_rt
@@ -54,7 +61,6 @@ from StopsCompressed.Tools.user            import cache_directory
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
 from StopsCompressed.Analysis.estimators   import *
-from StopsCompressed.Analysis.regions      import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
 from StopsCompressed.Analysis.MCBasedEstimate import MCBasedEstimate
 from StopsCompressed.Analysis.DataObservation import DataObservation
 from StopsCompressed.Analysis.Cache           import Cache
@@ -75,9 +81,9 @@ setup = Setup(year=year)
 setup.channels = allChannels # NOTE: = ['all']
 
 # Define regions for CR
-if args.control2016:
+if args.controlOnly:
 	setup.regions   = controlRegions
-elif args.signal2016:
+elif args.signalOnly:
 	setup.regions   = signalRegions
 elif args.fitAll:
 	setup.regions   = controlRegions + signalRegions
@@ -90,10 +96,10 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-if args.control2016:    subDir = 'controlRegions_AN_comb_v1'
-elif args.signal2016:   subDir = 'signalRegions_AN_comb_v1'
-elif args.fitAll:	    subDir = 'fitAll_AN_comb_v1'
-else:                   subDir += 'signalOnly'
+if args.controlOnly:    subDir = 'controlRegions_%s_comb_v1'%args.sensitivityStudyName
+elif args.signalOnly:   subDir = 'signalRegions_%s_comb_v1'%args.sensitivityStudyName
+elif args.fitAll:	    subDir = 'fitAll_%s_comb_v1'%args.sensitivityStudyName
+#else:                   subDir += 'signalOnly'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
 
@@ -218,9 +224,9 @@ def wrapper(s):
         c.addSR(signalRegions)
 
         for setup in setups:
-          eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
-          observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
-          for e in setup.estimators: e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
+          eSignal     = MCBasedEstimate(name=s.name, sample=s, cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=fullSensitivityStudyName))
+          observation = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=fullSensitivityStudyName))
+          for e in setup.estimators: e.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=fullSensitivityStudyName))
 
           for r in setup.regions:
             #print r 

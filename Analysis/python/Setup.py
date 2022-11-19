@@ -31,7 +31,7 @@ default_tauVeto     = True
 default_hardJets    = True
 default_lepVeto     = True
 default_jetVeto     = True
-default_MET         = (300, -999)
+default_MET         = (200, -999) # NOTE: reduced from 300 to 200 for lowMET region
 default_prompt      = False
 default_dphiMetJets = False
 
@@ -331,10 +331,10 @@ class Setup:
             res["cuts"].append( getFilterCut(isData=(dataMC=="Data"), year=year_, skipVertexFilter = True, skipULFilter = True ) ) # NOTE: skipping UL filter
             res["cuts"].extend(self.externalCuts)
 
-        if dataMC in ["DataMC", "Data"]: 
-            for weight in [self.puWeight, "reweightwPt", "reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF"]: # not present as branches in data
-                if weight in self.sys["reweight"]:
-                    self.sys["reweight"].remove(weight)
+        #if dataMC in ["DataMC", "Data"]: # FIXME: broken 
+        #    for weight in [self.puWeight, "reweightwPt", "reweightL1Prefire", "reweightBTag_SF", "reweightLeptonSF"]: # not present as branches in data
+        #        if weight in self.sys["reweight"]:
+        #            self.sys["reweight"].remove(weight)
             
 
         return {'cut':"&&".join(res['cuts']), 'prefix':'-'.join(res['prefixes']), 'weightStr': self.weightString()}

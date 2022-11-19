@@ -21,7 +21,7 @@ from optparse import OptionParser
 parser = OptionParser()
 #parser.add_option("--file",             dest="filename",    default=None,   type="string", action="store",  help="Which file?")
 parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv"], help="which signal?")
-parser.add_option("--year",             dest="year",   type="int",    action="store",  help="Which year?")
+parser.add_option("--year",             dest="year",   type="int",    default=2018, action="store",  help="Which year?")
 parser.add_option("--version",          dest="version",  default='v9',  action="store",  help="Which version?")
 parser.add_option("--subDir",           dest="subDir",  default='unblindV1',  action="store",  help="Give some extra name")
 parser.add_option("--smoothAlgo",       dest="smoothAlgo",  default='k5a', choices=["k5a", "k3a", "k5b"],  action="store",  help="Which smoothing algo?")
@@ -59,15 +59,20 @@ def toGraph(name,title,length,x,y):
     del c
     return result
 
+lowMETregion = True # FIXME: hard-coded
 
 dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
 signalString = options.signal
 
 #analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
-analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_AN_comb_v1/limits/T2tt/T2tt/'
 
-sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse" # FIXME: hard-coded
+if lowMETregion:
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_comb_v1/limits/T2tt/T2tt/'
+    sensitivityStudyName = "baselinePlusLowMET_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+else:
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_comb_v1/limits/T2tt/T2tt/'
+    sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
 

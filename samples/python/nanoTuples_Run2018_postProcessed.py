@@ -25,7 +25,7 @@ except:
 logger.info("Loading data samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
 
 dirs = {}
-for pd in ['MET', 'SingleMuon', 'SingleElectron','JetHT']:
+for pd in ['MET', 'SingleMuon']:#, 'SingleElectron','JetHT']:
     for (run, version) in [('A','25Oct2019'),('B','25Oct2019'),('C','25Oct2019'),('D','25Oct2019')]:
     #for (run, version) in [('A',''), ('B',''),('C',''),('D','')]: 
         runTag = "Run2018" + run
@@ -36,8 +36,7 @@ def merge(pd, totalRunName, listOfRuns):
     dirs[pd + '_' + totalRunName] = []
     for run in listOfRuns: dirs[pd + '_' + totalRunName].extend(dirs[pd + '_' + run])
 
-#for pd in ['MET', 'JetHT', 'SingleElectron', 'SingleMuon']:
-for pd in ['MET']:
+for pd in ['MET', 'SingleMuon']:
     merge(pd, 'Run2018', ['Run2018A', 'Run2018B', 'Run2018C', 'Run2018D'])
 
 for key in dirs:
@@ -53,16 +52,14 @@ def getSample(pd, runName, lumi):
 
 allSamples_Data25ns = []
 
-#JetHT_Run2017                  	  = getSample('JetHT',            'Run2017',           (41.5)*1000)
-MET_Run2018                	  = getSample('MET',       	  'Run2018',           (59.83)*1000)
-#SingleElectron_Run2017            = getSample('SingleElectron',   'Run2017',           (41.5)*1000)
-#SingleMuon_Run2017                = getSample('SingleMuon',       'Run2017',           (41.5)*1000)
+MET_Run2018            = getSample('MET',       	 'Run2018', (59.83)*1000)
+SingleMuon_Run2018     = getSample('SingleMuon',     'Run2018', (59.83)*1000)
+#SingleElectron_Run2018 = getSample('SingleElectron', 'Run2018', (59.38)*1000)
+#JetHT_Run2018          = getSample('JetHT',          'Run2018', (59.38)*1000)
 
-#allSamples_Data25ns += [MET_Run2017, JetHT_Run2017, SingleElectron_Run2017, SingleMuon_Run2017]
-allSamples_Data25ns += [MET_Run2018]
+allSamples_Data25ns += [MET_Run2018, SingleMuon_Run2018]
 
-#Run2017 = Sample.combine("Run2017", [MET_Run2017, JetHT_Run2017,SingleElectron_Run2017, SingleMuon_Run2017], texName = "Run2017")
-Run2018 = Sample.combine("Run2018", [MET_Run2018], texName = "Run2018")
+Run2018 = Sample.combine("Run2018", [MET_Run2018, SingleMuon_Run2018], texName = "Run2018")
 Run2018.lumi = (59.83)*1000
 allSamples_Data25ns.append(Run2018)
 
@@ -70,5 +67,3 @@ allSamples_Data25ns.append(Run2018)
 for s in allSamples_Data25ns:
   s.color   = ROOT.kBlack
   s.isData  = True
-
-
