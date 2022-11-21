@@ -96,9 +96,11 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-if args.controlOnly:    subDir = 'controlRegions_%s_comb_v1'%args.sensitivityStudyName
-elif args.signalOnly:   subDir = 'signalRegions_%s_comb_v1'%args.sensitivityStudyName
-elif args.fitAll:	    subDir = 'fitAll_%s_comb_v1'%args.sensitivityStudyName
+suffix = "comb"
+
+if args.controlOnly:    subDir = 'controlRegions_%s_%s_v1'%(args.sensitivityStudyName, suffix)
+elif args.signalOnly:   subDir = 'signalRegions_%s_%s_v1'%(args.sensitivityStudyName, suffix)
+elif args.fitAll:	    subDir = 'fitAll_%s_%s_v1'%(args.sensitivityStudyName, suffix)
 #else:                   subDir += 'signalOnly'
 
 baseDir = os.path.join(setup.analysis_results, str(year), subDir)
@@ -122,7 +124,7 @@ cacheFileNameS  = os.path.join(limitDir, 'calculatedSignifs')
 signifCache     = Cache(cacheFileNameS, verbosity=2)
 
 fastSim = False # default value
-if args.signal == "T2tt" and not args.fullSim: fastSim = True
+if args.signal in ["T2tt", "T2bW"] and not args.fullSim: fastSim = True
 
 if fastSim:
     logger.info("Assuming the signal sample is FastSim!")
@@ -519,7 +521,7 @@ def wrapper(s):
 # Load the signals and run the code! #
 ######################################
 
-if args.signal == "T2tt":
+if args.signal in ["T2tt", "T2bW"]:
     if "2016" in year:
         if args.fullSim:
              from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
@@ -542,7 +544,10 @@ if args.signal == "T2tt":
             postProcessing_directory    = 'stops_2018_nano_v0p19/inclusive/'
             from StopsDilepton.samples.nanoTuples_Autumn18_FullSimSignal_postProcessed import signals_T2tt as jobs
         else:
-            from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
+            if args.signal == "T2tt":
+                from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory
+            elif args.signal == "T2bW": 
+                from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2bW as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
             #data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             #postProcessing_directory    = 'stops_2018_nano_v0p21/dilep/'
             #from StopsDilepton.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs

@@ -67,9 +67,9 @@ sensitivityStudyName = "{}_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}_lowMETregion{}
 
 # signal
 if options.year == "2016":
-    from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt
+    from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt, signals_T2bW
 elif options.year == "2018":
-    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt
+    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW
 else:
     raise NotImplementedError
 
@@ -84,9 +84,9 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
-channels = allChannels
-#channels = lepChannels
-#for c in channels: print c
+#channels = allChannels # ['all']
+channels = lepChannels # ['e', 'mu']
+
 setup = Setup(year=options.year)
 
 if options.control:
@@ -113,7 +113,7 @@ if options.isPrompt:
 estimators = estimatorList(setup)
 
 allEstimators = estimators.constructEstimatorList(['WJets','Top','Others', 'ZInv', 'QCD'])
-allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals_T2tt ] # + signals_T2bW + ...
+allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals_T2tt + signals_T2bW] #+ ...
 
 # Select estimate
 if not options.selectEstimator == 'Data':

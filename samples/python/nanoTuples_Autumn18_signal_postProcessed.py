@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 #RootTools
 from RootTools.core.standard import *
 
-signals_T2tt=[]
-
 # Data directory
 try:
     data_directory_ = sys.modules['__main__'].data_directory
@@ -28,6 +26,8 @@ except:
   postProcessing_directory_ = default_locations.signal_2018_postProcessing_directory 
 
 logger.info("Loading Signal samples from directory %s", os.path.join(data_directory_, postProcessing_directory_))
+
+signals_T2tt=[]
 
 try:
     for f in os.listdir(os.path.join(data_directory_, postProcessing_directory_, 'T2tt')):
@@ -56,3 +56,31 @@ try:
 except:
     logger.info("No T2tt signals found.")
 
+signals_T2bW=[]
+
+try:
+    for f in os.listdir(os.path.join(data_directory_, postProcessing_directory_, 'T2bW')):
+        if f.endswith('.root') and f.startswith('T2bW_'):
+            name = f.replace('.root','')
+            mStop, mNeu = name.replace('T2bW_','').split('_')
+    
+            tmp = Sample.fromFiles(\
+                name = name,
+                files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'T2bW',f))],
+                treeName = "Events",
+                isData = False,
+                color = 8 ,
+                texName = "#tilde{t} #rightarrow t#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}} ("+mStop+","+mNeu+")"
+            )
+    
+            tmp.mStop = int(mStop)
+            tmp.mNeu = int(mNeu)
+            tmp.isFastSim = True
+    
+            exec("%s=tmp"%name)
+            exec("signals_T2bW.append(%s)"%name)
+    
+    logger.info("Loaded %i T2bW signals", len(signals_T2bW))
+    logger.debug("Loaded T2bW signals: %s", ",".join([s.name for s in signals_T2bW]))
+except:
+    logger.info("No T2bW signals found.")

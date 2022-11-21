@@ -68,10 +68,10 @@ signalString = options.signal
 #analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
 
 if lowMETregion:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_comb_v1/limits/T2tt/T2tt/'
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_comb_v1/limits/{signal}/{signal}/'.format(signal = signalString)
     sensitivityStudyName = "baselinePlusLowMET_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
 else:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_comb_v1/limits/T2tt/T2tt/'
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_comb_v1/limits/{signal}/{signal}/'.format(signal = signalString)
     sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
@@ -101,15 +101,16 @@ hists   = {}
 
 #nbins = 50
 #nbins = 210
-if options.signal == 'T2tt':
+if options.signal in ['T2tt', 'T2bW']:
     #nbins = 105 # bin size 10 GeV
     nbins = 55 # bin size 10 GeV for dm plots
     nbinsx = 55#23+1 
     nbinsy = 55#15+1
 if options.signal.startswith('T8'):
     nbins = 64 # bin size 25 GeV
-if options.signal == 'T2bW':
-    nbins = 1300/25 * 2
+#if options.signal == 'T2bW':
+#    nbins = 1300/25 * 2 # FIXME: number of points between T2tt and T2bW is the same
+    
 
 import pickle
 import pandas as pd
@@ -127,9 +128,9 @@ results_df = results_df[results_df['-1.000']<4*results_df['0.840']]
 if options.signal == 'T2bW':
     # be a bit tighter here
     results_df = results_df[results_df['-1.000']<2.5*results_df['0.840']]
-    results_df = results_df.drop(index=331)
-    results_df = results_df.drop(index=319) #319, 334
-    results_df = results_df.drop(index=335) #this is another fluctuation point
+    #results_df = results_df.drop(index=331)
+    #results_df = results_df.drop(index=319) #319, 334
+    #results_df = results_df.drop(index=335) #this is another fluctuation point
 
 
 #results_df = results_df[(results_df['stop']-results_df['lsp'])>174]
