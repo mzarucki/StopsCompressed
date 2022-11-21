@@ -169,7 +169,7 @@ def muonSelector( lepton_selection, year):
     # tigher isolation applied on analysis level
     # medium Id for sensitivity studies from l["looseId"] -> l["mediumId"]
     if lepton_selection == 'hybridIso':
-        print "better not be here!" 
+        #print "better not be here!" 
         def func(l):
             if l["pt"] <= 25 and l["pt"] >3.5:
                 return \
@@ -187,7 +187,7 @@ def muonSelector( lepton_selection, year):
                     and l["looseId"] 
                     
     elif lepton_selection == 'looseHybridIso':
-	print "here for looseHybridIsolation"
+	#print "here for looseHybridIsolation"
         def func(l):
             if l["pt"] <= 25 and l["pt"] >3.5:
                 return \
@@ -277,7 +277,7 @@ def eleSelector( lepton_selection, year):
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pt'] ) \
                     ###and electronVIDSelector( l, idVal= 1, removedCuts=['pfRelIso03_all'] ) \
     if lepton_selection == 'hybridIso':
-        print "better not be here!" 
+        #print "better not be here!" 
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \
@@ -298,7 +298,7 @@ def eleSelector( lepton_selection, year):
                     and abs(l["dz"])        < 0.1 
 
     elif lepton_selection == 'looseHybridIso':
-	print "electrons for looseHybridIsolation"
+	#print "electrons for looseHybridIsolation"
         def func(l):
             if l["pt"] <= 25 and l["pt"] >5:
                 return \

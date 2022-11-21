@@ -13,7 +13,8 @@ class triggerSelector:
             self.e       = ["HLT_Ele35_WPTight_Gsf"] 
 
         elif year == 2018:
-            self.met     = ["HLT_PFMET90_PFMHT90_IDTight", "HLT_PFMET100_PFMHT100_IDTight", "HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
+            self.met     = ["HLT_PFMET110_PFMHT110_IDTight", "HLT_PFMET120_PFMHT120_IDTight"]
+            self.softmu  = ["HLT_Mu3er1p5_PFJet100er2p5_PFMET70_PFMHT70_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMET80_PFMHT80_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMET90_PFMHT90_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMET100_PFMHT100_IDTight"] # "HLT_Mu3er1p5_PFJet100er2p5_PFMETNoMu70_PFMHTNoMu70_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMETNoMu80_PFMHTNoMu80_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMETNoMu90_PFMHTNoMu90_IDTight", "HLT_Mu3er1p5_PFJet100er2p5_PFMETNoMu100_PFMHTNoMu100_IDTight" # NOTE: NoMu versions mainly disabled
             self.m       = ["HLT_IsoMu24", "HLT_Mu50"]
             self.jet     = ["HLT_PFJet450", "HLT_AK8PFJet450", "HLT_PFHT800"]
             self.e       = ["HLT_Ele32_WPTight_Gsf" , "HLT_Ele115_CaloIdVT_GsfTrkIdT"] 
@@ -23,6 +24,7 @@ class triggerSelector:
 
         # define which triggers should be used for which dataset. could join several lists of triggers
         self.MET            = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.met ] )
+        self.SingleMuon     = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.softmu ] ) if self.softmu else None
         #self.SingleElectron = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.e ] ) if self.e else None
         #self.JetHT          = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.jet ] )if self.jet else None
         #self.SingleMuon     = "(%s)"%"||".join( [ "Alt$(%s,0)"%trigger for trigger in self.m ] ) if self.m else None
@@ -34,7 +36,8 @@ class triggerSelector:
             self.PDHierarchy = [ "MET" ]
         else:
             # DoubleEG and SingleElectron PDs are merged into EGamma. No change necessary for MC though.
-            self.PDHierarchy = [ "MET" ]
+            #self.PDHierarchy = [ "MET" ]
+            self.PDHierarchy = [ "MET", "SingleMuon" ]
             #self.PDHierarchy = [ "MET", "EGamma", "JetHT", "SingleMuon" ]
 
     def __getVeto(self, cutString):
@@ -48,7 +51,7 @@ class triggerSelector:
             return "(%s)"%"||".join([self.MET])
         else:
             for x in reversed(self.PDHierarchy):
-		if not getattr( self, x ): continue 
+                if not getattr( self, x ): continue 
                 if found:
                     cutString += "&&%s"%self.__getVeto(getattr(self,x))
                 if x in PD:# == getattr(self, PD):

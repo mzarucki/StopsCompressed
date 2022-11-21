@@ -145,11 +145,11 @@ def get_parser():
         )
     argParser.add_argument('--T2bW',
         action='store_true',
-        help="Is T2tt signal?"
+        help="Is T2bW signal?"
         )
     argParser.add_argument('--T2bt',
         action='store_true',
-        help="Is T2tt signal?"
+        help="Is T2bt signal?"
         )
     argParser.add_argument('--small',
         action='store_true',
@@ -217,6 +217,9 @@ def get_parser():
 
 options = get_parser().parse_args()
 
+cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018"
+#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/%s/"%(options.year)
+
 # Logging
 import StopsCompressed.Tools.logger as _logger
 logFile = '/tmp/%s_%s_%s_njob%s.txt'%(options.skim, '_'.join(options.samples), os.environ['USER'], str(0 if options.nJobs==1 else options.job))
@@ -263,11 +266,14 @@ elif options.year == 2017:
     from Samples.nanoAOD.Run2017_31Mar2018_private  import allSamples as dataSamples
     allSamples = mcSamples + dataSamples
 elif options.year == 2018:
-    from Samples.nanoAOD.Spring18_private           import allSamples as HEMSamples
-    from Samples.nanoAOD.Run2018_26Sep2018_private  import allSamples as HEMDataSamples
-    from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as mcSamples
-    from Samples.nanoAOD.Run2018_17Sep2018_private  import allSamples as dataSamples
-    allSamples = HEMSamples + HEMDataSamples + mcSamples + dataSamples
+    #from Samples.nanoAOD.Spring18_private           import allSamples as HEMSamples
+    #from Samples.nanoAOD.Run2018_26Sep2018_private  import allSamples as HEMDataSamples
+    #from Samples.nanoAOD.Autumn18_private_legacy_v1 import allSamples as mcSamples
+    #from Samples.nanoAOD.Run2018_17Sep2018_private  import allSamples as dataSamples
+    #allSamples = HEMSamples + HEMDataSamples + mcSamples + dataSamples
+    from Samples.nanoAOD.Autumn18_nanoAODv6 import allSamples as mcSamples
+    from Samples.nanoAOD.Run2018_nanoAODv6  import allSamples as dataSamples
+    allSamples = mcSamples + dataSamples
 else:
     raise NotImplementedError
 
@@ -291,7 +297,7 @@ if options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options
     assert len(samples)==1, "Can only process one SUSY sample at a time."
     samples[0].files = samples[0].files[:maxN]
     logger.debug( "Fetching signal weights..." )
-    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = '/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/%s/'%(options.year)) #Can use same x-sec/weight for T8bbllnunu as for T2tt
+    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir) #Can use same x-sec/weight for T8bbllnunu as for T2tt
     logger.debug("Done fetching signal weights.")
 
 if len(samples)==0:
@@ -430,7 +436,7 @@ if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or option
             try:
                 u = inF.Get("Events")
             except ReferenceError:
-                logger.info( "Found null pointerfor mStop %i mNeu %i. Continue. ", s[0],s[1]) 
+                logger.info( "Found null pointer for mStop %i mNeu %i. Continue. ", s[0],s[1]) 
                 u = None
 
             if u:

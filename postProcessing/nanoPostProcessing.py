@@ -166,19 +166,21 @@ else:
 era = None
 if isData:
     era = extractEra(samples[0].name)[-1]
-## Trigger selection
-if isData and options.triggerSelection:
-    from StopsCompressed.Tools.triggerSelector import triggerSelector
-    era = extractEra(samples[0].name)[-1]
-    logger.info( "######### Era %s ########", era )
-    ts = triggerSelector(options.year, era=era)
-    triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
-    treeFormulas = {"triggerDecision": {'string':triggerCond} }
 
-    logger.info("Sample will have the following trigger skim: %s"%triggerCond)
-    skimConds.append( triggerCond )
-#elif isData and not options.triggerSelection:
-#    raise Exception( "Data should have a trigger selection" ) # NOTE: can be done at cut level
+## Trigger selection
+if isData:
+    if options.triggerSelection:
+        from StopsCompressed.Tools.triggerSelector import triggerSelector
+        era = extractEra(samples[0].name)[-1]
+        logger.info( "######### Era %s ########", era )
+        ts = triggerSelector(options.year, era=era)
+        triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
+        treeFormulas = {"triggerDecision": {'string':triggerCond} }
+
+        logger.info("Sample will have the following trigger skim: %s"%triggerCond)
+        skimConds.append( triggerCond )
+    else:
+        raise Exception( "Data should have a trigger selection" )
 
 #triggerEff          = triggerEfficiency(options.year)
 
@@ -420,8 +422,12 @@ if isMC:
     jetVars     += jetMCInfo
     jetVars     += ['pt_jesTotalUp/F', 'pt_jesTotalDown/F', 'pt_jerUp/F', 'pt_jerDown/F', 'corr_JER/F', 'corr_JEC/F']
 jetVarNames     = [x.split('/')[0] for x in jetVars]
+
 # those are for writing leptons
-lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I','index/I', 'wPt/F', 'charge/I', 'isPrompt/O', 'dRgen/F','genPartIdx/I'] 
+lepVars         = ['pt/F','eta/F','phi/F','pdgId/I','cutBased/I','miniPFRelIso_all/F','pfRelIso03_all/F','sip3d/F','lostHits/I','convVeto/I','dxy/F','dz/F','charge/I','deltaEtaSC/F','mediumId/I','eleIndex/I','muIndex/I','index/I', 'wPt/F', 'charge/I', 'isPrompt/O']
+if isMC:
+    lepVars += ['genPartIdx/I', 'dRgen/F']
+ 
 lepVarNames     = [x.split('/')[0] for x in lepVars]
 
 read_variables = map(TreeVariable.fromString, [ 'MET_pt/F', 'MET_phi/F', 'run/I', 'luminosityBlock/I', 'event/l', 'PV_npvs/I', 'PV_npvsGood/I'] )
@@ -455,14 +461,21 @@ if isMC:
 
 read_variables += [\
     TreeVariable.fromString('nElectron/I'),
-    VectorTreeVariable.fromString('Electron[genPartIdx/I,pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dz/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I,genPartFlav/b]'),
+    VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dz/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[genPartIdx/I, pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I, genPartFlav/b]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
     VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,idMVAoldDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dz/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
     VectorTreeVariable.fromString('Jet[%s]'% ( ','.join(jetVars) ) ),
 ]
+    
+if isMC:
+    read_variables += [\
+        VectorTreeVariable.fromString('Electron[genPartIdx/I,genPartFlav/b]'),
+        VectorTreeVariable.fromString('Muon[genPartIdx/I,genPartFlav/b]'),
+    ]
+
 
 new_variables += [\
     'nlep/I',
@@ -476,9 +489,7 @@ new_variables += [\
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
 cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018"
-#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified2016"
-#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/ISR2016"
-#cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/gen_v7_2016"
+
 renormISR = False
 if options.susySignal:
     from StopsCompressed.samples.helpers import getT2ttSignalWeight , getT2ttISRNorm
@@ -491,7 +502,6 @@ if options.susySignal:
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
-    #if getT2ttISRNorm(samples[0], masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir_ISR):
     if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
 		    renormISR = True
 		    logger.info("Successfully loaded ISR normalzations.")
@@ -505,9 +515,10 @@ new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
 if isSingleLep or isMetSingleLep or isMet or noSkim:
     new_variables.extend( ['nGoodMuons/I','nGoodTaus/I', 'nGoodElectrons/I', 'nGoodLeptons/I' ] )
-    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I', 'l1_isPrompt/O', 'l1_dRgen/F', 'l1_HI/F' ,] )
+    new_variables.extend( ['l1_pt/F', 'l1_eta/F', 'l1_phi/F', 'l1_pdgId/I', 'l1_index/I', 'l1_jetPtRelv2/F', 'l1_jetPtRatiov2/F', 'l1_miniRelIso/F', 'l1_relIso03/F', 'l1_dxy/F', 'l1_dz/F', 'l1_mIsoWP/I', 'l1_eleIndex/I', 'l1_muIndex/I' , 'mt/F', 'l1_charge/I', 'l1_isPrompt/O', 'l1_HI/F' ] )
     if isMC: 
         new_variables.extend(['reweightLeptonSF/F', 'reweightLeptonSFUp/F', 'reweightLeptonSFDown/F', 'reweightnISR/F','reweightnISRUp/F','reweightnISRDown/F', 'reweightwPt/F', 'reweightwPtUp/F', 'reweightwPtDown/F'])
+        new_variables.extend( ['l1_dRgen/F'] )
 
 if addSystematicVariations:
     for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jer', 'jerDown', 'unclustEnUp', 'unclustEnDown']:

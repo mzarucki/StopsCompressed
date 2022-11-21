@@ -69,7 +69,7 @@ python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_n
 ### QCD ###
 python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT50to100    #SPLIT5
 python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT100to200   #SPLIT10
-python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT200to300   #SPLIT5
+python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT200to300   #SPLIT10
 python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT300to500   #SPLIT5
 python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT500to700   #SPLIT5
 python nanoPostProcessing.py --skim Met --year 2018 --processingEra stops_2018_nano_v1 --sample QCD_HT700to1000  #SPLIT10
