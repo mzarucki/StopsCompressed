@@ -65,6 +65,7 @@ def get_parser():
     argParser.add_argument('--keepAllJets', action='store_true',                                                                        help="Keep also forward jets?" )
     argParser.add_argument('--small',       action='store_true',                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used" )
     argParser.add_argument('--susySignal',  action='store_true',                                                                        help="Is SUSY signal?" )
+    argParser.add_argument('--EWKinos',     action='store_true',                                                                        help="Is EWKino signal?" )
     argParser.add_argument('--fastSim',     action='store_true',                                                                        help="FastSim?" )
     argParser.add_argument('--TTDM',        action='store_true',                                                                        help="Is TTDM signal?" )
     argParser.add_argument('--triggerSelection',            action='store_true',                                                        help="Trigger selection?" ) 
@@ -289,7 +290,7 @@ if not os.path.exists( targetPath ):
 len_orig = len(sample.files)
 ## sort the list of files?
 sample = sample.split( n=options.nJobs, nSub=options.job)
-logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job, options.nJobs))
+logger.info(  "fileBasedSplitting: Run over %i/%i files for job %i/%i."%(len(sample.files), len_orig, options.job+1, options.nJobs)) # NOTE: starting from job 0
 logger.debug( "fileBasedSplitting: Files to be run over:\n%s", "\n".join(sample.files) )
 
 targetFilePath  = os.path.join( targetPath, sample.name + '.root' )
@@ -492,21 +493,33 @@ cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018
 
 renormISR = False
 if options.susySignal:
-    from StopsCompressed.samples.helpers import getT2ttSignalWeight , getT2ttISRNorm
     logger.info( "SUSY signal samples to be processed: %s", ",".join(s.name for s in samples) )
     assert len(samples)==1, "Can only process one SUSY sample at a time."
     logger.info( "Signal weights will be drawn from %s files. If that's not the whole sample, stuff will be wrong.", len(samples[0].files))
     logger.info( "Fetching signal weights..." )
     logger.info( "Weights will be stored in %s for future use.", output_directory)
-    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir ) #Can use same x-sec/weight for T8bbllnunu as for T2tt
+    if options.EWKinos:
+        from StopsCompressed.samples.helpers import getEWKSignalWeight, getEWKISRNorm
+        signalWeight = getEWKSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir )
+    else: 
+        from StopsCompressed.samples.helpers import getT2ttSignalWeight, getT2ttISRNorm
+        signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir ) #Can use same x-sec/weight for T8bbllnunu as for T2tt
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
-    if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
-		    renormISR = True
-		    logger.info("Successfully loaded ISR normalzations.")
+    
+    if options.EWKinos:
+        if getEWKISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
+        	    renormISR = True
+           	    logger.info("Successfully loaded ISR normalzations.")
+        else:
+                logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
     else:
-    		    logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
+        if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
+        	    renormISR = True
+           	    logger.info("Successfully loaded ISR normalzations.")
+        else:
+                logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
 		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
 new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
@@ -534,11 +547,14 @@ for var in btagEff.btagWeightNames:
 #if options.susySignal or options.TTDM:
 #    read_variables += map(TreeVariable.fromString, ['met_genPt/F', 'met_genPhi/F'] )
 if options.susySignal:
-    new_variables  += ['reweightXSecUp/F', 'reweightXSecDown/F', 'mStop/I', 'mNeu/I']
+    new_variables  += ['reweightXSecUp/F', 'reweightXSecDown/F']
     if  'T8bbllnunu' in options.samples[0]:
         new_variables  += ['mCha/I', 'mSlep/I', 'sleptonPdg/I']
-    if 'T2tt' in options.samples[0]:
+    if 'T2' in options.samples[0]:
+        new_variables  += ['mStop/I', 'mNeu/I']
         new_variables  += ['weight_pol_L/F', 'weight_pol_R/F']
+    if 'TChiWZ' in options.samples[0]:
+        new_variables  += ['mCha/I', 'mNeu/I']
 
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
@@ -654,9 +670,22 @@ def filler( event ):
                 for nEvt in range(event.nLHE):
                     event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
 
+        if 'T2' in options.samples[0]:
+            r.GenSusyMStop = max([p['mass']*(abs(p['pdgId']==1000006)) for p in gPart])
+            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
+            mass1 = int(round(r.GenSusyMStop,0))
+            mass2 = int(round(r.GenSusyMNeutralino,0))
+            event.mStop = mass1 
+            event.mNeu  = mass2 
 
-        r.GenSusyMStop = max([p['mass']*(abs(p['pdgId']==1000006)) for p in gPart])
-        r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
+        if 'TChiWZ' in options.samples[0]:
+            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
+            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000023)) for p in gPart])
+            mass1 = int(round(r.GenSusyMChargino,0))
+            mass2 = int(round(r.GenSusyMNeutralino,0))
+            event.mCha = mass1 
+            event.mNeu = mass2 
+        
         if 'T8bbllnunu' in options.samples[0]:
             r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
             r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000011)) for p in gPart]) #FIXME check PDG ID of slepton in sample
@@ -670,22 +699,22 @@ def filler( event ):
                 r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000015)) for p in gPart])
                 logger.debug("Slepton is stau with mass %i", r.GenSusyMSlepton)
                 event.sleptonPdg = 1000015
-            event.mCha  = int(round(r.GenSusyMChargino,0))
-            event.mSlep = int(round(r.GenSusyMSlepton,0))
+            mass1 = int(round(r.GenSusyMChargino,0))
+            mass2 = int(round(r.GenSusyMSlepton,0))
+            event.mCha  = mass1
+            event.mSlep = mass2 
 
         try:
-            event.weight=signalWeight[(int(r.GenSusyMStop), int(r.GenSusyMNeutralino))]['weight'] #* r.genWeight
-	    #print event.weight, int(r.GenSusyMStop),int(r.GenSusyMNeutralino)
+            event.weight=signalWeight[(mass1, mass2)]['weight'] #* r.genWeight
+            print mass1, mass2, event.weight 
         except KeyError:
-            logger.info("Couldn't find weight for %s, %s. Setting weight to 0.", r.GenSusyMStop, r.GenSusyMNeutralino)
+            logger.info("Couldn't find weight for %s, %s. Setting weight to 0.", mass1, mass2)
             event.weight = 0.
-        event.mStop = int(r.GenSusyMStop)
-        event.mNeu  = int(r.GenSusyMNeutralino)
         try:
-            event.reweightXSecUp    = signalWeight[(r.GenSusyMStop, r.GenSusyMNeutralino)]['xSecFacUp']
-            event.reweightXSecDown  = signalWeight[(r.GenSusyMStop, r.GenSusyMNeutralino)]['xSecFacDown']
+            event.reweightXSecUp    = signalWeight[(mass1, mass2)]['xSecFacUp']
+            event.reweightXSecDown  = signalWeight[(mass1, mass2)]['xSecFacDown']
         except KeyError:
-            logger.info("Couldn't find weight for %s, %s. Setting weight to 0.", r.GenSusyMStop, r.GenSusyMNeutralino)
+            logger.info("Couldn't find weight for %s, %s. Setting weight to 0.", mass1, mass2)
             event.reweightXSecUp    = 0.
             event.reweightXSecDown  = 0.
     elif isMC:
@@ -716,20 +745,25 @@ def filler( event ):
     # top pt reweighting
     if isMC:
         #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
-        ISRnorm = getT2ttISRNorm(samples[0], r.GenSusyMStop, r.GenSusyMNeutralino, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
-	isr = ISRweight()
-	#print "mStop",event.mStop
-        #isr.getISRWeight(r, norm=ISRnorm, isFast=True )
-	#print "ISRnorm: ", ISRnorm
-        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm,isFast=True )             if options.susySignal else 1
-        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)     if options.susySignal else 1
-        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1)    if options.susySignal else 1
-	#print event.reweight_nISR, event.reweight_nISRUp, event.reweight_nISRDown
-	### use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
-        #event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
-        #event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
-        #event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
-	#print "ISR reweight: " , event.reweight_nISR
+        if 'T2' in options.samples[0]:
+            ISRnorm = getT2ttISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+        elif 'TChiWZ' in options.samples[0]:
+            ISRnorm = getEWKISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+
+    if not options.EWKinos: # TODO: ISR weights for EWKinos
+	    isr = ISRweight()
+	    #print "mStop",event.mStop
+            #isr.getISRWeight(r, norm=ISRnorm, isFast=True )
+	    #print "ISRnorm: ", ISRnorm
+            event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)              if options.susySignal else 1
+            event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)     if options.susySignal else 1
+            event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1)    if options.susySignal else 1
+	    #print event.reweight_nISR, event.reweight_nISRUp, event.reweight_nISRDown
+	    ### use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
+            #event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
+            #event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
+            #event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
+	    #print "ISR reweight: " , event.reweight_nISR
 
     if options.keepAllJets:
         jetAbsEtaCut = 99.
@@ -884,7 +918,7 @@ def filler( event ):
     event.reweightwPt = 1 
     event.reweightwPtUp = 1 
     event.reweightwPtDown = 1 
-    if isMC and options.year==2016:
+    if isMC and options.year==2016 and not options.EWKinos: # TODO: ISR weights for other years and EWKinos
 	    isr = ISRweight()
 	    wpt = wPtWeight()
 	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  

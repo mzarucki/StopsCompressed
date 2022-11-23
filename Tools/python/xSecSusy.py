@@ -3,9 +3,11 @@ logger = logging.getLogger(__name__)
 
 class xSecSusy:
     def __init__(self):
-        from StopsCompressed.Tools.xSecSusyData.stops_13TeV import xsec as stop13TeV
+        from StopsCompressed.Tools.xSecSusyData.stops_13TeV import xsec as stop13TeV # FIXME: why not xsecNNLL? 
+        from StopsCompressed.Tools.xSecSusyData.TChiWZ_13TeV import xsecNNLL as TChiWZ_13TeV
         self.xSec = {
-            'stop13TeV':stop13TeV
+            'stop13TeV':stop13TeV,
+            'TChiWZ_13TeV':TChiWZ_13TeV
         }
 
     def getXSec(self, mass, sigma=0, channel='stop13TeV'):
