@@ -128,11 +128,14 @@ if not estimate:
   logger.warn(options.selectEstimator + " not known")
   exit(0)
 
+for sig in ['T2tt', 'T2bW', 'TChiWZ', 'TTbarDM', 'T8bbllnunu']:
+    if estimate.name.count(sig): estimate.isSignal = True
 
-if estimate.name.count('T2tt') or estimate.name.count('TTbarDM') or estimate.name.count('T8bbllnunu'): estimate.isSignal = True
+for sig in ['T2tt', 'T2bW', 'TChiWZ']: # not sure about TT, T8 etc.
+    isFastSim = estimate.name.count(sig)
+else:
+    isFastSim = False
 
-isFastSim = estimate.name.count('T2tt')
-isFastSim = estimate.name.count('T8bbllnunu')
 if isFastSim:
   setup = setup.sysClone(sys={'reweight':['reweightLeptonFastSimSF'], 'remove':['reweightPU36fb']})
 

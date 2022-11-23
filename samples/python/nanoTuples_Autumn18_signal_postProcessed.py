@@ -84,3 +84,32 @@ try:
     logger.debug("Loaded T2bW signals: %s", ",".join([s.name for s in signals_T2bW]))
 except:
     logger.info("No T2bW signals found.")
+
+signals_TChiWZ=[]
+
+try:
+    for f in os.listdir(os.path.join(data_directory_, postProcessing_directory_, 'TChiWZ')):
+        if f.endswith('.root') and f.startswith('TChiWZ_'):
+            name = f.replace('.root','')
+            mCha, mNeu = name.replace('TChiWZ_','').split('_')
+    
+            tmp = Sample.fromFiles(\
+                name = name,
+                files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'TChiWZ',f))],
+                treeName = "Events",
+                isData = False,
+                color = 8 ,
+                texName = " #tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}} #rightarrow WZ#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}("+mCha+","+mNeu+")"
+            )
+    
+            tmp.mCha = int(mCha)
+            tmp.mNeu = int(mNeu)
+            tmp.isFastSim = True
+    
+            exec("%s=tmp"%name)
+            exec("signals_TChiWZ.append(%s)"%name)
+    
+    logger.info("Loaded %i TChiWZ signals", len(signals_TChiWZ))
+    logger.debug("Loaded TChiWZ signals: %s", ",".join([s.name for s in signals_TChiWZ]))
+except:
+    logger.info("No TChiWZ signals found.")

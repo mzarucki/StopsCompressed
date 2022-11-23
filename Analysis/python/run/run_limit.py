@@ -7,7 +7,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 argParser.add_argument('--logLevel',       action='store', default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'],             help="Log level for logging")
-argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv"], help="which signal?")
+argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
 argParser.add_argument("--only",           action='store', default=None,            nargs='?',                                                                                           help="pick only one masspoint?")
 argParser.add_argument("--scale",          action='store', default=1.0, type=float, nargs='?',                                                                                           help="scaling all yields")
 argParser.add_argument("--overwrite",      default = False, action = "store_true", help="Overwrite existing output files")
@@ -77,7 +77,7 @@ setup = Setup(year=year)
 
 # Define CR
 # Define channels for CR
-#setup.channels = lepChannels # NOTE = ['mu', 'e']
+#setup.channels = ['mu'] # lepChannels # NOTE = ['mu', 'e']
 setup.channels = allChannels # NOTE: = ['all']
 
 # Define regions for CR
@@ -96,7 +96,10 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-suffix = "comb"
+suffix = "comb" # "mu" "el" "comb"
+
+if args.scale != 1.0:
+    suffix += "_scaled%s"%str(args.scale).replace(".","p")
 
 if args.controlOnly:    subDir = 'controlRegions_%s_%s_v1'%(args.sensitivityStudyName, suffix)
 elif args.signalOnly:   subDir = 'signalRegions_%s_%s_v1'%(args.sensitivityStudyName, suffix)
@@ -124,7 +127,7 @@ cacheFileNameS  = os.path.join(limitDir, 'calculatedSignifs')
 signifCache     = Cache(cacheFileNameS, verbosity=2)
 
 fastSim = False # default value
-if args.signal in ["T2tt", "T2bW"] and not args.fullSim: fastSim = True
+if args.signal in ["T2tt", "T2bW", "TChiWZ"] and not args.fullSim: fastSim = True
 
 if fastSim:
     logger.info("Assuming the signal sample is FastSim!")
@@ -150,12 +153,15 @@ def getPDFUnc(name, r, niceName, channel):
 
 def wrapper(s):
     xSecScale = 1
-    #print "mStop: ", s.mStop, "mNeu: ", s.mNeu
-    genEff = genFilter.getEff(s.mStop,s.mNeu)
-    if genEff == 0:
-	    print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
-	    genEff = 0.48 # FIXME: hard-coded value
-    #print "genEff: ", genEff
+    
+    if hasattr(s, "mStop") and hasattr(s, "mNeu"):
+        genEff = genFilter.getEff(s.mStop,s.mNeu) # TODO: genEff for T2bW, TChiWZ
+        if genEff == 0:
+	        print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
+	        genEff = 0.48 # FIXME: hard-coded value
+    else:
+        genEff = 1
+ 
     if "T8bb" in s.name:
         if s.mStop<301:#810
                 xSecScale = 0.01
@@ -424,6 +430,7 @@ def wrapper(s):
     elif args.signal == "T2tt":                         sConfig = s.mStop, s.mNeu
     elif args.signal == "T2bt":                         sConfig = s.mStop, s.mNeu
     elif args.signal == "T2bW":                         sConfig = s.mStop, s.mNeu
+    elif args.signal == "TChiWZ":                       sConfig = s.mCha,  s.mNeu
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05": sConfig = s.mStop, s.mNeu
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09": sConfig = s.mStop, s.mNeu
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":  sConfig = s.mStop, s.mNeu
@@ -496,6 +503,7 @@ def wrapper(s):
       elif args.signal == "T2tt":                           sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T2bt":                           sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T2bW":                           sString = "mStop %i mNeu %i" % sConfig
+      elif args.signal == "TChiWZ":                         sString = "mCha  %i mNeu %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05":   sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09":   sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":    sString = "mStop %i mNeu %i" % sConfig
@@ -521,7 +529,7 @@ def wrapper(s):
 # Load the signals and run the code! #
 ######################################
 
-if args.signal in ["T2tt", "T2bW"]:
+if args.signal in ["T2tt", "T2bW", "TChiWZ"]:
     if "2016" in year:
         if args.fullSim:
              from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
@@ -548,6 +556,8 @@ if args.signal in ["T2tt", "T2bW"]:
                 from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory
             elif args.signal == "T2bW": 
                 from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2bW as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
+            elif args.signal == "TChiWZ": 
+                from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_TChiWZ as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
             #data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             #postProcessing_directory    = 'stops_2018_nano_v0p21/dilep/'
             #from StopsDilepton.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs

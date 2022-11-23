@@ -1,7 +1,8 @@
 import os
 
 if os.environ['USER'] in ['mzarucki']:
-    cache_directory                     = "/eos/user/m/mzarucki/StopsCompressed/"
+    cache_directory                     = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/"
+    #cache_directory                     = "/eos/user/m/mzarucki/StopsCompressed/cache" # condor doesn't like eos
     analysis_results                    = "/eos/user/m/mzarucki/StopsCompressed/sensitivity/"
     postProcessing_output_directory     = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" 
     plot_directory                      = "/eos/user/m/mzarucki/www/2022/StopsCompressed/"
