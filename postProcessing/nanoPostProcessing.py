@@ -680,7 +680,7 @@ def filler( event ):
 
         if 'TChiWZ' in options.samples[0]:
             r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
-            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000023)) for p in gPart])
+            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
             mass1 = int(round(r.GenSusyMChargino,0))
             mass2 = int(round(r.GenSusyMNeutralino,0))
             event.mCha = mass1 
