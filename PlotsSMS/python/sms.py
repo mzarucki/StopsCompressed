@@ -122,7 +122,7 @@ class sms():
         self.Xmin = 250.
         self.Xmax = 800.
         self.Ymin = 10.
-        self.Ymax = 107.
+        self.Ymax = 107. # max dm = 80 GeV
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle
@@ -138,10 +138,10 @@ class sms():
         # decay chain
         self.label= "pp #rightarrow #tilde{#chi}^{#pm}_{1} #tilde{#chi}^{0}_{2} #rightarrow W Z #tilde{#chi}^{0}_{1} #tilde{#chi}^{0}_{1}";
         # scan range to plot
-        self.Xmin = 250.
-        self.Xmax = 800.
-        self.Ymin = 0.
-        self.Ymax = 107.
+        self.Xmin = 100.
+        self.Xmax = 500.
+        self.Ymin = 3.
+        self.Ymax = 66. # max dm = 50 GeV
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle

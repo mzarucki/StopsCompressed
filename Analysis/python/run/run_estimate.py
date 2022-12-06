@@ -86,8 +86,8 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
-#channels = allChannels # ['all']
-channels = lepChannels # ['e', 'mu']
+channels = allChannels # ['all']
+#channels = lepChannels # ['e', 'mu']
 
 setup = Setup(year=options.year)
 
@@ -144,7 +144,7 @@ def wrapper(args):
         r,channel,setup = args
         logger.info("Running estimate for region %s, channel %s for estimator %s"%(r,channel, options.selectEstimator if options.selectEstimator else "None"))
         res = estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
-        print "Estimate:", res
+        #print "Estimate:", res
         return (estimate.uniqueKey(r,channel, setup), res )
 
 estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))

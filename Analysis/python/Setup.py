@@ -180,14 +180,14 @@ class Setup:
                     res.sys[k] = list(set(res.sys[k]+sys[k])) #Add with unique elements
                     
                     for upOrDown in ["Up","Down"]:
-                        if "reweightL1Prefire"+upOrDown             in res.sys[k]: res.sys[k].remove("reweightL1Prefire")
+                        #if "reweightL1Prefire"+upOrDown             in res.sys[k]: res.sys[k].remove("reweightL1Prefire") # FIXME: temporarily commented out
                         if "reweightPU"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightPU")
-                        if 'reweightBTag_SF_b_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
-                        if 'reweightBTag_SF_l_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
-                        if 'reweightBTag_SF_FS_'+upOrDown         in res.sys[k]: res.sys[k].remove('reweightBTag_SF')
-                        if 'reweightLeptonFastSimSF'+upOrDown     in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')
-                        #if "reweightnISR"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightnISR")
-                        if "reweightwPt"+upOrDown                    in res.sys[k]: res.sys[k].remove("reweightwPt")
+                        #if 'reweightBTag_SF_b_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')# FIXME: temporarily commented out
+                        #if 'reweightBTag_SF_l_'+upOrDown            in res.sys[k]: res.sys[k].remove('reweightBTag_SF')# FIXME: temporarily commented out
+                        #if 'reweightBTag_SF_FS_'+upOrDown           in res.sys[k]: res.sys[k].remove('reweightBTag_SF')# FIXME: temporarily commented out
+                        #if 'reweightLeptonFastSimSF'+upOrDown       in res.sys[k]: res.sys[k].remove('reweightLeptonFastSimSF')# FIXME: temporarily commented out
+                        #if "reweightnISR"+upOrDown                  in res.sys[k]: res.sys[k].remove("reweightnISR")
+                        #if "reweightwPt"+upOrDown                   in res.sys[k]: res.sys[k].remove("reweightwPt") # FIXME: temporarily commented out
                         if "reweightLeptonSF"+upOrDown              in res.sys[k]: res.sys[k].remove("reweightLeptonSF")
                         #if "reweightLeptonSF_new{}(l1_pt,l1_eta,l1_pdgId)".format(upOrDown)              in res.sys[k]: res.sys[k].remove("reweightLeptonSF_new(l1_pt,l1_eta,l1_pdgId)")
                 else:

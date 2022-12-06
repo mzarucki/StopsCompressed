@@ -35,10 +35,10 @@ argParser.add_argument("--year",           default=2016,    action="store",     
 argParser.add_argument("--dpm",            default= False,  action="store_true",help="Use dpm?",)
 args = argParser.parse_args()
 
-if args.sensitivityStudyName == "baseline":
+if args.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
     from StopsCompressed.Analysis.regions import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
-elif args.sensitivityStudyName == "baselinePlusLowMET":
+elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET import signalRegions, controlRegions, regionMapping
 else:

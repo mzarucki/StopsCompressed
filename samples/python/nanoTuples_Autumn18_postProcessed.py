@@ -165,13 +165,13 @@ dirs['TTZ_LO'] = ['TTZ_LO']
 
 #dirs['TTZToQQ']     = ['TTZToQQ']
 #dirs['TTZToLLNuNu'] = ['TTZToLLNuNu', 'TTZToLLNuNu_m1to10']
-#dirs['TTZ_NLO']     = dirs['TTZ_TTZToLLNuNu'] + dirs['TTZToQQ'] 
+#dirs['TTZ_NLO']     = dirs['TTZToLLNuNu'] + dirs['TTZToQQ'] 
 
 dirs['TTZ'] = dirs['TTZ_LO']
 #dirs['TTZ'] = dirs['TTZ_NLO'] # NOTE: alternative
 
 ## TTG
-dirs['TTG'] = []#"TTGJets"] # FIXME: processing
+dirs['TTG'] = ["TTGJets"]
 
 dirs['TTX'] = dirs['TTW'] + dirs['TTZ'] + dirs['TTG']
 

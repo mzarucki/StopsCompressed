@@ -59,9 +59,14 @@ def toGraph(name,title,length,x,y):
     del c
     return result
 
-lowMETregion = True # FIXME: hard-coded
+lowMETregion = False # FIXME: hard-coded
+
+scale = 1.0 # 4.3 # 0.6 
 
 suffix = "comb"
+
+if scale != 1.0:
+    suffix += "_scaled%s"%str(scale).replace(".","p")
 
 dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
@@ -70,10 +75,10 @@ signalString = options.signal
 #analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
 
 if lowMETregion:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
     sensitivityStudyName = "baselinePlusLowMET_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
 else:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
+    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
     sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
@@ -101,17 +106,22 @@ if not os.path.exists(plotDir):
 graphs  = {}
 hists   = {}
 
-#nbins = 50
-#nbins = 210
-if options.signal in ['T2tt', 'T2bW', 'TChiWZ']:
+if options.signal in ['T2tt', 'T2bW']: # NOTE: number of points between T2tt and T2bW is the same
+    nbinsx = (800-250)/25 * 2
+    nbinsy = (110-10)/10 * 5 
     #nbins = 105 # bin size 10 GeV
-    nbins = 55 # bin size 10 GeV for dm plots
-    nbinsx = 55#23+1 
-    nbinsy = 55#15+1
-if options.signal.startswith('T8'):
+    #nbins = 55 # bin size 10 GeV for dm plots
+    #nbinsx = 55
+    #nbinsy = 55
+elif options.signal == 'TChiWZ':
+    nbinsx = (500-100)/25 * 2
+    nbinsy = (70-0)/10 * 5 
+    #nbinsx = 50
+    #nbinsy = 35
+elif options.signal.startswith('T8'):
     nbins = 64 # bin size 25 GeV
 #if options.signal == 'T2bW':
-#    nbins = 1300/25 * 2 # FIXME: number of points between T2tt and T2bW is the same
+#    nbins = 1300/25 * 2 
     
 
 import pickle
@@ -296,30 +306,56 @@ xsecLimits_df = [] # this will become a data frame
 from StopsCompressed.Tools.xSecSusy import xSecSusy
 xSecSusy_ = xSecSusy()
 xSecKey = "obs_dm"
-for ix in range(hists[xSecKey].GetNbinsX()):
-    for iy in range(hists[xSecKey].GetNbinsY()):
-        mStop   = (hists[xSecKey].GetXaxis().GetBinUpEdge(ix)+hists[xSecKey].GetXaxis().GetBinLowEdge(ix)) / 2.
-        #mNeu    = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
-        dm      = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
-        v       = hists[xSecKey].GetBinContent(hists[xSecKey].FindBin(mStop, dm))
-        v_exp   = hists['exp_dm'].GetBinContent(hists[xSecKey].FindBin(mStop, dm)) # get expected limit
-        #if mStop>200 and v>0 or True:
-        if mStop>200 and v>0:
-            scaleup   = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=1) /xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
-            scaledown = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=-1)/xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
-            xSec = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
-            hists["obs_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v * xSec)
-            hists["exp_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v_exp * xSec)
-            hists["obs_dm_up"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v*scaleup)
-            hists["obs_dm_down"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v*scaledown)
-            if v>0 and xSec>0:
-                xsecLimits_df.append({'mStop':mStop, 'dm':dm, 'exp':v_exp * xSec, 'obs': v * xSec})
-		if mStop>500 and mStop<700:
-	    		print "mStop: ", mStop,"dm: " , dm,"v_exp: ", v_exp,"xSec: ", xSec
-            #if mStop>640 and mNeu>540 and v>0 and v_exp>0:
-            #    print mStop, mNeu, v, v_exp, xSec, scaleup, scaledown
-            #if mStop>650 and mStop<660 and mNeu>500 and mNeu<600 and v_exp >0 and v >0:
-            #    print "acc: " ,v, v_exp, mStop, mNeu, xSec, scaleup, scaledown
+
+
+if options.signal == 'TChiWZ':
+    for ix in range(hists[xSecKey].GetNbinsX()):
+        for iy in range(hists[xSecKey].GetNbinsY()):
+            mCha   = (hists[xSecKey].GetXaxis().GetBinUpEdge(ix)+hists[xSecKey].GetXaxis().GetBinLowEdge(ix)) / 2.
+            #mNeu    = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            dm      = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            v       = hists[xSecKey].GetBinContent(hists[xSecKey].FindBin(mCha, dm))
+            v_exp   = hists['exp_dm'].GetBinContent(hists[xSecKey].FindBin(mCha, dm)) # get expected limit
+            
+            #if mCha>=100 and v>0:
+            print "!!! mCha", mCha
+            if mCha>=100:
+                scaleup   = xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=1) /xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=0)
+                scaledown = xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=-1)/xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=0)
+                xSec = xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=0)
+                hists["obs_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mCha, dm), v * xSec)
+                hists["exp_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mCha, dm), v_exp * xSec)
+                hists["obs_dm_up"].SetBinContent(hists[xSecKey].FindBin(mCha, dm), v*scaleup)
+                hists["obs_dm_down"].SetBinContent(hists[xSecKey].FindBin(mCha, dm), v*scaledown)
+            
+                if v>0 and xSec>0:
+                    xsecLimits_df.append({'mCha':mCha, 'dm':dm, 'exp':v_exp * xSec, 'obs': v * xSec})
+                    print "mCha: ", mCha, "dm: ", dm, "v_exp: ", v_exp,"xSec: ", xSec
+else:
+    for ix in range(hists[xSecKey].GetNbinsX()):
+        for iy in range(hists[xSecKey].GetNbinsY()):
+            mStop   = (hists[xSecKey].GetXaxis().GetBinUpEdge(ix)+hists[xSecKey].GetXaxis().GetBinLowEdge(ix)) / 2.
+            #mNeu    = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            dm      = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            v       = hists[xSecKey].GetBinContent(hists[xSecKey].FindBin(mStop, dm))
+            v_exp   = hists['exp_dm'].GetBinContent(hists[xSecKey].FindBin(mStop, dm)) # get expected limit
+            
+            if mStop>200 and v>0:
+                scaleup   = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=1) /xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
+                scaledown = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=-1)/xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
+                xSec = xSecSusy_.getXSec(channel='stop13TeV',mass=mStop,sigma=0)
+                hists["obs_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v * xSec)
+                hists["exp_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v_exp * xSec)
+                hists["obs_dm_up"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v*scaleup)
+                hists["obs_dm_down"].SetBinContent(hists[xSecKey].FindBin(mStop, dm), v*scaledown)
+                if v>0 and xSec>0:
+                    xsecLimits_df.append({'mStop':mStop, 'dm':dm, 'exp':v_exp * xSec, 'obs': v * xSec})
+    		if mStop>500 and mStop<700:
+    	    		print "mStop: ", mStop,"dm: " , dm,"v_exp: ", v_exp,"xSec: ", xSec
+                #if mStop>640 and mNeu>540 and v>0 and v_exp>0:
+                #    print mStop, mNeu, v, v_exp, xSec, scaleup, scaledown
+                #if mStop>650 and mStop<660 and mNeu>500 and mNeu<600 and v_exp >0 and v >0:
+                #    print "acc: " ,v, v_exp, mStop, mNeu, xSec, scaleup, scaledown
 
 xsecLimits_df = pd.DataFrame(xsecLimits_df)
 
