@@ -159,6 +159,8 @@ def wrapper(s):
         if genEff == 0:
 	        print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
 	        genEff = 0.48 # FIXME: hard-coded value
+    elif hasattr(s, "mCha") and hasattr(s, "mNeu"): 
+	        genEff = 0.48 # FIXME: hard-coded value for EWKinos 
     else:
         genEff = 1
  
