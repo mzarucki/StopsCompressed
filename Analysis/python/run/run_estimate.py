@@ -26,12 +26,12 @@ parser.add_option("--isPrompt",            action='store_true',            defau
 (options, args) = parser.parse_args()
 
 from StopsCompressed.Analysis.estimators import *
-if (options.l1pT_CR_split) :
+if options.l1pT_CR_split:
     _NBINS = 68
-    if (options.mT_cut_value == 95) :
-        if (options.extra_mT_cut) :
+    if options.mT_cut_value == 95:
+        if options.extra_mT_cut:
             _NBINS = 88
-            if (options.CT_cut_value == 450):
+            if options.CT_cut_value == 450:
                 print "Using regions_splitCR_4mTregions_CT450.py for definition of regions."
                 from StopsCompressed.Analysis.regions_splitCR_4mTregions_CT450 import controlRegions, signalRegions, regionMapping
             else:     
@@ -40,25 +40,30 @@ if (options.l1pT_CR_split) :
         else:
             print "Using regions_splitCR.py for definition of regions."
             from StopsCompressed.Analysis.regions_splitCR	                   import controlRegions, signalRegions, regionMapping
-    elif (options.mT_cut_value == 100): 
+    elif options.mT_cut_value == 100: 
         print "Using regions_splitCR_mT100.py for definition of regions."
         from StopsCompressed.Analysis.regions_splitCR_mT100	                   import controlRegions, signalRegions, regionMapping
-    elif (options.mT_cut_value == 105):
+    elif options.mT_cut_value == 105:
         print "Using regions_mt105_splitCR.py for definition of regions."
         from StopsCompressed.Analysis.regions_mt105_splitCR	                   import controlRegions, signalRegions, regionMapping
-elif options.lowMETregion:
-    _NBINS = 80
-    print "Using regions_lowMET.py for definition of regions."
-    from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping
+elif options.lowMETregion: 
+    if options.extra_mT_cut:
+        _NBINS = 104
+        print "Using regions_lowMET_4mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_4mTregions                    import controlRegions, signalRegions, regionMapping
+    else:
+        _NBINS = 80
+        print "Using regions_lowMET.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping
 else:
     _NBINS = 56
     if (options.mT_cut_value == 95):
         print "Using regions.py for definition of regions."
-        from StopsCompressed.Analysis.regions	                 import controlRegions, signalRegions, regionMapping
-    elif (options.mT_cut_value == 100) :
+        from StopsCompressed.Analysis.regions	               import controlRegions, signalRegions, regionMapping
+    elif (options.mT_cut_value == 100):
         print "Using regions_mT100.py for definition of regions."
         from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
-    elif (options.mT_cut_value == 105) :
+    elif (options.mT_cut_value == 105):
         print "Using regions_mt105.py for definition of regions."
         from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
 

@@ -4,6 +4,10 @@ from StopsCompressed.Analysis.Region import Region
 
 # Put all sets of regions that are used in the analysis, closure, tables, etc.
 
+# nSR = 44
+# nCR = 12
+# nSR + nCR = 56 regions
+
 ### SR1
 SR1 = Region("HT", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5))
 signalRegions  = []
@@ -111,7 +115,7 @@ SR2hcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (20,30)) + Region ("C
 CR2cX    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region ("CT2", (300,400)) 
 CR2cY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region ("CT2", (400, -999)) 
 
-signalRegions = [
+signalRegions = [ # nSR = 44
     SR1vlaX, SR1laX, SR1maX, SR1haX, 
     SR1vlaY, SR1laY, SR1maY, SR1haY,
  
@@ -132,7 +136,7 @@ signalRegions = [
              SR2lcY, SR2mcY, SR2hcY
 ]
 
-controlRegions= [
+controlRegions= [ # nCR = 12
     CR1aX, CR1aY, CR1bX, CR1bY, CR1cX, CR1cY, 
     CR2aX, CR2aY, CR2bX, CR2bY, CR2cX, CR2cY
 ]

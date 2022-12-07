@@ -38,9 +38,12 @@ args = argParser.parse_args()
 if args.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
     from StopsCompressed.Analysis.regions import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
-elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys"]:
+elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET2", "baselinePlusLowMET_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET2_redSys_extramTbin"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregions import signalRegions, controlRegions, regionMapping
 else:
     raise NotImplementedError
 

@@ -11,9 +11,9 @@ from StopsCompressed.Analysis.Region import Region
 
 # NOTE: Caches do not like MET cut. Additionally defined in Setup.py. Should be redundant with CT cuts in SRs/CRs.
 
-# nSR = 62
-# nCR = 18
-# nSR + nCR = 80 regions
+# nSR = 80
+# nCR = 24
+# nSR + nCR = 104 regions
 
 ### SR1
 SR1 = Region("HT", (300,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) # NOTE: reducing HT cut due to correlation with MET 
@@ -70,24 +70,45 @@ CR1bY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l
 
 ## SR1c
 # SR1cZ
-SR1lcZ  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1mcZ  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1hcZ  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1lcZ  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1mcZ  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1hcZ  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
 
 # SR1cX
-SR1lcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999)) 
-SR1mcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
-SR1hcX  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
+SR1lcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999)) 
+SR1mcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
+SR1hcX  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
 
 # SR1cY
-SR1lcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1mcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
-SR1hcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+SR1lcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
+SR1mcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+SR1hcY  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
 
 ## CR1c
-CR1cZ   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (200,300))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1cX   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-CR1cY   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+CR1cZ   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (200,300))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+CR1cX   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
+CR1cY   = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+
+## SR1d
+# SR1dZ
+SR1ldZ  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1mdZ  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1hdZ  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (200,300)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+
+# SR1dX
+SR1ldX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999)) 
+SR1mdX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
+SR1hdX  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
+
+# SR1dY
+SR1ldY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
+SR1mdY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+SR1hdY  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+
+## CR1d
+CR1dZ   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (200,300))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+CR1dX   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
+CR1dY   = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
 
 ### SR2
 SR2 = Region("HT", (300,-999)) + Region("ISRJets_pt", (325,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0))
@@ -141,26 +162,47 @@ CR2bY   = SR2 + Region("mt", (60,95)) + Region("l1_pt", (30,-999)) + Region("CT2
 
 ## SR2c
 # SR2cZ
-SR2lcZ  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
-SR2mcZ  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
-SR2hcZ  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+SR2lcZ  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+SR2mcZ  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+SR2hcZ  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
 
 # SR2cX
-SR2lcX  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
-SR2mcX  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
-SR2hcX  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+SR2lcX  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+SR2mcX  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+SR2hcX  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
 
 # SR2cY
-SR2lcY  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
-SR2mcY  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
-SR2hcY  = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+SR2lcY  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+SR2mcY  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+SR2hcY  = SR2 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
 
 ## CR2c
-CR2cZ   = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (200,300))  + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
-CR2cX   = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (300,400))  + Region("l1_eta", (-2.4, 2.4)) 
-CR2cY   = SR2 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+CR2cZ   = SR2 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT2", (200,300))  + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+CR2cX   = SR2 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT2", (300,400))  + Region("l1_eta", (-2.4, 2.4)) 
+CR2cY   = SR2 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
 
-signalRegions = [ # nSR = 62 
+## SR2d
+# SR2dZ
+SR2ldZ  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+SR2mdZ  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+SR2hdZ  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (200,300)) + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+
+# SR2dX
+SR2ldX  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+SR2mdX  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+SR2hdX  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (300,400)) + Region("l1_eta", (-2.4, 2.4))
+
+# SR2dY
+SR2ldY  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+SR2mdY  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+SR2hdY  = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+
+## CR2d
+CR2dZ   = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (200,300))  + Region("l1_eta", (-1.5, 1.5)) + Region("abs(l1_pdgId)", (13,13)) 
+CR2dX   = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (300,400))  + Region("l1_eta", (-2.4, 2.4)) 
+CR2dY   = SR2 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT2", (400,-999)) + Region("l1_eta", (-2.4, 2.4))
+
+signalRegions = [ # nSR = 80 
              SR1laZ, SR1maZ, SR1haZ, 
     SR1vlaX, SR1laX, SR1maX, SR1haX, 
     SR1vlaY, SR1laY, SR1maY, SR1haY,
@@ -172,6 +214,10 @@ signalRegions = [ # nSR = 62
              SR1lcZ,  SR1mcZ, SR1hcZ,
              SR1lcX,  SR1mcX, SR1hcX,
              SR1lcY,  SR1mcY, SR1hcY, 
+             
+             SR1ldZ,  SR1mdZ, SR1hdZ,
+             SR1ldX,  SR1mdX, SR1hdX,
+             SR1ldY,  SR1mdY, SR1hdY, 
 
 
              SR2laZ, SR2maZ, SR2haZ, 
@@ -184,25 +230,33 @@ signalRegions = [ # nSR = 62
  
              SR2lcZ,  SR2mcZ, SR2hcZ,
              SR2lcX,  SR2mcX, SR2hcX,
-             SR2lcY,  SR2mcY, SR2hcY
+             SR2lcY,  SR2mcY, SR2hcY,
+             
+             SR2ldZ,  SR2mdZ, SR2hdZ,
+             SR2ldX,  SR2mdX, SR2hdX,
+             SR2ldY,  SR2mdY, SR2hdY
 ]
 
-controlRegions= [ # nCR = 18
+controlRegions= [ # nCR = 24
     CR1aZ, CR1aX, CR1aY, 
     CR1bZ, CR1bX, CR1bY, 
     CR1cZ, CR1cX, CR1cY,
+    CR1dZ, CR1dX, CR1dY,
  
     CR2aZ, CR2aX, CR2aY, 
     CR2bZ, CR2bX, CR2bY, 
-    CR2cZ, CR2cX, CR2cY
+    CR2cZ, CR2cX, CR2cY,
+    CR2dZ, CR2dX, CR2dY
 ]
 
 regionMapping = { # CR:nSRs
     0:3, 1:4, 2:4, 
     3:3, 4:4, 5:4,
     6:3, 7:3, 8:3,
+    9:3, 10:3, 11:3,
  
-    9:3, 10:4, 11:4,
     12:3, 13:4, 14:4,
-    15:3, 16:3, 17:3
+    15:3, 16:4, 17:4,
+    18:3, 19:3, 20:3,
+    21:3, 22:3, 23:3
 }
