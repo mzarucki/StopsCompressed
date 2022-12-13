@@ -92,8 +92,8 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
-#channels = allChannels # ['all']
-channels = lepChannels # ['e', 'mu']
+channels = allChannels # ['all']
+#channels = lepChannels # ['e', 'mu']
 setup = Setup(year=options.year)
 
 if options.control:
@@ -121,9 +121,10 @@ estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below.
 #estList.remove('Data')
 
 allEstimators = estimators.constructEstimatorList(estList)
-allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # FIXME: choosing several signal points
-#allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if "550_510" in s.name] # FIXME: choosing one signal point
-#allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals]
+if options.makeYieldsTable: 
+    allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
+else:
+    allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals]
 
 if options.selectEstimator:
     # Select estimate
