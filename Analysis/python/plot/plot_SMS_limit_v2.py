@@ -20,6 +20,7 @@ from StopsCompressed.Analysis.plot.limitHelpers   import getContours, cleanConto
 from optparse import OptionParser
 parser = OptionParser()
 #parser.add_option("--file",             dest="filename",    default=None,   type="string", action="store",  help="Which file?")
+parser.add_option("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
 parser.add_option("--year",             dest="year",   type="int",    default=2018, action="store",  help="Which year?")
 parser.add_option("--version",          dest="version",  default='v9',  action="store",  help="Which version?")
@@ -59,11 +60,9 @@ def toGraph(name,title,length,x,y):
     del c
     return result
 
-lowMETregion = False # FIXME: hard-coded
-
 scale = 1.0 # 4.3 # 0.6 
 
-suffix = "comb"
+suffix = "comb" # "mu" "e"
 
 if scale != 1.0:
     suffix += "_scaled%s"%str(scale).replace(".","p")
@@ -74,19 +73,29 @@ signalString = options.signal
 
 #analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
 
-if lowMETregion:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
-    sensitivityStudyName = "baselinePlusLowMET_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+if options.sensitivityStudyName in ["baseline", "baseline_redSys"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET2_redSys_extramTbin"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
 else:
-    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
-    sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+    raise NotImplementedError
+
+analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_{sensitivityStudyName}_{suffix}_v1/limits/{signal}/{signal}/'.format(sensitivityStudyName = options.sensitivityStudyName, signal = signalString, suffix = suffix)
+
+#if lowMETregion:
+#    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baselinePlusLowMET2_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
+#    sensitivityStudyName = "baselinePlusLowMET2_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+#else:
+#    analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll_baseline_redSys_{suffix}_v1/limits/{signal}/{signal}/'.format(signal = signalString, suffix = suffix)
+#    sensitivityStudyName = "baseline_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
 
 defFile =  os.path.join(analysis_results,"limitResults.root")
 
-print signalString, yearString
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
 #sppit CR
-plotDir = os.path.join(plot_directory,'limits', yearString, signalString, sensitivityStudyName, 'FR_limitAll_%s_%s'%(yearString, suffix))
+plotDir = os.path.join(plot_directory,'limits', yearString, signalString, fullSensitivityStudyName, 'FR_limitAll_%s_%s'%(yearString, suffix))
 #plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse','FR_limitAll_'+yearString)
 
 #AN based binning

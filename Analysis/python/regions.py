@@ -145,3 +145,26 @@ regionMapping = { # CR:nSRs
     0:4, 1:4, 2:4, 3:4, 4:3, 5:3,
     6:4, 7:4, 8:4, 9:4, 10:3, 11:3
 }
+
+regionNames = [
+    "CR1aX", "CR1aY", "CR1bX", "CR1bY", "CR1cX", "CR1cY", 
+    "CR2aX", "CR2aY", "CR2bX", "CR2bY", "CR2cX", "CR2cY",
+
+    "SR1vlaX", "SR1laX", "SR1maX", "SR1haX", 
+    "SR1vlaY", "SR1laY", "SR1maY", "SR1haY",
+ 
+    "SR1vlbX", "SR1lbX", "SR1mbX", "SR1hbX", 
+    "SR1vlbY", "SR1lbY", "SR1mbY", "SR1hbY",
+ 
+               "SR1lcX", "SR1mcX", "SR1hcX", 
+               "SR1lcY", "SR1mcY", "SR1hcY", 
+
+    "SR2vlaX", "SR2laX", "SR2maX", "SR2haX", 
+    "SR2vlaY", "SR2laY", "SR2maY", "SR2haY",
+ 
+    "SR2vlbX", "SR2lbX", "SR2mbX", "SR2hbX", 
+    "SR2vlbY", "SR2lbY", "SR2mbY", "SR2hbY",
+ 
+               "SR2lcX", "SR2mcX", "SR2hcX",
+               "SR2lcY", "SR2mcY", "SR2hcY"
+]

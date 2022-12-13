@@ -38,7 +38,7 @@ args = argParser.parse_args()
 if args.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
     from StopsCompressed.Analysis.regions import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
-elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET2", "baselinePlusLowMET_redSys"]:
+elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET import signalRegions, controlRegions, regionMapping
 elif args.sensitivityStudyName in ["baselinePlusLowMET2_redSys_extramTbin"]:
@@ -80,7 +80,7 @@ setup = Setup(year=year)
 
 # Define CR
 # Define channels for CR
-#setup.channels = ['mu'] # lepChannels # NOTE = ['mu', 'e']
+#setup.channels = lepChannels # NOTE = ['mu', 'e']
 setup.channels = allChannels # NOTE: = ['all']
 
 # Define regions for CR
@@ -99,7 +99,7 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-suffix = "comb" # "mu" "el" "comb"
+suffix = "comb" # "mu" "el"
 
 if args.scale != 1.0:
     suffix += "_scaled%s"%str(args.scale).replace(".","p")

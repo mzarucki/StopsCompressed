@@ -4,6 +4,7 @@ parser = OptionParser()
 parser.add_option("--sensitivityStudyName",  dest="sensitivityStudyName",  default = "baseline",        type="str",    action="store",      help="Name of sensitivity study")
 parser.add_option("--noMultiThreading",      dest="noMultiThreading",      default = False,             action="store_true",  help="noMultiThreading?")
 parser.add_option("--noSystematics",         dest="noSystematics",         default = False,             action="store_true",  help="no systematics?")
+parser.add_option("--makeYieldsTable",       dest="makeYieldsTable",       default = False,             action="store_true",  help="Make yields table")
 parser.add_option("--selectEstimator",       dest="selectEstimator",       default=None,                action="store",       help="select estimator?")
 parser.add_option("--selectRegion",          dest="selectRegion",          default=None, type="int",    action="store",       help="select region?")
 parser.add_option("--year",                  dest="year",                  default="2016postVFP", type="str", action="store", help="Which year?")
@@ -50,16 +51,16 @@ elif options.lowMETregion:
     if options.extra_mT_cut:
         _NBINS = 104
         print "Using regions_lowMET_4mTregions.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_4mTregions                    import controlRegions, signalRegions, regionMapping
+        from StopsCompressed.Analysis.regions_lowMET_4mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
     else:
         _NBINS = 80
         print "Using regions_lowMET.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping
+        from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping, regionNames
 else:
     _NBINS = 56
     if (options.mT_cut_value == 95):
         print "Using regions.py for definition of regions."
-        from StopsCompressed.Analysis.regions	               import controlRegions, signalRegions, regionMapping
+        from StopsCompressed.Analysis.regions	               import controlRegions, signalRegions, regionMapping, regionNames
     elif (options.mT_cut_value == 100):
         print "Using regions_mT100.py for definition of regions."
         from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
@@ -91,9 +92,8 @@ logger_rt = logger_rt.get_logger('INFO', logFile = None )
 
 from StopsCompressed.Analysis.Setup import Setup
 from StopsCompressed.Analysis.SetupHelpers import *
-channels = allChannels # ['all']
-#channels = lepChannels # ['e', 'mu']
-
+#channels = allChannels # ['all']
+channels = lepChannels # ['e', 'mu']
 setup = Setup(year=options.year)
 
 if options.control:
@@ -116,67 +116,119 @@ if options.isPrompt:
 #	setup.parameters["dphiJets"] 	= True
 estimators = estimatorList(setup)
 
-allEstimators = estimators.constructEstimatorList(['WJets','Top','Others', 'ZInv', 'QCD'])
-allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals]
+estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below..
+#estList = setup.processes.keys() # = smarter way? equivalent as estList defined from processes in setup?
+#estList.remove('Data')
 
-# Select estimate
-if not options.selectEstimator == 'Data':
-    estimate = next((e for e in allEstimators if e.name == options.selectEstimator), None)
-    estimate.isData = False
-else:
-    estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
-    estimate.isSignal = False
-    estimate.isData   = True
+allEstimators = estimators.constructEstimatorList(estList)
+allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # FIXME: choosing several signal points
+#allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if "550_510" in s.name] # FIXME: choosing one signal point
+#allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals]
 
-if not estimate:
-  logger.warn(options.selectEstimator + " not known")
-  exit(0)
+if options.selectEstimator:
+    # Select estimate
+    if not options.selectEstimator == 'Data':
+        estimate = next((e for e in allEstimators if e.name == options.selectEstimator), None)
+        estimate.isData = False
+    else:
+        estimate = DataObservation(name='Data', sample=setup.processes['Data'], cacheDir=setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
+        estimate.isSignal = False
+        estimate.isData   = True
+    
+    if not estimate:
+      logger.warn(options.selectEstimator + " not known")
+      exit(0)
+    
+    for sig in ['T2tt', 'T2bW', 'TChiWZ', 'TTbarDM', 'T8bbllnunu']:
+        if estimate.name.count(sig): estimate.isSignal = True
+    
+    for sig in ['T2tt', 'T2bW', 'TChiWZ']: # not sure about TT, T8 etc.
+        isFastSim = estimate.name.count(sig)
+    else:
+        isFastSim = False
+    
+    if isFastSim:
+      setup = setup.sysClone(sys={'reweight':['reweightLeptonFastSimSF'], 'remove':['reweightPU36fb']})
 
-for sig in ['T2tt', 'T2bW', 'TChiWZ', 'TTbarDM', 'T8bbllnunu']:
-    if estimate.name.count(sig): estimate.isSignal = True
+    #setup = setup.sysClone()
+    setup.verbose=True
+    def wrapper(args):
+            r,channel,setup = args
+            logger.info("Running estimate for region %s, channel %s for estimator %s"%(r,channel, options.selectEstimator if options.selectEstimator else "None"))
+            res = estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
+            #print "Estimate:", res
+            return (estimate.uniqueKey(r,channel, setup), res )
+    
+    estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
+    
+    jobs=[]
+    for channel in channels:
+        for (i, r) in enumerate(allRegions):
+            if options.selectRegion is not None and options.selectRegion != i: continue
+            jobs.append((r, channel, setup))
+            if not estimate.isData and not options.noSystematics:
+                if estimate.isSignal: jobs.extend(estimate.getSigSysJobs(r,channel,  setup, isFastSim))
+                else:                 jobs.extend(estimate.getBkgSysJobs(r,channel,  setup))
+    
+    results = map(wrapper, jobs)
+    #print "Results:", results
+    for channel in (['all']):
+        for (i, r) in enumerate(allRegions):
+            #print r
+            if options.selectRegion is not None and options.selectRegion != i: continue
+            if options.useGenMet: estimate.cachedEstimate(r, setup.sysClone({'selectionModifier':'genMet'}), save=True, overwrite=options.overwrite)
+            else: estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
+            if not estimate.isData and not options.noSystematics:
+                if estimate.isSignal: 
+                    map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getSigSysJobs(r, channel,  setup, isFastSim))
+                else: 
+                    map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getBkgSysJobs(r,  channel, setup))
+    		# print estimate.getBkgSysJobs(r,  channel, setup) 
+    
+            logger.info('Done with region: %s', r)
+        logger.info('Done with channel: %s', channel)
+    logger.info('Done.')
 
-for sig in ['T2tt', 'T2bW', 'TChiWZ']: # not sure about TT, T8 etc.
-    isFastSim = estimate.name.count(sig)
-else:
-    isFastSim = False
 
-if isFastSim:
-  setup = setup.sysClone(sys={'reweight':['reweightLeptonFastSimSF'], 'remove':['reweightPU36fb']})
+# Yields Table
 
-#setup = setup.sysClone()
-setup.verbose=True
-def wrapper(args):
-        r,channel,setup = args
-        logger.info("Running estimate for region %s, channel %s for estimator %s"%(r,channel, options.selectEstimator if options.selectEstimator else "None"))
-        res = estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
-        #print "Estimate:", res
-        return (estimate.uniqueKey(r,channel, setup), res )
+allResults = {}
 
-estimate.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
+newRegionsOnly = False
+suffix = ""
+if newRegionsOnly: suffix += "_newRegionsOnly"
 
-jobs=[]
-for channel in channels:
-    for (i, r) in enumerate(allRegions):
-        if options.selectRegion is not None and options.selectRegion != i: continue
-        jobs.append((r, channel, setup))
-        if not estimate.isData and not options.noSystematics:
-            if estimate.isSignal: jobs.extend(estimate.getSigSysJobs(r,channel,  setup, isFastSim))
-            else:                 jobs.extend(estimate.getBkgSysJobs(r,channel,  setup))
+if options.makeYieldsTable and not options.selectRegion and options.noSystematics and not options.selectEstimator:
 
-results = map(wrapper, jobs)
-#print "Results:", results
-for channel in (['all']):
-    for (i, r) in enumerate(allRegions):
-        #print r
-        if options.selectRegion is not None and options.selectRegion != i: continue
-        if options.useGenMet: estimate.cachedEstimate(r, setup.sysClone({'selectionModifier':'genMet'}), save=True, overwrite=options.overwrite)
-        else: estimate.cachedEstimate(r,channel, setup, save=True, overwrite=options.overwrite)
-        if not estimate.isData and not options.noSystematics:
-            if estimate.isSignal: map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getSigSysJobs(r, channel,  setup, isFastSim))
-            else: 
-	    	map(lambda args:estimate.cachedEstimate(*args, save=True, overwrite=options.overwrite), estimate.getBkgSysJobs(r,  channel, setup))
-		# print estimate.getBkgSysJobs(r,  channel, setup) 
+    from StopsCompressed.Tools.user import plot_directory#, analysis_results
 
-        logger.info('Done with region: %s', r)
-    logger.info('Done with channel: %s', channel)
-logger.info('Done.')
+    texdir = os.path.join(plot_directory, 'yields', options.year, 'yieldsTables', sensitivityStudyName) 
+
+    if not os.path.exists(texdir): os.makedirs(texdir)
+    
+    for channel in channels:
+        for res in allEstimators:
+            res.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
+            allResults[res.name] = {} 
+            for (i, r) in enumerate(allRegions):
+                allResults[res.name][r] = res.cachedEstimate(r, channel, setup, overwrite = False)
+
+        estListFull = estList + [x for x in allResults.keys() if x not in estList] # workaround to get ordered table 
+        ofile = "yieldsTable_%s_%s%s.tex"%(sensitivityStudyName, channel, suffix)
+        ofilename = "%s/%s"%(texdir,ofile)
+        print "Writing to ", ofilename 
+        with open(ofilename, "w") as f:
+            f.write("\\documentclass[a4paper,10pt,oneside]{article} \n \\usepackage{caption} \n \\usepackage{rotating} \n")
+            f.write("\\usepackage[a4paper,bindingoffset=0.2in,left=1cm,right=1cm,top=1cm,bottom=1cm,footskip=.25in]{geometry} \n")
+            f.write("\\begin{document}\n")
+            f.write("\\begin{table}\n")
+            f.write("\\centering\n")
+            f.write("\\begin{tabular}{|c" + "|c"*len(allResults) + "|} \n")
+            f.write("\\hline Region & " + " & ".join(res for res in estListFull).replace("_", "\_") + "\\\\ \\hline \\hline \n")
+            for (i, r) in enumerate(allRegions):
+                if newRegionsOnly and not 'Z' in regionNames[i]: continue # selecting new regions only
+                f.write("%s & "%regionNames[i] + " & ".join("${:0.1f} \pm {:1.1f}$".format(allResults[res][r].val, allResults[res][r].sigma) for res in estListFull) + "\\\\ \\hline \n")
+            f.write("\\end{tabular}\n")
+            f.write("\\end{table}\n")
+            f.write("\\end{document}")
+        os.system("cd "+texdir+";pdflatex "+ofile)

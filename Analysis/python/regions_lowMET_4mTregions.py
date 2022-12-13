@@ -260,3 +260,48 @@ regionMapping = { # CR:nSRs
     18:3, 19:3, 20:3,
     21:3, 22:3, 23:3
 }
+
+regionNames = [
+    "CR1aZ", "CR1aX", "CR1aY", 
+    "CR1bZ", "CR1bX", "CR1bY", 
+    "CR1cZ", "CR1cX", "CR1cY",
+    "CR1dZ", "CR1dX", "CR1dY",
+ 
+    "CR2aZ", "CR2aX", "CR2aY", 
+    "CR2bZ", "CR2bX", "CR2bY", 
+    "CR2cZ", "CR2cX", "CR2cY",
+    "CR2dZ", "CR2dX", "CR2dY",
+
+               "SR1laZ", "SR1maZ", "SR1haZ", 
+    "SR1vlaX", "SR1laX", "SR1maX", "SR1haX", 
+    "SR1vlaY", "SR1laY", "SR1maY", "SR1haY",
+ 
+               "SR1lbZ", "SR1mbZ", "SR1hbZ", 
+    "SR1vlbX", "SR1lbX", "SR1mbX", "SR1hbX", 
+    "SR1vlbY", "SR1lbY", "SR1mbY", "SR1hbY",
+ 
+               "SR1lcZ", "SR1mcZ", "SR1hcZ",
+               "SR1lcX", "SR1mcX", "SR1hcX",
+               "SR1lcY", "SR1mcY", "SR1hcY", 
+               
+               "SR1ldZ", "SR1mdZ", "SR1hdZ",
+               "SR1ldX", "SR1mdX", "SR1hdX",
+               "SR1ldY", "SR1mdY", "SR1hdY", 
+
+
+               "SR2laZ", "SR2maZ", "SR2haZ", 
+    "SR2vlaX", "SR2laX", "SR2maX", "SR2haX", 
+    "SR2vlaY", "SR2laY", "SR2maY", "SR2haY",
+ 
+               "SR2lbZ", "SR2mbZ", "SR2hbZ", 
+    "SR2vlbX", "SR2lbX", "SR2mbX", "SR2hbX", 
+    "SR2vlbY", "SR2lbY", "SR2mbY", "SR2hbY",
+ 
+               "SR2lcZ", "SR2mcZ", "SR2hcZ",
+               "SR2lcX", "SR2mcX", "SR2hcX",
+               "SR2lcY", "SR2mcY", "SR2hcY",
+               
+               "SR2ldZ", "SR2mdZ", "SR2hdZ",
+               "SR2ldX", "SR2mdX", "SR2hdX",
+               "SR2ldY", "SR2mdY", "SR2hdY"
+]
