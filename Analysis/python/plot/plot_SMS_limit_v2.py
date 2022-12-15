@@ -62,7 +62,7 @@ def toGraph(name,title,length,x,y):
 
 scale = 1.0 # 4.3 # 0.6 
 
-suffix = "comb" # "mu" "e"
+suffix = "mu" #"comb" # "mu" "e"
 
 if scale != 1.0:
     suffix += "_scaled%s"%str(scale).replace(".","p")
@@ -75,10 +75,14 @@ signalString = options.signal
 
 if options.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
-elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys"]:
-    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
-elif options.sensitivityStudyName in ["baselinePlusLowMET2_redSys_extramTbin"]:
-    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_5mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins128_mt95_5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
 else:
     raise NotImplementedError
 

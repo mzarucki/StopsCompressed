@@ -38,12 +38,18 @@ args = argParser.parse_args()
 if args.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
     from StopsCompressed.Analysis.regions import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
-elif args.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys"]:
-    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET import signalRegions, controlRegions, regionMapping
-elif args.sensitivityStudyName in ["baselinePlusLowMET2_redSys_extramTbin"]:
-    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregions import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_5mTregions"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins128_mt95_5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_5mTregions import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_5mTregions import signalRegions, controlRegions, regionMapping
 else:
     raise NotImplementedError
 
@@ -80,8 +86,8 @@ setup = Setup(year=year)
 
 # Define CR
 # Define channels for CR
-#setup.channels = lepChannels # NOTE = ['mu', 'e']
-setup.channels = allChannels # NOTE: = ['all']
+setup.channels = ['mu'] #lepChannels # NOTE = ['mu', 'e']
+#setup.channels = allChannels # NOTE: = ['all']
 
 # Define regions for CR
 if args.controlOnly:
@@ -99,7 +105,7 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-suffix = "comb" # "mu" "el"
+suffix = "mu" #"comb" # "mu" "el"
 
 if args.scale != 1.0:
     suffix += "_scaled%s"%str(args.scale).replace(".","p")

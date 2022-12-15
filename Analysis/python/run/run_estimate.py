@@ -17,8 +17,10 @@ parser.add_option("--useGenMet",             dest="useGenMet",             defau
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true',  help="overwrite existing results?")
 parser.add_option("--lowMETregion",        action='store_true',            default=False,                                     help="Add low MET region")
 parser.add_option("--l1pT_CR_split",       action='store_true',            default=False,                                     help="lepton pT CR split")
+parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and HT in Z region")
+parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
-parser.add_option("--extra_mT_cut",        action='store_true',            default=False,                                     help="extra mT cut of 130")
+parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4','5','6'],    help="number of mT regions")
 parser.add_option("--CT_cut_value",        action='store',                 default=400,                 choices=[400, 450],   help="CT cut threshold")
 parser.add_option("--isPrompt",            action='store_true',            default=False,                                     help="prompt leptons contributing to regions")
 #parser.add_option("--isdPhiMetJets",       action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), not on dPhiJets")
@@ -30,7 +32,7 @@ from StopsCompressed.Analysis.estimators import *
 if options.l1pT_CR_split:
     _NBINS = 68
     if options.mT_cut_value == 95:
-        if options.extra_mT_cut:
+        if options.mTregions == 4:
             _NBINS = 88
             if options.CT_cut_value == 450:
                 print "Using regions_splitCR_4mTregions_CT450.py for definition of regions."
@@ -47,15 +49,37 @@ if options.l1pT_CR_split:
     elif options.mT_cut_value == 105:
         print "Using regions_mt105_splitCR.py for definition of regions."
         from StopsCompressed.Analysis.regions_mt105_splitCR	                   import controlRegions, signalRegions, regionMapping
-elif options.lowMETregion: 
-    if options.extra_mT_cut:
-        _NBINS = 104
-        print "Using regions_lowMET_4mTregions.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_4mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
     else:
+        raise NotImplementedError
+elif options.lowMETregion: 
+    if options.mTregions == '3':
         _NBINS = 80
         print "Using regions_lowMET.py for definition of regions."
         from StopsCompressed.Analysis.regions_lowMET  	                           import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == '4':
+        if options.splitCTZ:
+            if options.lowHTbin:
+                _NBINS = 104
+                print "Using regions_lowMET_4mTregions_splitCTZ_lowHTbin.py for definition of regions."
+                from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+            else:
+                _NBINS = 104
+                print "Using regions_lowMET_4mTregions_splitCTZ.py for definition of regions."
+                from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ          import controlRegions, signalRegions, regionMapping, regionNames
+        else:
+            _NBINS = 104
+            print "Using regions_lowMET_4mTregions.py for definition of regions."
+            from StopsCompressed.Analysis.regions_lowMET_4mTregions                import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == '5':
+        _NBINS = 128
+        print "Using regions_lowMET_5mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_5mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == '6':
+        _NBINS = 156
+        print "Using regions_lowMET_6mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_6mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
+    else:
+        raise NotImplementedError
 else:
     _NBINS = 56
     if (options.mT_cut_value == 95):
@@ -67,9 +91,11 @@ else:
     elif (options.mT_cut_value == 105):
         print "Using regions_mt105.py for definition of regions."
         from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
+    else:
+        raise NotImplementedError
 
 
-sensitivityStudyName = "{}_nbins{}_mt{}_extramT{}_CT{}_isPrompt{}_lowMETregion{}".format(options.sensitivityStudyName, _NBINS,options.mT_cut_value,options.extra_mT_cut,options.CT_cut_value,options.isPrompt,options.lowMETregion)
+sensitivityStudyName = "{}_nbins{}_mt{}_{}mTregions_CT{}_isPrompt{}_lowMETregion{}".format(options.sensitivityStudyName, _NBINS,options.mT_cut_value,options.mTregions,options.CT_cut_value,options.isPrompt,options.lowMETregion)
 
 # signal
 if options.year == "2016":
