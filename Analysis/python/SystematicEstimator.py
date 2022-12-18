@@ -53,8 +53,8 @@ class SystematicEstimator:
         sysForKey = setup.sys.copy()
         sysForKey['reweight'] = 'TEMP'
         reweightKey ='["' + '", "'.join(sorted([i for i in setup.sys['reweight']])) + '"]' # little hack to preserve order of list when being dumped into json
-        return region, channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)
-        #return '_'.join([str(region), channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)]) # this should give one string
+        #return region, channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True) # FIXME: for some reason self.cache.contains(key) always returns False for more sophisticated SRs (eg. with MET_pt as a variable)
+        return '_'.join([str(region), channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)]) # this should give one string
 
     def replace(self, i, r):
         try:

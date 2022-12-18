@@ -59,7 +59,7 @@ elif options.lowMETregion:
     elif options.mTregions == '4':
         if options.splitCTZ:
             if options.lowHTbin:
-                _NBINS = 104
+                _NBINS = 136
                 print "Using regions_lowMET_4mTregions_splitCTZ_lowHTbin.py for definition of regions."
                 from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
             else:

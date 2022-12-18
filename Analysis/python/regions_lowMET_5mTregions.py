@@ -9,15 +9,13 @@ from StopsCompressed.Analysis.Region import Region
 # NOTE: muon plateau ~ 8 GeV and cut at 6 GeV (~ 85 %)    # NOTE: abs(eta) < 1.5
 # NOTE: jet plateau ~ 140 GeV and cut at 130 GeV (~ 90 %) # NOTE: all jets already have abs(eta) < 2.4
 
-# NOTE: Caches do not like MET cut. Additionally defined in Setup.py. Should be redundant with CT cuts in SRs/CRs.
-
 # nSR = 98
 # nCR = 30
 # nSR + nCR = 128 regions
 
 ### SR1
 SR1 = Region("HT", (300,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) # NOTE: reducing HT cut due to correlation with CT1 
-#SR1 = Region("met_pt", (200,-999)) + Region("HT", (300,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) # NOTE: adding reduced MET cut and reducing HT cut as well due to correlation with CT1
+#SR1 = Region("MET_pt", (200,-999)) + Region("HT", (300,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) # NOTE: adding reduced MET cut and reducing HT cut as well due to correlation with CT1
 signalRegions = []
 controlRegions = []
 region = {}
@@ -133,7 +131,7 @@ CR1eY   = SR1 + Region("mt", (160,-999)) + Region("l1_pt", (30,-999)) + Region("
 
 ### SR2
 SR2 = Region("HT", (300,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0))
-#SR2 = Region("met_pt", (200,-999)) + Region("HT", (300,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) # NOTE: adding reduced MET cut
+#SR2 = Region("MET_pt", (200,-999)) + Region("HT", (300,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) # NOTE: adding reduced MET cut
 
 ## SR2a
 # SR2aZ
