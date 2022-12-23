@@ -81,10 +81,16 @@ elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions", "
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
-elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_5mTregions"]:
-    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins128_mt95_5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_low5mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins128_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_5mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins168_mt95_5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins204_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
 else:
     raise NotImplementedError
 

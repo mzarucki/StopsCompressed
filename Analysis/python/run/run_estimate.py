@@ -20,7 +20,7 @@ parser.add_option("--l1pT_CR_split",       action='store_true',            defau
 parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and HT in Z region")
 parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
-parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4','5','6'],    help="number of mT regions")
+parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', '5','high5','low5','6'],    help="number of mT regions")
 parser.add_option("--CT_cut_value",        action='store',                 default=400,                 choices=[400, 450],   help="CT cut threshold")
 parser.add_option("--isPrompt",            action='store_true',            default=False,                                     help="prompt leptons contributing to regions")
 #parser.add_option("--isdPhiMetJets",       action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), not on dPhiJets")
@@ -70,14 +70,28 @@ elif options.lowMETregion:
             _NBINS = 104
             print "Using regions_lowMET_4mTregions.py for definition of regions."
             from StopsCompressed.Analysis.regions_lowMET_4mTregions                import controlRegions, signalRegions, regionMapping, regionNames
-    elif options.mTregions == '5':
+    elif options.mTregions == 'low5':
+        _NBINS = 132
+        print "Using regions_lowMET_low5mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_low5mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == 'high5':
         _NBINS = 128
-        print "Using regions_lowMET_5mTregions.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_5mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
+        print "Using regions_lowMET_high5mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_high5mTregions               import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == '5' and options.splitCTZ and options.lowHTbin: # FIXME: 5 = high5
+        _NBINS = 168
+        print "Using regions_lowMET_5mTregions_splitCTZ_lowHTbin.py for definition of regions."
+        from StopsCompressed.Analysis.regions_lowMET_5mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == '6':
-        _NBINS = 156
-        print "Using regions_lowMET_6mTregions.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_6mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
+        if options.splitCTZ:
+            if options.lowHTbin:
+                _NBINS = 204
+                print "Using regions_lowMET_6mTregions_splitCTZ_lowHTbin.py for definition of regions."
+                from StopsCompressed.Analysis.regions_lowMET_6mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+        else:
+            _NBINS = 156
+            print "Using regions_lowMET_6mTregions.py for definition of regions."
+            from StopsCompressed.Analysis.regions_lowMET_6mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
     else:
         raise NotImplementedError
 else:
@@ -148,9 +162,9 @@ estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below.
 
 allEstimators = estimators.constructEstimatorList(estList)
 if options.makeYieldsTable: 
-    allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
+    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
 else:
-    allEstimators += [ MCBasedEstimate(name=s.name, sample={channel:s for channel in channels}) for s in signals]
+    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals]
 
 if options.selectEstimator:
     # Select estimate
@@ -219,13 +233,17 @@ if options.selectEstimator:
 
 # Yields Table
 
-allResults = {}
-
-newRegionsOnly = False
-suffix = ""
-if newRegionsOnly: suffix += "_newRegionsOnly"
-
 if options.makeYieldsTable and not options.selectRegion and options.noSystematics and not options.selectEstimator:
+    allResults = {}
+    
+    newRegionsOnly = False
+    suffix = ""
+    if newRegionsOnly: suffix += "_newRegionsOnly"
+    
+    scaleYieldsTable = 0.6
+    
+    if scaleYieldsTable != 1:
+        suffix += "_scaled{}".format(scaleYieldsTable).replace(".","p")
 
     from StopsCompressed.Tools.user import plot_directory#, analysis_results
 
@@ -238,7 +256,7 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
             res.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
             allResults[res.name] = {} 
             for (i, r) in enumerate(allRegions):
-                allResults[res.name][r] = res.cachedEstimate(r, channel, setup, overwrite = False)
+                allResults[res.name][r] = res.cachedEstimate(r, channel, setup, overwrite = False) * scaleYieldsTable
 
         estListFull = estList + [x for x in allResults.keys() if x not in estList] # workaround to get ordered table 
         ofile = "yieldsTable_%s_%s%s.tex"%(sensitivityStudyName, channel, suffix)

@@ -52,9 +52,10 @@ class SystematicEstimator:
     def uniqueKey(self, region, channel, setup):
         sysForKey = setup.sys.copy()
         sysForKey['reweight'] = 'TEMP'
-        reweightKey ='["' + '", "'.join(sorted([i for i in setup.sys['reweight']])) + '"]' # little hack to preserve order of list when being dumped into json
-        #return region, channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True) # FIXME: for some reason self.cache.contains(key) always returns False for more sophisticated SRs (eg. with MET_pt as a variable)
-        return '_'.join([str(region), channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)]) # this should give one string
+        reweightKey = '["' + '", "'.join(sorted([i for i in setup.sys['reweight']])) + '"]' # little hack to preserve order of list when being dumped into json
+        #key = region, channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True) # FIXME: for some reason self.cache.contains(key) always returns False for more sophisticated SRs
+        key = '_'.join([str(region), channel, json.dumps(sysForKey, sort_keys=True).replace('"TEMP"',reweightKey), json.dumps(setup.parameters, sort_keys=True), json.dumps(setup.lumi, sort_keys=True)]) # this should give one string
+        return key
 
     def replace(self, i, r):
         try:
@@ -64,6 +65,7 @@ class SystematicEstimator:
 
     def cachedEstimate(self, region, channel, setup, save=True, overwrite=False):
         key =  self.uniqueKey(region, channel, setup)
+
         if (self.cache and self.cache.contains(key)) and not overwrite:# and not (channel == 'SF' or channel == 'all') : # FIXME: why overwrite dependent on channel?
             res = self.cache.get(key)
             logger.info("Loading cached %s result"%self.name)

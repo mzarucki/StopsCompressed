@@ -24,7 +24,7 @@ else:
     import logging
     logger = logging.getLogger(__name__)
 
-default_HT          = (300,-999)
+default_HT          = (200,-999) # NOTE: reduced from 300 to 200 for lowHT bin 
 default_nISRJet     = (1,-999)
 default_dphiJets    = True
 default_tauVeto     = True
