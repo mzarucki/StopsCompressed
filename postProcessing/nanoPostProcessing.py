@@ -811,8 +811,7 @@ def filler( event ):
     allJetsNotClean = getAllJets(r, [], ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar=None)
     reallyAllJets= getAllJets(r, leptons, ptCut=0, absEtaCut=99, jetVars=jetVarNames, jetCollections=["Jet"], idVar='jetId') # keeping robert's comment: ... yeah, I know.
     allJets      = filter(lambda j:abs(j['eta'])<jetAbsEtaCut, reallyAllJets)
-    #lower jet pt threshold to 20 for sensitivity studies
-    jets         = filter(lambda j:jetId(j, ptCut=20,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets)
+    jets         = filter(lambda j:jetId(j, ptCut=30,   absEtaCut=jetAbsEtaCut, ptVar='pt'), allJets) #lower jet pt threshold to 20 for sensitivity studies # FIXME: reverted back to standard 30
     ISRJets      = filter(lambda j:jetId(j, ptCut=100,  absEtaCut=jetAbsEtaCut), jets) 
 
     if options.year == 2016:
