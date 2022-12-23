@@ -425,7 +425,7 @@ if isMC:
 jetVarNames     = [x.split('/')[0] for x in jetVars]
 
 # those are for writing leptons
-lepVars         = ['pt/F', 'eta/F', 'phi/F', 'pdgId/I', 'cutBased/I', 'miniPFRelIso_all/F', 'pfRelIso03_all/F', 'sip3d/F', 'lostHits/I', 'convVeto/I', 'dxy/F', 'dxyErr/F', 'dz/F', 'dzErr/F', 'charge/I', 'deltaEtaSC/F', 'mediumId/I', 'eleIndex/I', 'muIndex/I', 'index/I', 'wPt/F', 'charge/I', 'isPrompt/O']
+lepVars         = ['pt/F', 'eta/F', 'phi/F', 'pdgId/I', 'cutBased/I', 'miniPFRelIso_all/F', 'pfRelIso03_all/F', 'sip3d/F', 'lostHits/I', 'convVeto/I', 'dxy/F', 'dxyErr/F', 'dz/F', 'dzErr/F', 'charge/I', 'deltaEtaSC/F', 'looseId/I', 'mediumId/I', 'tightId/I', 'eleIndex/I', 'muIndex/I', 'index/I', 'wPt/F', 'charge/I', 'isPrompt/O']
 if isMC:
     lepVars += ['genPartIdx/I', 'dRgen/F']
  
@@ -464,7 +464,7 @@ read_variables += [\
     TreeVariable.fromString('nElectron/I'),
     VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,mediumId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,looseId/I,mediumId/I,tightId/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
     VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,idMVAoldDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
@@ -1001,6 +1001,10 @@ def filler( event ):
             event.l1_dzErr      = leptons[0]['dzErr']
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
+            event.l1_looseId    = leptons[0]['looseId']
+            event.l1_mediumId   = leptons[0]['mediumId']
+            event.l1_tightId    = leptons[0]['tightId']
+            event.l1_cutBased   = leptons[0]['cutBased']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
 	    #print"pt, eta, pdg: ", event.l1_pt, event.l1_eta, abs(event.l1_pdgId)
 	    event.l1_HI = event.l1_relIso03 * min(event.l1_pt,25)
