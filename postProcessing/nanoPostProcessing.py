@@ -917,7 +917,7 @@ def filler( event ):
     event.reweightwPt = 1 
     event.reweightwPtUp = 1 
     event.reweightwPtDown = 1 
-    if isMC and options.year==2016 and not options.EWKinos: # TODO: ISR weights for other years and EWKinos
+    if isMC and options.year in [2016, 2018]: # FIXME: temporarily using 2016 W-pt and tt-ISR weights for 2018 (until they are re-calculated for 2018) 
 	    isr = ISRweight()
 	    wpt = wPtWeight()
 	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
