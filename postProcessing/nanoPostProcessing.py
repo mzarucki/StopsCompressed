@@ -522,7 +522,7 @@ if options.susySignal:
                 logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
 		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
-new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F'] )
+new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F', 'dPhiJetMet/F', 'dPhiLepMet/F', 'dPhiLepJet/F'] )
 new_variables += ["reweightHEM/F"]
 new_variables.append( 'lep[%s]'% ( ','.join(lepVars) ) )
 
@@ -797,6 +797,7 @@ def filler( event ):
     for iLep, lep in enumerate(leptons):
         lep['index'] = iLep
 	lep['wPt']   = get_wPt(r.MET_pt, r.MET_phi,lep)
+
     fill_vector_collection( event, "lep", lepVarNames, leptons)
     event.nlep = len(leptons)
     # getting clean taus against leptons
@@ -844,6 +845,7 @@ def filler( event ):
 
         #event.met_pt    = r.MET_pt_nom 
         #event.met_phi   = r.MET_phi_nom
+
     # Filling jets
     maxNJet = 100
     store_jets = jets 
@@ -869,11 +871,17 @@ def filler( event ):
     #veto events with 3rd jet pt>60
     #if len(jets)<=2 or (len(jets)>2 and jets[2]['pt']<60):
 
-    # dphi between leading(ISR) and subleading jet with pt >60
-    if len (jets) > 1 and jets[1]['pt'] > 60 :
-      event.dphij0j1= deltaPhi(jets[0]['phi'],jets[1]['phi'])  
+    # dPhi between leading (ISR) and subleading jet with pt > 60 GeV
+    if len(jets) > 1 and jets[1]['pt'] > 60:
+        event.dphij0j1= deltaPhi(jets[0]['phi'], jets[1]['phi'])  
     else:
-      event.dphij0j1= -999.
+        event.dphij0j1= -999.
+    
+    # dPhi between leading jet and MET
+    if len(jets) >= 1:
+        event.dPhiJetMet = deltaPhi(jets[0]['phi'], event.met_phi)
+    else:             
+        event.dPhiJetMet = -999.
         
 #    # Filling bjets sorted by pt
 #    maxNBJet = 10
@@ -986,7 +994,7 @@ def filler( event ):
         event.nGoodElectrons  = len(filter( lambda l:abs(l['pdgId'])==11, leptons))
         event.nGoodLeptons    = len(leptons)
         event.nGoodTaus       = len(taus)
-        if len(leptons)>=1 :
+        if len(leptons) >= 1:
             event.l1_pt         = leptons[0]['pt']
             event.l1_eta        = leptons[0]['eta']
             event.l1_phi        = leptons[0]['phi']
@@ -1002,10 +1010,23 @@ def filler( event ):
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
-	    #print"pt, eta, pdg: ", event.l1_pt, event.l1_eta, abs(event.l1_pdgId)
-	    event.l1_HI = event.l1_relIso03 * min(event.l1_pt,25)
-	    #print "hybrin iso: ", event.HI, event.l1_pt, event.l1_relIso03
-	    #print "#"*25
+            #print"pt, eta, pdg: ", event.l1_pt, event.l1_eta, abs(event.l1_pdgId)
+            event.l1_HI = event.l1_relIso03 * min(event.l1_pt,25)
+            #print "hybrin iso: ", event.HI, event.l1_pt, event.l1_relIso03
+            #print "#"*25
+        
+        # dPhi between leading lepton and MET
+        if len(leptons) >= 1:
+            event.dPhiLepMet = deltaPhi(event.l1_phi, event.met_phi)
+        else:             
+            event.dPhiLepMet = -999.
+        
+        # dPhi between leading lepton and leading jet
+        if len(leptons) >= 1 and len(jets) >= 1:
+            event.dPhiLepJet = deltaPhi(event.l1_phi, jets[0]['phi'])
+        else:
+            event.dPhiLepJet = -999.
+
         if isMC:
             #leptonsForSF   = ( leptons[:1] if (isMetSingleLep or isMet) else [] )
             leptonsForSF   = leptons[:1]
