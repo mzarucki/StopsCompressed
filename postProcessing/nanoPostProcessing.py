@@ -1001,10 +1001,6 @@ def filler( event ):
             event.l1_dzErr      = leptons[0]['dzErr']
             event.l1_eleIndex   = leptons[0]['eleIndex']
             event.l1_muIndex    = leptons[0]['muIndex']
-            event.l1_looseId    = leptons[0]['looseId']
-            event.l1_mediumId   = leptons[0]['mediumId']
-            event.l1_tightId    = leptons[0]['tightId']
-            event.l1_cutBased   = leptons[0]['cutBased']
             event.mt            = sqrt (2 * event.l1_pt * event.met_pt * (1 - cos(event.l1_phi - event.met_phi) ) )
 	    #print"pt, eta, pdg: ", event.l1_pt, event.l1_eta, abs(event.l1_pdgId)
 	    event.l1_HI = event.l1_relIso03 * min(event.l1_pt,25)

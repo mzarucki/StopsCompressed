@@ -316,20 +316,21 @@ def eleSelector( lepton_selection, year):
     return func
 
 
-leptonVars_data = ['eta','etaSc', 'pt','phi','dxy', 'dz','tightId', 'pdgId', 'mediumMuonId', 'miniRelIso', 'relIso03', 'sip3d', 'mvaIdSpring15', 'convVeto', 'lostHits', 'jetPtRelv2', 'jetPtRatiov2', 'eleCutId_Spring2016_25ns_v1_ConvVetoDxyDz','genPartFlav']
-leptonVars = leptonVars_data + ['mcMatchId','mcMatchAny','genPartIdx']
+leptonVars_data = ['pt', 'eta', 'phi', 'etaSc', 'dxy', 'dxyErr', 'dz', 'dzErr', 'looseId', 'mediumId', 'tightId', 'cutBased', 'pdgId', 'mediumMuonId', 'miniRelIso', 'relIso03', 'sip3d', 'mvaIdSpring15', 'convVeto', 'lostHits', 'jetPtRelv2', 'jetPtRatiov2', 'eleCutId_Spring2016_25ns_v1_ConvVetoDxyDz']
+leptonVars = leptonVars_data + ['mcMatchId', 'mcMatchAny', 'genPartIdx', 'genPartFlav']
 
-electronVars_data = ['pt','eta','phi','pdgId','cutBased','miniPFRelIso_all','pfRelIso03_all','sip3d','lostHits','convVeto','dxy','dz','charge','deltaEtaSC','mvaFall17V2noIso_WP80', 'vidNestedWPBitmap', 'genPartIdx','genPartFlav']
-electronVars = electronVars_data + []
+electronVars_data = ['pt', 'eta', 'phi', 'pdgId', 'cutBased', 'miniPFRelIso_all', 'pfRelIso03_all', 'sip3d', 'lostHits', 'convVeto', 'dxy', 'dxyErr', 'dz', 'dzErr', 'charge', 'deltaEtaSC', 'mvaFall17V2noIso_WP80', 'vidNestedWPBitmap']
+electronVars = electronVars_data + ['genPartIdx', 'genPartFlav']
 
-muonVars_data = ['pt','eta','phi','pdgId','mediumId','looseId','miniPFRelIso_all','pfRelIso03_all','sip3d','dxy','dz','charge','Wpt','genPartFlav']
-muonVars = muonVars_data + ['genPartIdx']
+muonVars_data = ['pt', 'eta', 'phi', 'pdgId', 'looseId', 'mediumId', 'tightId', 'miniPFRelIso_all', 'pfRelIso03_all', 'sip3d', 'dxy', 'dxyErr', 'dz', 'dzErr', 'charge', 'Wpt']
+muonVars = muonVars_data + ['genPartIdx','genPartFlav']
 
 def getLeptons(c, collVars=leptonVars):
     return [getObjDict(c, 'LepGood_', collVars, i) for i in range(int(getVarValue(c, 'nLepGood')))]
 
 def getMuons(c, collVars=muonVars):
     return [getObjDict(c, 'Muon_', collVars, i) for i in range(int(getVarValue(c, 'nMuon')))]
+
 def getElectrons(c, collVars=electronVars):
     return [getObjDict(c, 'Electron_', collVars, i) for i in range(int(getVarValue(c, 'nElectron')))]
 
@@ -342,7 +343,8 @@ def getGoodElectrons(c, collVars=electronVars, ele_selector = alwaysFalse):
         if ele_selector(l):
             lep.append(l)
         else:
-            print "rejeted ele: " ,l
+            pass
+            #print "rejeted ele: " ,l # NOTE: flooding output 
     return lep
     #return [l for l in getElectrons(c, collVars) if ele_selector(l)]
 
