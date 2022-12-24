@@ -464,7 +464,7 @@ read_variables += [\
     TreeVariable.fromString('nElectron/I'),
     VectorTreeVariable.fromString('Electron[pt/F,eta/F,phi/F,pdgId/I,cutBased/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,lostHits/b,convVeto/O,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I,deltaEtaSC/F,vidNestedWPBitmap/I]'),
     TreeVariable.fromString('nMuon/I'),
-    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,looseId/I,mediumId/I,tightId/I,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
+    VectorTreeVariable.fromString('Muon[pt/F,eta/F,phi/F,pdgId/I,looseId/O,mediumId/O,tightId/O,miniPFRelIso_all/F,pfRelIso03_all/F,sip3d/F,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
     TreeVariable.fromString('nJet/I'),
     VectorTreeVariable.fromString('Tau[pt/F,eta/F,phi/F,idMVAnewDM2017v2/b,idMVAoldDM2017v2/b,neutralIso/F,idAntiMu/O,dxy/F,dxyErr/F,dz/F,dzErr/F,charge/I]'),
     TreeVariable.fromString('nTau/I'),
