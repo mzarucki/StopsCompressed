@@ -452,8 +452,8 @@ if isMC:
     # reading gen particles for top pt reweighting
     read_variables.append( TreeVariable.fromString('nGenPart/I') )
     read_variables.append( TreeVariable.fromString('nISR/I') ) # keep if you run the ISR counter 
-    #new_variables.extend([ 'reweightTopPt/F', 'reweight_nISR/F', 'reweight_nISRUp/F', 'reweight_nISRDown/F'] )
     new_variables.extend([ 'reweight_nISR/F', 'reweight_nISRUp/F', 'reweight_nISRDown/F'] )
+    new_variables.extend([ 'reweight_wPt/F', 'reweight_wPtUp/F', 'reweight_wPtDown/F'] )
     read_variables.append( VectorTreeVariable.fromString('GenPart[pt/F,mass/F,phi/F,eta/F,pdgId/I,genPartIdxMother/I,status/I,statusFlags/I]', nMax=200 )) # default nMax is 100, which would lead to corrupt values in this case
     read_variables.append( TreeVariable.fromString('genWeight/F') )
     read_variables.append( TreeVariable.fromString('nGenJet/I') )
@@ -489,7 +489,8 @@ new_variables += [\
 # Add weight branches for susy signal samples from friend tree
 if has_susy_weight_friend:
     new_variables.extend([ "LHE[weight/F]", "LHE_weight_original/F"] )
-cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018"
+
+cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signals/2018" # FIXME: hard-coded
 
 renormISR = False
 if options.susySignal:
@@ -705,6 +706,7 @@ def filler( event ):
         except KeyError:
             logger.info("Couldn't find weight for %s, %s. Setting weight to 0.", mass1, mass2)
             event.weight = 0.
+
         try:
             event.reweightXSecUp    = signalWeight[(mass1, mass2)]['xSecFacUp']
             event.reweightXSecDown  = signalWeight[(mass1, mass2)]['xSecFacDown']
@@ -737,28 +739,20 @@ def filler( event ):
         event.reweightPUVUp  = nTrueInt_puRWVUp    ( r.Pileup_nTrueInt )
         event.reweightPUVVUp = nTrueInt_puRWVVUp   ( r.Pileup_nTrueInt )
 
-    # top pt reweighting
-    if isMC:
-        #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
-        if 'T2' in options.samples[0]:
-            ISRnorm = getT2ttISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
-        elif 'TChiWZ' in options.samples[0]:
-            ISRnorm = getEWKISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+    if isMC: # FIXME: this could be refactored better with the above signal section # FIXME: different weight names for signals and backgrounds (with and without underscore)?
+        # nISR reweighting for strong signal
+        # NOTE: ISR/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf)
 
-    if not options.EWKinos: # TODO: ISR weights for EWKinos
-	    isr = ISRweight()
-	    #print "mStop",event.mStop
-            #isr.getISRWeight(r, norm=ISRnorm, isFast=True )
-	    #print "ISRnorm: ", ISRnorm
-            event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)              if options.susySignal else 1
-            event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)     if options.susySignal else 1
-            event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1)    if options.susySignal else 1
-	    #print event.reweight_nISR, event.reweight_nISRUp, event.reweight_nISRDown
-	    ### use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
-            #event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm )             if options.susySignal else 1
-            #event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, sigma=1)     if options.susySignal else 1
-            #event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, sigma=-1)    if options.susySignal else 1
-	    #print "ISR reweight: " , event.reweight_nISR
+        # NOTE: use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
+        ISRnorm = getISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+        
+        isr = ISRweight()
+        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)           if options.susySignal else 1
+        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)  if options.susySignal else 1
+        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1) if options.susySignal else 1
+        
+        # top pt reweighting
+        #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
 
     if options.keepAllJets:
         jetAbsEtaCut = 99.
@@ -918,32 +912,27 @@ def filler( event ):
     nonBjets_sys  = {}
     event.reweightwPt = 1 
     event.reweightwPtUp = 1 
-    event.reweightwPtDown = 1 
+    event.reweightwPtDown = 1
+    
+    # weights for backgrounds
     if isMC and options.year in [2016, 2018]: # FIXME: temporarily using 2016 W-pt and tt-ISR weights for 2018 (until they are re-calculated for 2018) 
-	    isr = ISRweight()
-	    wpt = wPtWeight()
-	    event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
-	    event.reweightnISRUp = isr.getWeight(nISRJets=event.nISRJets,sigma=1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
-	    event.reweightnISRDown = isr.getWeight(nISRJets=event.nISRJets,sigma=-1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
-	#    if leptons:
-	#    	    event.reweightwPt  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=0) if sampleName.startswith('WJets') else 1   
-	#    	    event.reweightwPtUp  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=1) if sampleName.startswith('WJets') else 1   
-	#    	    event.reweightwPtDown  = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=-1) if sampleName.startswith('WJets') else 1   
-	#	    print "wpt weight: " , event.reweightwPt, "length of leptons: ", len(leptons)
-	    if leptons and sampleName.startswith('WJets'):
-		    
-		    event.reweightwPt  = wpt.wPtWeight(leptons[0]['wPt']) 
-		    event.reweightwPtUp  = wpt.wPtWeight(leptons[0]['wPt'], sigma=1) 
-		    event.reweightwPtDown  = wpt.wPtWeight(leptons[0]['wPt'], sigma=-1) 
-		    #print "wpt weight: " , event.reweightwPt, "length of leptons: ", len(leptons) 
-		    #print "pt of Wjet: ", leptons[0]['wPt']
-		    #print "wpt Up:", event.reweightwPtUp
-		    #print "wpt down:", event.reweightwPtDown
-	    else:
-		    event.reweightwPt = 1 
-		    event.reweightwPtUp = 1 
-		    event.reweightwPtDown = 1 
-		    #print "wpt weight: " , event.reweightwPt, "lenth of leptons: ", len(leptons)
+        isr = ISRweight()
+        wpt = wPtWeight()
+        event.reweightnISR = isr.getWeight(nISRJets=event.nISRJets) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
+        event.reweightnISRUp = isr.getWeight(nISRJets=event.nISRJets,sigma=1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
+        event.reweightnISRDown = isr.getWeight(nISRJets=event.nISRJets,sigma=-1) if sampleName in ['TTbar','TTJets_DiLept', 'TTJets_SingleLeptonFromT','TTJets_SingleLeptonFromTbar','TTLep_pow','TTSingleLep_pow'] else 1  
+        if leptons:
+       	    event.reweightwPt     = wpt.wPtWeight(wpt=leptons[0]['wPt'])          if sampleName.startswith('WJets') else 1   
+       	    event.reweightwPtUp   = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=1)  if sampleName.startswith('WJets') else 1   
+       	    event.reweightwPtDown = wpt.wPtWeight(wpt=leptons[0]['wPt'],sigma=-1) if sampleName.startswith('WJets') else 1
+ 
+    # W-pt reweighting for EWK signal
+    if isMC: # FIXME: organise better with above signal sections
+        wpt = wPtWeight()
+        if leptons:
+            event.reweight_wPt     = wpt.wPtWeight(leptons[0]['wPt'])           if (options.susySignal and options.EWKinos) else 1
+            event.reweight_wPtUp   = wpt.wPtWeight(leptons[0]['wPt'], sigma=1)  if (options.susySignal and options.EWKinos) else 1
+            event.reweight_wPtDown = wpt.wPtWeight(leptons[0]['wPt'], sigma=-1) if (options.susySignal and options.EWKinos) else 1
 
     if addSystematicVariations:
         for var in ['jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown', 'unclustEnUp', 'unclustEnDown']: # don't use 'jer' as of now

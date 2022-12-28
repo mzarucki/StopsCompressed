@@ -29,9 +29,7 @@ import StopsCompressed.Tools.user as user
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
 
 # use a cacheDir that's read/writable for all of us
-cacheDir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/new"
-#cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
-#cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
+cacheDir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signals"
 
 def get_parser():
     ''' Argument parser for post-processing module.
@@ -59,7 +57,7 @@ logger  = _logger.get_logger(options.logLevel, logFile = logFile)
 import RootTools.core.logger as _logger_rt
 logger_rt = _logger_rt.get_logger(options.logLevel, logFile = None )
 
-cacheDir += "%s/"%options.year
+cacheDir += "/%s"%options.year
 
 ## First, get the normalization per masspoint (done on nanoAOD tuples)
 
@@ -120,12 +118,10 @@ if options.ppSamplePath:
     logger.info("Now extracting the ISR normalization factors.")
 
     from StopsCompressed.samples.helpers import getISRNorm
-    norm = getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir, fillCache=True, overwrite=options.overwrite)
+    norm = getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal = sample.name, cacheDir = cacheDir, fillCache = True, overwrite = options.overwrite)
     logger.info("Got the following norms for the masspoints")
 
     for masspoint in sorted(masspoints):
-        norm = getISRNorm(sample, masspoint[0], masspoint[1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir)
+        norm = getISRNorm(sample, masspoint[0], masspoint[1], masspoints, options.year, signal = sample.name, cacheDir = cacheDir)
         logger.info("%s, %s: %s", masspoint[0], masspoint[1], norm)
     logger.info("Done.")
-
-

@@ -2,7 +2,7 @@
 class ISRweight:
 
   def __init__(self):
-    #Parameters for 2016 data
+    # Parameters for 2016 data (https://indico.cern.ch/event/592621/contributions/2398559/attachments/1383909/2105089/16-12-05_ana_manuelf_isr.pdf)
     self.weights    = [1, 0.920, 0.821, 0.715, 0.662, 0.561, 0.511]
     self.weights_syst = [0.0, 0.040, 0.090, 0.143, 0.169, 0.219, 0.244]
     self.norm       = 1.071

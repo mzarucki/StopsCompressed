@@ -1,13 +1,14 @@
 
 class wPtWeight:
 	def __init__(self):
-		#Parameters for 2016 data
+		# Parameters for 2016 data (https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf)
+        # NOTE: W-pt as a proxy for ISR pt
 		self.params    = { 
-				'norm' : 0.94,
+				'norm' : 0.94, # NOTE: needs to be re-calculated
 				'a0'   : 1.00,
 				'a1'   : 1.052,
-				'a2'   : 1.179, #greater than 1
-				'a3'   : 1.150, #greater than 1
+				'a2'   : 1.179, # greater than 1
+				'a3'   : 1.150, # greater than 1
 				'a4'   : 1.057,
 				'a5'   : 1.000,
 				'a6'   : 0.912,
