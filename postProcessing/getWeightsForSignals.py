@@ -108,7 +108,7 @@ masspoints = signalWeight.keys()
 
 # now, if we already have a post-processed version of the samples, also get the ISR norm for each masspoint
 
-if options.ppSamplePath:
+if options.ppSamplePath and not options.EWKinos: # NOTE: ISR-pt/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf). Module also currently relies on mStop. Therefore, turning off nISR reweighting for EWKinos. 
     import glob
     files = '%s/%s/*.root'%(options.ppSamplePath[0], options.samples[0])
     fileList = [ f for f in  glob.glob(files) if not f.count('signalCounts') ]

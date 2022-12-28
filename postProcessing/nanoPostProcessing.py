@@ -741,15 +741,14 @@ def filler( event ):
 
     if isMC: # FIXME: this could be refactored better with the above signal section # FIXME: different weight names for signals and backgrounds (with and without underscore)?
         # nISR reweighting for strong signal
-        # NOTE: ISR/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf)
-
-        # NOTE: use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
         ISRnorm = getISRNorm(samples[0], mass1, mass2, masspoints, options.year, signal=nameForISR, cacheDir=cache_dir) if renormISR else 1
+        # NOTE: use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
         
         isr = ISRweight()
-        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)           if options.susySignal else 1
-        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)  if options.susySignal else 1
-        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1) if options.susySignal else 1
+        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)           if (options.susySignal and not options.EWKinos) else 1
+        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)  if (options.susySignal and not options.EWKinos) else 1
+        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1) if (options.susySignal and not options.EWKinos) else 1
+        # NOTE: ISR-pt/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf). getISRWeight also relies on mStop. Therefore, turning off nISR reweighting for EWKinos.
         
         # top pt reweighting
         #event.reweightTopPt     = topPtReweightingFunc(getTopPtsForReweighting(r)) * topScaleF if doTopPtReweighting else 1.
@@ -910,9 +909,14 @@ def filler( event ):
     jets_sys      = {}
     bjets_sys     = {}
     nonBjets_sys  = {}
+
     event.reweightwPt = 1 
     event.reweightwPtUp = 1 
     event.reweightwPtDown = 1
+    
+    event.reweight_wPt = 1 
+    event.reweight_wPtUp = 1 
+    event.reweight_wPtDown = 1
     
     # weights for backgrounds
     if isMC and options.year in [2016, 2018]: # FIXME: temporarily using 2016 W-pt and tt-ISR weights for 2018 (until they are re-calculated for 2018) 
