@@ -498,28 +498,23 @@ if options.susySignal:
     logger.info( "Signal weights will be drawn from %s files. If that's not the whole sample, stuff will be wrong.", len(samples[0].files))
     logger.info( "Fetching signal weights..." )
     logger.info( "Weights will be stored in %s for future use.", output_directory)
+
+    from StopsCompressed.samples.helpers import getSignalWeight, getISRNorm
     if options.EWKinos:
-        from StopsCompressed.samples.helpers import getEWKSignalWeight, getEWKISRNorm
-        signalWeight = getEWKSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir )
+        xsec_channel = "TChiWZ_13TeV"
     else: 
-        from StopsCompressed.samples.helpers import getT2ttSignalWeight, getT2ttISRNorm
-        signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir ) #Can use same x-sec/weight for T8bbllnunu as for T2tt
+        xsec_channel = "stop13TeV"
+
+    signalWeight = getSignalWeight(samples[0], lumi = targetLumi, cacheDir = cache_dir, channel = xsec_channel)
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
     
-    if options.EWKinos:
-        if getEWKISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
-        	    renormISR = True
-           	    logger.info("Successfully loaded ISR normalzations.")
-        else:
-                logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
+    if getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal = nameForISR, cacheDir = cache_dir):
+        renormISR = True
+        logger.info("Successfully loaded ISR normalzations.")
     else:
-        if getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=nameForISR, cacheDir = cache_dir):
-        	    renormISR = True
-           	    logger.info("Successfully loaded ISR normalzations.")
-        else:
-                logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
+        logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
 		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
 new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F', 'dPhiJetMet/F', 'dPhiLepMet/F', 'dPhiLepJet/F'] )

@@ -29,7 +29,7 @@ import StopsCompressed.Tools.user as user
 #from StopsDilepton.tools.topPtReweighting import getUnscaledTopPairPtReweightungFunction, getTopPtDrawString, getTopPtsForReweighting
 
 # use a cacheDir that's read/writable for all of us
-cacheDir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/"
+cacheDir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/new"
 #cacheDir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/modified"
 #cacheDir = "/afs/hephy.at/data/cms08/StopsCompressed/signals/caches/"
 
@@ -99,16 +99,16 @@ targetLumi = 1000 #pb-1 Which lumi to normalize to
 
 logger.info("Getting the signal weights for sample %s", options.samples[0])
 
+from StopsCompressed.samples.helpers import getSignalWeight
 if options.EWKinos:
-    from StopsCompressed.samples.helpers import getEWKSignalWeight
-    signalWeight = getEWKSignalWeight( samples[0], lumi = targetLumi, cacheDir = cacheDir)
+    xsec_channel = "TChiWZ_13TeV"
 else:
-    from StopsCompressed.samples.helpers import getT2ttSignalWeight
-    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cacheDir)
+    xsec_channel = "stop13TeV"
 
+signalWeight = getSignalWeight(samples[0], lumi = targetLumi, cacheDir = cacheDir, channel = xsec_channel)
 masspoints = signalWeight.keys()
 
-## now, if we already have a post-processed version of the samples, also get the ISR norm for each masspoint
+# now, if we already have a post-processed version of the samples, also get the ISR norm for each masspoint
 
 if options.ppSamplePath:
     import glob
@@ -119,21 +119,12 @@ if options.ppSamplePath:
 
     logger.info("Now extracting the ISR normalization factors.")
 
-    if options.EWKinos:
-        from StopsCompressed.samples.helpers import getEWKISRNorm # FIXME: needs to be modified according to https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf
-        norm = getEWKISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir, fillCache=True, overwrite=options.overwrite)
-    else: 
-        from StopsCompressed.samples.helpers import getT2ttISRNorm
-        norm = getT2ttISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir, fillCache=True, overwrite=options.overwrite)
-    if options.EWKinos:
-        logger.info("Got the following norms for the masspoints (mCha, mNeu)")
-    else:
-        logger.info("Got the following norms for the masspoints (mStop, mLSP)")
+    from StopsCompressed.samples.helpers import getISRNorm
+    norm = getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir, fillCache=True, overwrite=options.overwrite)
+    logger.info("Got the following norms for the masspoints")
+
     for masspoint in sorted(masspoints):
-        if options.EWKinos:
-            norm = getEWKISRNorm(sample, masspoint[0], masspoint[1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir)
-        else:
-            norm = getT2ttISRNorm(sample, masspoint[0], masspoint[1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir)
+        norm = getISRNorm(sample, masspoint[0], masspoint[1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir)
         logger.info("%s, %s: %s", masspoint[0], masspoint[1], norm)
     logger.info("Done.")
 
