@@ -120,7 +120,7 @@ if options.ppSamplePath:
     logger.info("Now extracting the ISR normalization factors.")
 
     if options.EWKinos:
-        from StopsCompressed.samples.helpers import getEWKISRNorm
+        from StopsCompressed.samples.helpers import getEWKISRNorm # FIXME: needs to be modified according to https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf
         norm = getEWKISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal=sample.name, cacheDir=cacheDir, fillCache=True, overwrite=options.overwrite)
     else: 
         from StopsCompressed.samples.helpers import getT2ttISRNorm

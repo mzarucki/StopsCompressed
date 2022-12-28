@@ -237,7 +237,7 @@ def getT2ttISRNorm(sample, mStop, mLSP, massPoints, year, signal="T2tt", fillCac
         #print cache.get(key)
         return cache.get(key)
 
-def getEWKISRNorm(sample, mCha, mNeu, massPoints, year, signal="TChiWZ", fillCache=False, cacheDir='/tmp/ISR/', overwrite=False): # FIXME: can be merged with getT2ttISRNorm
+def getEWKISRNorm(sample, mCha, mNeu, massPoints, year, signal="TChiWZ", fillCache=False, cacheDir='/tmp/ISR/', overwrite=False): # FIXME: can be merged with getT2ttISRNorm # FIXME: needs to be modified according to https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf
     '''
     Get the normalization for the ISR reweighting. Needs post-processed samples for nISR.
     '''
