@@ -24,15 +24,15 @@ else:
     import logging
     logger = logging.getLogger(__name__)
 
-default_HT          = (200,-999) # NOTE: reduced from 300 to 200 for lowHT bin 
+default_MET         = (200, -999) # NOTE: reduced from 300 to 200 for lowMET region
+default_HT          = (200,-999)
 default_nISRJet     = (1,-999)
 default_dphiJets    = True
-default_tauVeto     = True
 default_hardJets    = True
+default_tauVeto     = True
 default_lepVeto     = True
-default_jetVeto     = True
-default_MET         = (200, -999) # NOTE: reduced from 300 to 200 for lowMET region
-default_prompt      = False
+default_jetVeto     = True # FIXME: unused. Supposed to be hardJets?
+default_l1_prompt   = False
 default_dphiMetJets = False
 
 class Setup:
@@ -46,15 +46,15 @@ class Setup:
 
         #Default cuts and requirements. Those three things below are used to determine the key in the cache!
         self.parameters   = {
+            "MET":          default_MET,
             "HT":           default_HT,
             "nISRJet":      default_nISRJet,
             "dphiJets":     default_dphiJets,
-            "tauVeto":      default_tauVeto,
             "hardJets":     default_hardJets,
+            "tauVeto":      default_tauVeto,
             "lepVeto":      default_lepVeto,
             "jetVeto":      default_jetVeto,
-            "MET":          default_MET,
-            "l1_prompt":    default_prompt,
+            "l1_prompt":    default_l1_prompt,
             "dphiMetJets":  default_dphiMetJets,
         }
 
@@ -214,7 +214,6 @@ class Setup:
         logger.debug("Using cut-string: %s", cut)
         return cut
 
-    #def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto, l1_prompt, channel='all', isFastSim =False):
     def selection(self, dataMC, HT, MET, nISRJet, dphiJets, tauVeto, hardJets, lepVeto, jetVeto, l1_prompt, dphiMetJets, channel='all', isFastSim =False):
         """Define full selection
            dataMC: "Data" or "MC"
@@ -237,47 +236,7 @@ class Setup:
             sysStr = "_" + self.sys['selectionModifier']
 
         res={"cuts":[], "prefixes":[]}
-        if hardJets: 
-            res['prefixes'].append('nHardJetsTo2')
-            res['cuts'].append('Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2')
-
-        if dphiJets:
-            res['prefixes'].append('deltaPhiJets')
-            res['cuts'].append('dphij0j1<2.5')
-
-        if dphiMetJets:
-            res['prefixes'].append('deltaPhiMetJets')
-            res['cuts'].append('dPhiMetJet>=0.5')
-
-        if tauVeto:
-            res['prefixes'].append('tauveto')
-            res['cuts'].append('nGoodTaus==0')
-
-        if lepVeto:
-            res['prefixes'].append('lepSel')
-            res['cuts'].append('Sum$(lep_pt>20)<=1&&l1_pt>0')
-
-        if nISRJet:
-            res['prefixes'].append('nISRJets')
-            res['cuts'].append('nISRJets>=1')
-
-        if l1_prompt:
-            res['prefixes'].append('l1_prompt')
-            res['cuts'].append('l1_isPrompt>=1')
-       # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
-       #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
-       #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
-       #     prefix   = "nISRJet"+str(nISRJet[0])
-       #     if nISRJet[1]>=0:
-       #         njetsstr+= "&&"+"nISRJets"+sysStr+"<="+str(nISRJet[1])
-       #         if nISRJet[1]!=nISRJet[0]: prefix+=str(nISRJet[1])
-#      #          if nJet[1]!=nJet[0]: prefix+="To"+str(nJet[1])
-       #     else:
-       #         prefix+="p"
-       #     res["cuts"].append(njetsstr)
-       #     res["prefixes"].append(prefix)
-
-
+        
         #MET cut
         if MET and not (MET[0]==0 and MET[1]<0):
             assert MET[0]>=0 and (MET[1]>=MET[0] or MET[1]<0), "Not a good MET selection: %r"%MET
@@ -305,7 +264,46 @@ class Setup:
             res["cuts"].append(metsstr)
             res["prefixes"].append(prefix)
 
+        if nISRJet:
+            res['prefixes'].append('nISRJets')
+            res['cuts'].append('nISRJets>=1')
+        
+        if dphiJets:
+            res['prefixes'].append('deltaPhiJets')
+            res['cuts'].append('dphij0j1<2.5')
 
+        if hardJets: 
+            res['prefixes'].append('nHardJetsTo2')
+            res['cuts'].append('Sum$(JetGood_pt>=60&&abs(Jet_eta)<2.4)<=2')
+
+        if tauVeto:
+            res['prefixes'].append('tauveto')
+            res['cuts'].append('nGoodTaus==0')
+
+        if lepVeto:
+            res['prefixes'].append('lepSel')
+            res['cuts'].append('Sum$(lep_pt>20)<=1&&l1_pt>0')
+
+        if l1_prompt:
+            res['prefixes'].append('l1_prompt')
+            res['cuts'].append('l1_isPrompt>=1')
+        
+        if dphiMetJets:
+            res['prefixes'].append('deltaPhiMetJets')
+            res['cuts'].append('dPhiMetJet>=0.5')
+
+       # if nISRJet and not (nISRJet[0]==0 and nISRJet[1]<0):
+       #     assert nISRJet[0]>=0 and (nISRJet[1]>=nISRJet[0] or nISRJet[1]<0), "Not a good nISRJet selection: %r"%nISRJet
+       #     njetsstr = "nISRJets"+sysStr+">="+str(nISRJet[0])
+       #     prefix   = "nISRJet"+str(nISRJet[0])
+       #     if nISRJet[1]>=0:
+       #         njetsstr+= "&&"+"nISRJets"+sysStr+"<="+str(nISRJet[1])
+       #         if nISRJet[1]!=nISRJet[0]: prefix+=str(nISRJet[1])
+       #          if nJet[1]!=nJet[0]: prefix+="To"+str(nJet[1])
+       #     else:
+       #         prefix+="p"
+       #     res["cuts"].append(njetsstr)
+       #     res["prefixes"].append(prefix)
 
         if   channel=="e"  :  chStr = "abs(l1_pdgId)==11"
         elif channel=="mu" :  chStr = "abs(l1_pdgId)==13"
