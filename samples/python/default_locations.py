@@ -102,14 +102,14 @@ class default_locations:
     data_2017_postProcessing_directory = "compstops_UL17v9_nano_v7/Met"
 
     mc_2018_data_directory = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" # EOS
-    signal_2018_postProcessing_directory = "stops_2018_nano_v1/Met/"
+    signal_2018_postProcessing_directory = "softSingleLepton_nanoPP_2018_v1/MetSingleLep/" # private
     #mc_2018_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
     #mc_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/" # latest
-    mc_2018_postProcessing_directory = "stops_2018_nano_v1/Met/" # private
+    mc_2018_postProcessing_directory = "softSingleLepton_nanoPP_2018_v1/MetSingleLep/" # private
     #mc_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/" # latest
 
     data_2018_data_directory = "/eos/user/m/mzarucki/StopsCompressed/nanoTuples/" # private
     #data_2018_data_directory = "/eos/cms/store/group/phys_susy/hephy/StopsCompressed/nanoTuples/" # EOS
     #data_2018_data_directory = "/scratch-cbe/users/dietrich.liko/StopsCompressed/nanoTuples/" # latest
-    data_2018_postProcessing_directory = "stops_2018_nano_v1/Met/" # private
+    data_2018_postProcessing_directory = "softSingleLepton_nanoPP_2018_v1/MetSingleLep/" # private
     #data_2018_postProcessing_directory = "compstops_UL18v9_nano_v7/Met/" # latest

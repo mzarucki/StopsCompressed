@@ -75,13 +75,14 @@ elif options.lowMETregion:
         print "Using regions_lowMET_low5mTregions.py for definition of regions."
         from StopsCompressed.Analysis.regions_lowMET_low5mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == 'high5':
-        _NBINS = 128
-        print "Using regions_lowMET_high5mTregions.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_high5mTregions               import controlRegions, signalRegions, regionMapping, regionNames
-    elif options.mTregions == '5' and options.splitCTZ and options.lowHTbin: # FIXME: 5 = high5
-        _NBINS = 168
-        print "Using regions_lowMET_5mTregions_splitCTZ_lowHTbin.py for definition of regions."
-        from StopsCompressed.Analysis.regions_lowMET_5mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+        if options.splitCTZ and options.lowHTbin:
+            _NBINS = 168
+            print "Using regions_lowMET_high5mTregions_splitCTZ_lowHTbin.py for definition of regions."
+            from StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+        else:
+            _NBINS = 128
+            print "Using regions_lowMET_high5mTregions.py for definition of regions."
+            from StopsCompressed.Analysis.regions_lowMET_high5mTregions               import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == '6':
         if options.splitCTZ:
             if options.lowHTbin:
