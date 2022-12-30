@@ -221,7 +221,7 @@ def get_parser():
 
 options = get_parser().parse_args()
 
-cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signal/2018"
+cache_dir = "/afs/cern.ch/work/m/mzarucki/data/StopsCompressed/cache/signals/2018"
 #cache_dir = "/mnt/hephy/cms/priya.hussain/StopsCompressed/signals/caches/%s/"%(options.year)
 
 # Logging
@@ -301,12 +301,23 @@ samples[0].files = samples[0].files[:maxN]
 # FIXME I'm forcing ==1 signal sample because I don't have a good idea how to construct a sample name from the complicated T2tt_x_y_z_... names
 logger.debug( "Fetching signal weights..." )
 
-if options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options.T8bbstausnu:
-    from StopsCompressed.samples.helpers import getT2ttSignalWeight
-    signalWeight = getT2ttSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir) #Can use same x-sec/weight for T8bbllnunu as for T2tt
-elif options.TChiWZ:
-    from StopsCompressed.samples.helpers import getEWKSignalWeight
-    signalWeight = getEWKSignalWeight( samples[0], lumi = targetLumi, cacheDir = cache_dir, channel = "TChiWZ_13TeV")
+if options.TChiWZ:
+    xsec_channel = "TChiWZ_13TeV"
+    mass1_name = "mCha"
+    mass2_name = "mNeu"
+    mass1_pdgId = 1000024
+    mass2_pdgId = 1000022
+elif options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options.T8bbstausnu:
+    xsec_channel = "stop13TeV"
+    mass1_name = "mStop"
+    mass2_name = "mNeu"
+    mass1_pdgId = 1000006
+    mass2_pdgId = 1000022
+else:
+    raise NotImplementedError
+
+from StopsCompressed.samples.helpers import getSignalWeight
+signalWeight = getSignalWeight(samples[0], lumi = targetLumi, cacheDir = cache_dir, channel = xsec_channel)
 
 logger.debug("Done fetching signal weights.")
 
@@ -409,32 +420,26 @@ print masspoints[job]
 
 # Write one file per mass point for T2tt
 if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or options.T8bbstausnu or options.TChiWZ:
-    
-    if options.T2tt: output = Sample.fromDirectory("T2tt_output", inDir)
-    elif options.T2bW: output = Sample.fromDirectory("T2bW_output", inDir)
-    elif options.TChiWZ: output = Sample.fromDirectory("TChiWZ_output", inDir)
-    elif options.T2bt: output = Sample.fromDirectory("T2bt_output", inDir)
-    elif options.T8bbstausnu:output = Sample.fromDirectory("T8bbstausnu_output", inDir) 
-    else: output = Sample.fromDirectory("T8bbllnunu_output", inDir) #FIXME
+    if options.T2tt:          output = Sample.fromDirectory("T2tt_output", inDir)
+    elif options.T2bW:        output = Sample.fromDirectory("T2bW_output", inDir)
+    elif options.TChiWZ:      output = Sample.fromDirectory("TChiWZ_output", inDir)
+    elif options.T2bt:        output = Sample.fromDirectory("T2bt_output", inDir)
+    elif options.T8bbstausnu: output = Sample.fromDirectory("T8bbstausnu_output", inDir) 
+    else:                     output = Sample.fromDirectory("T8bbllnunu_output", inDir) #FIXME
 
     print "Initialising chain, otherwise first mass point is empty"
     print output.chain
     if options.small: output.reduceFiles( to = 1 )
     for i,s in enumerate(masspoints[job]):
-        if options.TChiWZ:
-            logger.info("Going to write masspoint mCha %i mNeu %i", s[0], s[1])
-            cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)==1000024))=="+str(s[0])+"&&Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022))=="+str(s[1])
-        else: 
-            logger.info("Going to write masspoint mStop %i mNeu %i", s[0], s[1])
-            cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)==1000006))=="+str(s[0])+"&&Max$(GenPart_mass*(abs(GenPart_pdgId)==1000022))=="+str(s[1])
-            #cut = "GenSusyMStop=="+str(s[0])+"&&GenSusyMNeutralino=="+str(s[1]) #FIXME
+        logger.info("Going to write masspoint {} {} {} {}".format(mass1_name, s[0], mass2_name, s[1]))
+        cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))==".format(mass1_pdgId = mass1_pdgId) + str(s[0]) + "&& Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId}))==".format(mass2_pdgId = mass2_pdgId) + str(s[1])
         logger.debug("Using cut %s", cut)
-        if options.T2tt: signal_prefix = 'T2tt_'
-        elif options.T2bW: signal_prefix = 'T2bW_'
-        elif options.TChiWZ: signal_prefix = 'TChiWZ_'
-        elif options.T2bt: signal_prefix = 'T2bt_'
+        if options.T2tt:          signal_prefix = 'T2tt_'
+        elif options.T2bW:        signal_prefix = 'T2bW_'
+        elif options.TChiWZ:      signal_prefix = 'TChiWZ_'
+        elif options.T2bt:        signal_prefix = 'T2bt_'
         elif options.T8bbstausnu: signal_prefix = 'T8bbstausnu_XCha%s_XStau%s_'%(x_cha,x_stau)
-        elif options.T8bbllnunu: signal_prefix = 'T8bbllnunu_XCha%s_XSlep%s_'%(x_cha,x_slep)
+        elif options.T8bbllnunu:  signal_prefix = 'T8bbllnunu_XCha%s_XSlep%s_'%(x_cha,x_slep)
         else: logger.info("Model isn't specified") 
         signalFile = os.path.join(signalDir, signal_prefix + str(s[0]) + '_' + str(s[1]) + '.root' )
         #signalFile = os.path.join(signalDir, 'T2tt_'+str(s[0])+'_'+str(s[1])+'.root' )
@@ -456,8 +461,7 @@ if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or option
             try:
                 u = inF.Get("Events")
             except ReferenceError:
-                if options.TChiWZ: logger.info( "Found null pointer for mCha %i mNeu %i. Continue. ", s[0],s[1])
-                else:              logger.info( "Found null pointer for mStop %i mNeu %i. Continue. ", s[0],s[1]) 
+                logger.info( "Found null pointer for {} {} {} {}. Continue.".format(mass1_name, s[0], mass2_name, s[1]))
                 u = None
 
             if u:
@@ -466,8 +470,7 @@ if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or option
                 if nEvents == nnEvents: logger.debug("All events written")
                 else: logger.debug("Something went wrong, discrepancy between file and tree")
             inF.Close()
-            if options.TChiWZ: logger.info( "Written signal file for masses mCha %i mNeu %i to %s", s[0], s[1], signalFile)
-            else:              logger.info( "Written signal file for masses mStop %i mNeu %i to %s", s[0], s[1], signalFile)
+            logger.info( "Written signal file for masses {} {} {} {} to {}".format(mass1_name, s[0], mass2_name, s[1], signalFile))
         else:
             logger.info( "Found file %s -> Skipping"%(signalFile) )
         logger.info("Done with %s/%s", i+1, len(masspoints[job])) 

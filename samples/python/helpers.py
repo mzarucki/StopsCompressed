@@ -119,6 +119,19 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
     mMax = 2000
     bStr = str(mMax)+',0,'+str(mMax)
 
+    if channel == "stop13TeV":
+        mass1_name = "mStop"
+        mass2_name = "mNeu"
+        mass1_pdgId = 1000006 
+        mass2_pdgId = 1000022
+    elif channel == "TChiWZ_13TeV":
+        mass1_name = "mCha"
+        mass2_name = "mNeu"
+        mass1_pdgId = 1000024
+        mass2_pdgId = 1000022
+    else:
+        raise NotImplementedError
+
     if not os.path.isdir(cacheDir):
         os.makedirs(cacheDir)
     cacheFile = os.path.join(cacheDir, "%s_signalCounts.root"%sample.name)
@@ -126,19 +139,6 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
         logger.info("Loading signal weights from %s", cacheFile)
         hNEvents = getObjFromFile(cacheFile, "hNEvents")
     else:
-        if channel == "stop13TeV":
-            mass1_name = "mStop"
-            mass2_name = "mNeu"
-            mass1_pdgId = 1000006 
-            mass2_pdgId = 1000022
-        elif channel == "TChiWZ_13TeV":
-            mass1_name = "mCha"
-            mass2_name = "mNeu"
-            mass1_pdgId = 1000024
-            mass2_pdgId = 1000022
-        else:
-            raise NotImplementedError
-            
         sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId})):Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))>>hNEvents(".format(mass1_pdgId = mass1_pdgId, mass2_pdgId = mass2_pdgId) + ','.join([bStr, bStr])+")", "", "goff")
 
         hNEvents = ROOT.gDirectory.Get("hNEvents")
@@ -151,11 +151,11 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
             if n>0:
                 signalWeight[(i,j)] = {'weight':lumi*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
 
-		logger.info("Found {mass1_name} %5i {mass2_name} %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)".format(mass1_name = mass1_name, mass2_name = mass2_name), i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'])
+    	        logger.info("Found {mass1_name} %5i {mass2_name} %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)".format(mass1_name = mass1_name, mass2_name = mass2_name), i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'])
 
-#		genEff = genFilter.getEff(i,j) # TODO: add gen filter weights? only after mass point splitting?
-#                signalWeight[(i,j)] = {'weight':lumi*genEff*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
-#		logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f), genEff: %6.6f", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'], genEff)
+                #genEff = genFilter.getEff(i,j) # TODO: add gen filter weights? only after mass point splitting?
+                #         signalWeight[(i,j)] = {'weight':lumi*genEff*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
+                #logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f), genEff: %6.6f", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'], genEff)
     del hNEvents
     return signalWeight
 
