@@ -74,7 +74,7 @@ signalString = options.signal
 #analysis_results = '/scratch/janik.andrejkovic/StopsCompressed/results/2016/fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse/limits/T2tt/T2tt/'
 
 if options.sensitivityStudyName in ["baseline", "baseline_redSys"]:
-    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
 elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
@@ -85,8 +85,8 @@ elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_low5mTregions"
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins128_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
-elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_5mTregions_splitCTZ_lowHTbin"]:
-    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins168_mt95_5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins168_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin"]:
@@ -106,8 +106,12 @@ analysis_results = '/eos/user/m/mzarucki/StopsCompressed/sensitivity/2018/fitAll
 defFile =  os.path.join(analysis_results,"limitResults.root")
 
 #plotDir = os.path.join(plot_directory,'limits', signalString, options.version, yearString, options.subDir)
-#sppit CR
-plotDir = os.path.join(plot_directory,'limits', yearString, signalString, fullSensitivityStudyName, 'FR_limitAll_%s_%s'%(yearString, suffix))
+
+from StopsCompressed.samples.default_locations import default_locations
+samples_tag = default_locations.mc_2018_postProcessing_directory.split("/")[0]
+
+plotDir = os.path.join(plot_directory, samples_tag, 'limits', yearString, signalString, fullSensitivityStudyName, 'FR_limitAll_%s_%s'%(yearString, suffix))
+#plotDir = os.path.join(plot_directory,'limits', yearString, signalString, fullSensitivityStudyName, 'FR_limitAll_%s_%s'%(yearString, suffix))
 #plotDir = os.path.join(plot_directory,'limits',signalString,yearString,'fitAllregion_nbins88_mt95_extramTTrue_CT400_isLNotTFalse','FR_limitAll_'+yearString)
 
 #AN based binning

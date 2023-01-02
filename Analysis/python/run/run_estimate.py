@@ -20,7 +20,7 @@ parser.add_option("--l1pT_CR_split",       action='store_true',            defau
 parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and HT in Z region")
 parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
-parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', '5','high5','low5','6'],    help="number of mT regions")
+parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', 'high5','low5','6'],    help="number of mT regions")
 parser.add_option("--CT_cut_value",        action='store',                 default=400,                 choices=[400, 450],   help="CT cut threshold")
 parser.add_option("--isPrompt",            action='store_true',            default=False,                                     help="prompt leptons contributing to regions")
 #parser.add_option("--isdPhiMetJets",       action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), not on dPhiJets")
@@ -247,8 +247,10 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
         suffix += "_scaled{}".format(scaleYieldsTable).replace(".","p")
 
     from StopsCompressed.Tools.user import plot_directory#, analysis_results
+    from StopsCompressed.samples.default_locations import default_locations
+    samples_tag = default_locations.mc_2018_postProcessing_directory.split("/")[0]
 
-    texdir = os.path.join(plot_directory, 'yields', options.year, 'yieldsTables', sensitivityStudyName) 
+    texdir = os.path.join(plot_directory, samples_tag 'yields', options.year, 'yieldsTables', sensitivityStudyName) 
 
     if not os.path.exists(texdir): os.makedirs(texdir)
     

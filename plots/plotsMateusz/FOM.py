@@ -385,7 +385,10 @@ for p in plotList:
 
     #Save
     if save: #web address: https://mzarucki.web.cern.ch/
-        tag = "2022/StopsCompressed"
+        from StopsCompressed.samples.default_locations import default_locations
+        samples_tag = default_locations.mc_2018_postProcessing_directory.split("/")[0]
+        tag = "2022/StopsCompressed/" + samples_tag
+
         suffix = "_%s_%s_%s"%(cut_name, channel, fom)
         savedir = "/eos/user/m/mzarucki/www/%s/FOM/%s/%s/%s"%(tag, sensitivityStudyName, args.region, channel)
  
