@@ -93,7 +93,6 @@ from Analysis.Tools.u_float    import u_float
 from math                           import sqrt
 #read gen filter efficicency
 from StopsCompressed.Tools.genFilter import genFilter
-genFilter = genFilter(year=year)
 ##https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSYSignalSystematicsRun2
 from Analysis.Tools.cardFileWriter import cardFileWriter
 
@@ -179,12 +178,17 @@ def wrapper(s):
     xSecScale = 1
     
     if hasattr(s, "mStop") and hasattr(s, "mNeu"):
-        genEff = genFilter.getEff(s.mStop,s.mNeu) # TODO: genEff for T2bW, TChiWZ
+        gFilter = genFilter(year = year, signal = "T2tt")
+        genEff = gFilter.getEff(s.mStop,s.mNeu)
         if genEff == 0:
-	        print "no gen eff found in map for %s,%s", s.mStop, s.mNeu
 	        genEff = 0.48 # FIXME: hard-coded value
+	        print "No gen. filter eff. found in map for %s, %s. Setting gen. filter eff. to %s."%(s.mStop, s.mNeu, genEff)
     elif hasattr(s, "mCha") and hasattr(s, "mNeu"): 
-	        genEff = 0.48 # FIXME: hard-coded value for EWKinos 
+        gFilter = genFilter(year = year, signal = "TChiWZ")
+        genEff = gFilter.getEffFromPkl(s.mCha,s.mNeu)
+        if genEff == 0:
+	        genEff = 0.1 # FIXME: hard-coded value for EWKinos 
+	        print "No gen. filter eff. found in map for %s, %s. Setting gen. filter eff. to %s."%(s.mCha, s.mNeu, genEff)
     else:
         genEff = 1
  

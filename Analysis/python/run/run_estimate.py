@@ -163,7 +163,7 @@ estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below.
 
 allEstimators = estimators.constructEstimatorList(estList)
 if options.makeYieldsTable: 
-    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_550_510", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
+    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_500_470", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
 else:
     allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals]
 
@@ -250,7 +250,7 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
     from StopsCompressed.samples.default_locations import default_locations
     samples_tag = default_locations.mc_2018_postProcessing_directory.split("/")[0]
 
-    texdir = os.path.join(plot_directory, samples_tag 'yields', options.year, 'yieldsTables', sensitivityStudyName) 
+    texdir = os.path.join(plot_directory, samples_tag, 'yields', options.year, 'yieldsTables', sensitivityStudyName) 
 
     if not os.path.exists(texdir): os.makedirs(texdir)
     

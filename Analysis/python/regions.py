@@ -10,6 +10,8 @@ from StopsCompressed.Analysis.Region import Region
 
 ### SR1
 SR1 = Region("HT", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5))
+CR1 = SR1 + Region("l1_pt", (30,-999))
+
 signalRegions  = []
 controlRegions = []
 region = {}
@@ -28,8 +30,8 @@ SR1maY  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l
 SR1haY  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999))  
 
 ## CR1a
-CR1aX   = SR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
-CR1aY   = SR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
+CR1aX   = CR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1)) + Region ("CT1", (300,400))   
+CR1aY   = CR1 + Region("mt", (0,60))  + Region("l1_charge", (-1,-1)) + Region ("CT1", (400, -999)) 
 
 ## SR1b
 # SR1bX
@@ -45,8 +47,8 @@ SR1mbY  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("
 SR1hbY  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
 
 ## CR1b
-CR1bX   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
-CR1bY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
+CR1bX   = CR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region ("CT1", (300,400))   
+CR1bY   = CR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1))  + Region ("CT1", (400, -999)) 
 
 ## SR1c
 # SR1cX
@@ -60,11 +62,12 @@ SR1mcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (12,20)) + Region ("CT
 SR1hcY  = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (20,30)) + Region ("CT1", (400,-999)) 
 
 ## CR1c
-CR1cX   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region ("CT1", (300,400))   
-CR1cY   = SR1 + Region("mt", (95,-999)) + Region("l1_pt", (30,-999)) + Region ("CT1", (400, -999)) 
+CR1cX   = CR1 + Region("mt", (95,-999)) + Region ("CT1", (300,400))   
+CR1cY   = CR1 + Region("mt", (95,-999)) + Region ("CT1", (400, -999)) 
 
 ### SR2
 SR2 = Region("HT", (300,-999)) + Region("ISRJets_pt", (325,-999)) + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-2.4, 2.4))
+CR2 = SR2 + Region("l1_pt", (30,-999))
 
 ## SR2a
 # SR2aX
@@ -80,8 +83,8 @@ SR2maY  = SR2 + Region("mt", (0,60))  + Region("l1_pt", (12,20)) + Region ("CT2"
 SR2haY  = SR2 + Region("mt", (0,60))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
 
 ## CR2a
-CR2aX   = SR2 + Region("mt", (0,60))   + Region("l1_pt", (30,-999))+ Region ("CT2", (300,400))   
-CR2aY   = SR2 + Region("mt", (0,60))   + Region("l1_pt", (30,-999))+ Region ("CT2", (400, -999))  
+CR2aX   = CR2 + Region("mt", (0,60))  + Region ("CT2", (300,400))   
+CR2aY   = CR2 + Region("mt", (0,60))  + Region ("CT2", (400, -999))  
 
 ## SR2b
 # SR2bX
@@ -97,8 +100,8 @@ SR2mbY  = SR2 + Region("mt", (60,95))  + Region("l1_pt", (12,20)) + Region ("CT2
 SR2hbY  = SR2 + Region("mt", (60,95))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
 
 ## CR2b
-CR2bX    = SR2 + Region("mt", (60,95))   + Region("l1_pt", (30,-999)) + Region ("CT2", (300,400)) 
-CR2bY    = SR2 + Region("mt", (60,95))   + Region("l1_pt", (30,-999)) + Region ("CT2", (400, -999)) 
+CR2bX   = CR2 + Region("mt", (60,95))  + Region ("CT2", (300,400)) 
+CR2bY   = CR2 + Region("mt", (60,95))  + Region ("CT2", (400, -999)) 
 
 ## SR2c
 # SR2cX
@@ -112,8 +115,8 @@ SR2mcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (12,20)) + Region ("C
 SR2hcY  = SR2 + Region("mt", (95,-999))  + Region("l1_pt", (20,30)) + Region ("CT2", (400,-999)) 
 
 # CR2c
-CR2cX    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region ("CT2", (300,400)) 
-CR2cY    = SR2 + Region("mt", (95,-999))   + Region("l1_pt", (30,-999)) + Region ("CT2", (400, -999)) 
+CR2cX   = CR2 + Region("mt", (95,-999))  + Region ("CT2", (300,400)) 
+CR2cY   = CR2 + Region("mt", (95,-999))  + Region ("CT2", (400, -999)) 
 
 signalRegions = [ # nSR = 44
     SR1vlaX, SR1laX, SR1maX, SR1haX, 

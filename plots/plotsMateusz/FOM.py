@@ -9,6 +9,8 @@ from Workspace.DegenerateStopAnalysis.toolsMateusz.pythonFunctions import *
 from Workspace.DegenerateStopAnalysis.tools.degTools import CutClass, getStackFromHists, setEventListToChains, setup_style, makeDir, anyIn, makeLegend, getFOMPlotFromStacks, makeLumiTag, drawCMSHeader
 from Workspace.HEPHYPythonTools.helpers import getChain, getPlotFromChain, getYieldFromChain
 
+from StopsCompressed.Tools.genFilter import genFilter
+
 from array import array
 from math import pi, sqrt #cos, sin, sinh, log
 
@@ -58,8 +60,9 @@ if year == "2018":
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import WJets_18, TTJets_18, ZInv_18, QCD_18, Others_18
     # Signals
     from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ
-    signals      = signals_T2tt + signals_T2bW + signals_TChiWZ
-    sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # just choosing benchmark signals
+    signals = signals_T2tt + signals_T2bW + signals_TChiWZ
+    sigList = ["T2tt_500_420", "T2tt_500_460", "T2tt_500_490", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 500; mCha = 200 GeV
+    #sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     selSignals = [s for s in signals if s.name in sigList]
     assert len(sigList) == len(selSignals)
 
@@ -117,20 +120,42 @@ lumi_fb = 59.83      #Data.lumi/1000.0
 #weight_       = lambda event, sample: event.weight*event.reweightHEM
 #sample.weight = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightwPt * event.reweightLeptonSF * genEff * lumi_year[event.year]/1000
 
-if sensitivityStudyName in ["baseline"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+if sensitivityStudyName in ["baseline", "baseline_redSys"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
     import StopsCompressed.Analysis.regions as regions # NOTE: 2016 analysis regions
-elif sensitivityStudyName in ["baselinePlusLowMET"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
+elif sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET3", "baselinePlusLowMET3_redSys"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET as regions 
-elif sensitivityStudyName in ["baselinePlusLowMET_extramTbin"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions", "baselinePlusLowMET3_redSys_4mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_low5mTregions", "baselinePlusLowMET3_redSys_low5mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_low5mTregions as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_high5mTregions", "baselinePlusLowMET3_redSys_high5mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins128_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_high5mTregions as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_high5mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_high5mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins168_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ_lowHTbin as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions", "baselinePlusLowMET3_redSys_6mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_6mTregions as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins204_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_6mTregions_splitCTZ_lowHTbin as regions 
 else:
     raise NotImplementedError
 
 cut_name = args.region
-region = getattr(regions, args.region)
+if args.region != "presel":
+    region = getattr(regions, args.region)
 presel = {}
 weight_str = {}
 cut_str = {'Data':{'nMinus1':{}}, 'MC':{'nMinus1':{}}}
@@ -142,8 +167,11 @@ else:
 
 for dataMC in ["Data", "MC"]: # DataMC
     presel[dataMC] = setup.preselection(dataMC, channel = channel)
-    cut_str[dataMC]['full'] = "&&".join([region.cutString(setup.sys['selectionModifier']), presel[dataMC]['cut']])
-    
+    if args.region == "presel":
+        cut_str[dataMC]['full'] = presel[dataMC]['cut']
+    else:
+        cut_str[dataMC]['full'] = "&&".join([region.cutString(setup.sys['selectionModifier']), presel[dataMC]['cut']])
+
     if highWeightVeto:
         cut_str[dataMC]['full'] += "&& weight < 5"
    
@@ -185,7 +213,7 @@ plotLimits = [1, 100]
 denoms=["bkg"]
 noms = sigList
 fom = "SOB" # "SOBSYS", "AMS", "AMSSYS", "AMS1", "AMSc"
-fomLimits = [0,1.5]
+fomLimits = [0,1.2]
 normalize = False
 plotMin = 0.1
     
@@ -222,12 +250,40 @@ for p in plotList:
     #stacks = getBkgSigStacks(samples, plotsDict, cut, sampleList = sampleList, plotList = plotList, normalize = normalize, transparency = normalize, scale = mc_scale, sName = cut_name)
     sigHists = [] 
     for i, sig in enumerate(sigList):
-        hists[sig][p] = getPlotFromChain(selSignals[i].chain, plotsDict[p]['var'], plotsDict[p]['bins'], cut_string, weight = weight_str["MC"], addOverFlowBin = addOverFlowBin, binningIsExplicit = binningIsExplicit, variableBinning = variableBinning, uniqueName = False)
+        if "T2tt" in sig:
+            mStop = int(sig.split('_')[1])
+            mNeu  = int(sig.split('_')[2])
+
+            gFilter = genFilter(year = args.year, signal = "T2tt")
+            genEff  = gFilter.getEff(mStop,mNeu) # NOTE: uses ROOT file insead
+            #genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+        elif "T2bW" in sig:
+            mStop = int(sig.split('_')[1])
+            mNeu  = int(sig.split('_')[2])
+
+            gFilter = genFilter(year = args.year, signal = "T2bW")
+            genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+        elif "TChiWZ" in sig:
+            mCha  = int(sig.split('_')[1])
+            mNeu  = int(sig.split('_')[2])
+
+            gFilter = genFilter(year = args.year, signal = "TChiWZ")
+            genEff  = gFilter.getEffFromPkl(mCha,mNeu)
+        else:
+            raise NotImplementedError
+    
+        hists[sig][p] = getPlotFromChain(selSignals[i].chain, plotsDict[p]['var'], plotsDict[p]['bins'], cut_string, weight = "(%s * %s)"%(weight_str["MC"], genEff), addOverFlowBin = addOverFlowBin, binningIsExplicit = binningIsExplicit, variableBinning = variableBinning, uniqueName = False)
         hists[sig][p].SetName("hist_%s_%s"%(sig,p))
         hists[sig][p].SetMarkerSize(1.2)
-        hists[sig][p].SetMarkerStyle(5)
-        hists[sig][p].SetMarkerColor(2+i)
-        hists[sig][p].SetLineColor(2+i)
+        if "T2" in sig:
+            hists[sig][p].SetMarkerStyle(5)
+            hists[sig][p].SetMarkerColor(ROOT.kRed-(3*(i%3)))
+            hists[sig][p].SetLineColor(ROOT.kRed-(3*(i%3)))
+        else:
+            hists[sig][p].SetMarkerStyle(4)
+            hists[sig][p].SetMarkerSize(0.5)
+            hists[sig][p].SetMarkerColor(ROOT.kCyan+(3*(i%3)))
+            hists[sig][p].SetLineColor(ROOT.kCyan+(3*(i%3)))
         sigHists.append(hists[sig][p])
 
     stacks['sig'][p] = getStackFromHists(sigHists)
