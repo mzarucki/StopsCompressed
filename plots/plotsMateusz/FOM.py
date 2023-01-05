@@ -109,6 +109,14 @@ plotsDict = {
    "nJets"  :{'var':"nJetGood",   "bins":[10,0,10],       "decor":{"title":"Number of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)", "y":"Events", 'log':[0,logy,0]}},
    }
 
+plotsDict_mu = {
+   "mu_looseId" :{'var':"lep_looseId[l1_muIndex[0]]",  "bins":[3,0,3], "decor":{"title":"muLooseId",  "x":"Loose ID ({lepLatex})",  "y":"Events", 'log':[0,logy,0]}},
+   "mu_mediumId":{'var':"lep_mediumId[l1_muIndex[0]]", "bins":[3,0,3], "decor":{"title":"muMediumId", "x":"Medium ID ({lepLatex})", "y":"Events", 'log':[0,logy,0]}},
+   "mu_tightId" :{'var':"lep_tightId[l1_muIndex[0]]",  "bins":[3,0,3], "decor":{"title":"muTightId",  "x":"Tight ID ({lepLatex})",  "y":"Events", 'log':[0,logy,0]}},
+   }
+
+if channel == "mu": plotsDict.update(plotsDict_mu)
+
 from StopsCompressed.Analysis.Setup import Setup
 setup = Setup(year=year)
 
@@ -149,7 +157,10 @@ elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions", "baselinePlusLowM
     import StopsCompressed.Analysis.regions_lowMET_6mTregions as regions 
 elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins204_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
-    import StopsCompressed.Analysis.regions_lowMET_6mTregions_splitCTZ_lowHTbin as regions 
+    import StopsCompressed.Analysis.regions_lowMET_6mTregions_splitCTZ_lowHTbin as regions
+elif sensitivityStudyName in ["extra"]:
+    fullSensitivityStudyName = sensitivityStudyName
+    import StopsCompressed.Analysis.regions_extra as regions 
 else:
     raise NotImplementedError
 
@@ -357,7 +368,7 @@ for p in plotList:
     if plotsDict[p].has_key("decor"):
         if plotsDict[p]['decor'].has_key("y"): decorAxis(refStack, 'y', plotsDict[p]['decor']['y'], tOffset=1.2, tSize = 0.05)
         if plotsDict[p]['decor'].has_key("x"):
-            if 'lep' in p: decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel).replace('all','l'), tOffset=1.4, tSize = 0.04)
+            if any(x in p for x in ['lep', 'mu', 'ele']): decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel).replace('all','l'), tOffset=1.4, tSize = 0.04)
             else:          decorAxis(refStack, 'x', plotsDict[p]['decor']['x'], tOffset=1.4, tSize = 0.04)
         if plotsDict[p]['decor'].has_key("title"): refStack.SetTitle(plotsDict[p]['decor']['title'])
         if plotsDict[p]['decor'].has_key("log"):

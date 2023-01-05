@@ -110,15 +110,39 @@ lumi_fb = 59.83      #Data.lumi/1000.0
 #weight_       = lambda event, sample: event.weight*event.reweightHEM
 #sample.weight = lambda event, sample: event.reweightPU * event.reweightBTag_SF * event.reweightL1Prefire * event.reweightwPt * event.reweightLeptonSF * genEff * lumi_year[event.year]/1000
 
-if sensitivityStudyName in ["baseline"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins56_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionFalse"
+if sensitivityStudyName in ["baseline", "baseline_redSys"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
     import StopsCompressed.Analysis.regions as regions # NOTE: 2016 analysis regions
-elif sensitivityStudyName in ["baselinePlusLowMET"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins80_mt95_extramTFalse_CT400_isPromptFalse_lowMETregionTrue"
-    import StopsCompressed.Analysis.regions_lowMET as regions 
-elif sensitivityStudyName in ["baselinePlusLowMET_extramTbin"]:
-    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_extramTTrue_CT400_isPromptFalse_lowMETregionTrue"
-    import StopsCompressed.Analysis.regions_lowMET_4mTregions as regions 
+elif sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET3", "baselinePlusLowMET3_redSys"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions", "baselinePlusLowMET3_redSys_4mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_low5mTregions", "baselinePlusLowMET3_redSys_low5mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_low5mTregions as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_high5mTregions", "baselinePlusLowMET3_redSys_high5mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins128_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_high5mTregions as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_high5mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_high5mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins168_mt95_high5mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ_lowHTbin as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions", "baselinePlusLowMET3_redSys_6mTregions"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins156_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_6mTregions as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_6mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins204_mt95_6mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_6mTregions_splitCTZ_lowHTbin as regions
+elif sensitivityStudyName in ["extra"]:
+    fullSensitivityStudyName = sensitivityStudyName
+    import StopsCompressed.Analysis.regions_extra as regions
 else:
     raise NotImplementedError
 
