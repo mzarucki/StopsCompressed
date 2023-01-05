@@ -97,16 +97,20 @@ else:
     dataList = []
 
 plotsDict = {
-   "lep_mt" :{'var':"mt",         "bins":[40,0,200],      "decor":{"title":"lepMt",                              "x":"m_{{T}}({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
-   "lep_pt" :{'var':"l1_pt",      "bins":[40,0,200],      "decor":{"title":"lepPt",                              "x":"p_{{T}}({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
-   "lep_eta":{'var':"l1_eta",     "bins":[20,-3,3],       "decor":{"title":"lepEta",                             "x":"#eta({lepLatex})",       "y":"Events", 'log':[0,logy,0]}},
-   "lep_phi":{'var':"l1_phi",     "bins":[20,-3.15,3.15], "decor":{"title":"lepPhi",                             "x":"lep Phi",                "y":"Events", 'log':[0,logy,0]}},
-   "MET"    :{'var':"MET_pt",     "bins":[40,200,1000],   "decor":{"title":"MET",                                "x":"E^{miss}_{T}",           "y":"Events", 'log':[0,logy,0]}},
-   "HT"     :{'var':"HT",         "bins":[40,200,1000],   "decor":{"title":"HT",                                 "x":"H_{T}",                  "y":"Events", 'log':[0,logy,0]}},
-   "CT1"    :{'var':"CT1",        "bins":[40,100,1000],   "decor":{"title":"CT1",                                "x":"C_{T1}",                 "y":"Events", 'log':[0,logy,0]}},
-   "CT2"    :{'var':"CT2",        "bins":[40,100,1000],   "decor":{"title":"CT2",                                "x":"C_{T2}",                 "y":"Events", 'log':[0,logy,0]}},
-   "ISR_pt" :{'var':"ISRJets_pt", "bins":[45,100,1000],   "decor":{"title":"ISR Jet p_{T}",                      "x":"ISR Jet p_{T}",          "y":"Events", 'log':[0,logy,0]}},
-   "nJets"  :{'var':"nJetGood",   "bins":[10,0,10],       "decor":{"title":"Number of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)", "y":"Events", 'log':[0,logy,0]}},
+   "lep_mt"    :{'var':"mt",                 "bins":[40,0,200],      "decor":{"title":"lepMt",                              "x":"m_{{T}}({lepLatex})",                 "y":"Events", 'log':[0,logy,0]}},
+   "lep_pt"    :{'var':"l1_pt",              "bins":[40,0,200],      "decor":{"title":"lepPt",                              "x":"p_{{T}}({lepLatex})",                 "y":"Events", 'log':[0,logy,0]}},
+   "lep_eta"   :{'var':"l1_eta",             "bins":[20,-3,3],       "decor":{"title":"lepEta",                             "x":"#eta({lepLatex})",                    "y":"Events", 'log':[0,logy,0]}},
+   "lep_phi"   :{'var':"l1_phi",             "bins":[20,-3.15,3.15], "decor":{"title":"lepPhi",                             "x":"#phi({lepLatex})",                    "y":"Events", 'log':[0,logy,0]}},
+   "lep_dxy"   :{'var':"l1_dxy",             "bins":[40,-0.02,0.02], "decor":{"title":"lepDxy",                             "x":"d_{{xy}}({lepLatex})",                "y":"Events", 'log':[0,logy,0]}},
+   "lep_dxySig":{'var':"(l1_dxy/l1_dxyErr)", "bins":[40,-2,2],       "decor":{"title":"lepDxySig",                          "x":"d_{{xy}}({lepLatex})/#sigma_{{dxy}}", "y":"Events", 'log':[0,logy,0]}},
+   "lep_dz"    :{'var':"l1_dz",              "bins":[20,-0.1,0.1],   "decor":{"title":"lepDz",                              "x":"d_{{z}}({lepLatex})",                 "y":"Events", 'log':[0,logy,0]}},
+   "lep_dzSig" :{'var':"(l1_dz/l1_dzErr)",   "bins":[40,-2,2],       "decor":{"title":"lepDzSig",                           "x":"d_{{z}}({lepLatex})/#sigma_{{dz}}",   "y":"Events", 'log':[0,logy,0]}},
+   "MET"       :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                                "x":"E^{miss}_{T}",                        "y":"Events", 'log':[0,logy,0]}},
+   "HT"        :{'var':"HT",                 "bins":[40,200,1000],   "decor":{"title":"HT",                                 "x":"H_{T}",                               "y":"Events", 'log':[0,logy,0]}},
+   "CT1"       :{'var':"CT1",                "bins":[40,100,1000],   "decor":{"title":"CT1",                                "x":"C_{T1}",                              "y":"Events", 'log':[0,logy,0]}},
+   "CT2"       :{'var':"CT2",                "bins":[40,100,1000],   "decor":{"title":"CT2",                                "x":"C_{T2}",                              "y":"Events", 'log':[0,logy,0]}},
+   "ISR_pt"    :{'var':"ISRJets_pt",         "bins":[45,100,1000],   "decor":{"title":"ISR Jet p_{T}",                      "x":"ISR Jet p_{T}",                       "y":"Events", 'log':[0,logy,0]}},
+   "nJets"     :{'var':"nJetGood",           "bins":[10,0,10],       "decor":{"title":"Number of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)",              "y":"Events", 'log':[0,logy,0]}},
    }
 
 plotsDict_mu = {
