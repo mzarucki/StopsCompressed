@@ -163,7 +163,7 @@ estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below.
 
 allEstimators = estimators.constructEstimatorList(estList)
 if options.makeYieldsTable: 
-    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_500_470", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table
+    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_500_470", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table # TODO: incorporate generator filter efficiencies
 else:
     allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals]
 
@@ -237,11 +237,11 @@ if options.selectEstimator:
 if options.makeYieldsTable and not options.selectRegion and options.noSystematics and not options.selectEstimator:
     allResults = {}
     
+    scaleYieldsTable = 1
     newRegionsOnly = False
+    
     suffix = ""
     if newRegionsOnly: suffix += "_newRegionsOnly"
-    
-    scaleYieldsTable = 0.6
     
     if scaleYieldsTable != 1:
         suffix += "_scaled{}".format(scaleYieldsTable).replace(".","p")
