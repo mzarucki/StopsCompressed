@@ -107,13 +107,16 @@ plotsDict = {
    "lep_dzSig"     :{'var':"(l1_dz/l1_dzErr)",   "bins":[40,-2,2],       "decor":{"title":"lepDzSig",                      "x":"d_{{z}}/#sigma_{{dz}}({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
    "lep_relIso"    :{'var':"l1_relIso03",        "bins":[30,0,3],        "decor":{"title":"lepRelIso",                     "x":"Relative Isolation ({lepLatex})",      "y":"Events", 'log':[0,logy,0]}},
    "lep_miniRelIso":{'var':"l1_miniRelIso",      "bins":[30,0,3],        "decor":{"title":"lepMiniRelIso",                 "x":"Mini Relative Isolation ({lepLatex})", "y":"Events", 'log':[0,logy,0]}},
-   "lep_HI"        :{'var':"l1_HI",              "bins":[50,0,5],       "decor":{"title":"lepHI",                         "x":"Hybrid Isolation ({lepLatex})",        "y":"Events", 'log':[0,logy,0]}},
-   "MET"           :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"E^{miss}_{T}",                         "y":"Events", 'log':[0,logy,0]}},
+   "lep_HI"        :{'var':"l1_HI",              "bins":[50,0,5],        "decor":{"title":"lepHI",                         "x":"Hybrid Isolation ({lepLatex})",        "y":"Events", 'log':[0,logy,0]}},
+   "MET"           :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"p^{miss}_{T}",                         "y":"Events", 'log':[0,logy,0]}},
    "HT"            :{'var':"HT",                 "bins":[40,200,1000],   "decor":{"title":"HT",                            "x":"H_{T}",                                "y":"Events", 'log':[0,logy,0]}},
    "CT1"           :{'var':"CT1",                "bins":[40,100,1000],   "decor":{"title":"CT1",                           "x":"C_{T1}",                               "y":"Events", 'log':[0,logy,0]}},
    "CT2"           :{'var':"CT2",                "bins":[40,100,1000],   "decor":{"title":"CT2",                           "x":"C_{T2}",                               "y":"Events", 'log':[0,logy,0]}},
    "ISR_pt"        :{'var':"ISRJets_pt",         "bins":[45,100,1000],   "decor":{"title":"ISR Jet p_{T}",                 "x":"ISR Jet p_{T}",                        "y":"Events", 'log':[0,logy,0]}},
    "nJets"         :{'var':"nJetGood",           "bins":[10,0,10],       "decor":{"title":"# of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)",               "y":"Events", 'log':[0,logy,0]}},
+   "dPhiJetMet"    :{'var':"dPhiJetMet",         "bins":[30,0,3.15],     "decor":{"title":"dPhiJetMet",                    "x":"#Delta#phi(Leading Jet,p^{miss}_{T})", "y":"Events", 'log':[0,logy,0]}},
+   "dPhiLepMet"    :{'var':"dPhiLepMet",         "bins":[30,0,3.15],     "decor":{"title":"dPhiLepMet",                    "x":"#Delta#phi({lepLatex},p^{{miss}}_{{T}})",  "y":"Events", 'log':[0,logy,0]}},
+   "dPhiLepJet"    :{'var':"dPhiLepJet",         "bins":[30,0,3.15],     "decor":{"title":"dPhiLepJet",                    "x":"#Delta#phi({lepLatex},Leading Jet)",   "y":"Events", 'log':[0,logy,0]}},
    }
 
 plotsDict_mu = {
@@ -375,7 +378,7 @@ for p in plotList:
     if plotsDict[p].has_key("decor"):
         if plotsDict[p]['decor'].has_key("y"): decorAxis(refStack, 'y', plotsDict[p]['decor']['y'], tOffset=1.2, tSize = 0.05)
         if plotsDict[p]['decor'].has_key("x"):
-            if any(x in p for x in ['lep', 'mu', 'ele']): decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel).replace('all','l'), tOffset=1.4, tSize = 0.04)
+            if any(x in p.lower() for x in ['lep', 'mu', 'ele']): decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel).replace('all','l'), tOffset=1.4, tSize = 0.04)
             else:          decorAxis(refStack, 'x', plotsDict[p]['decor']['x'], tOffset=1.4, tSize = 0.04)
         if plotsDict[p]['decor'].has_key("title"): refStack.SetTitle(plotsDict[p]['decor']['title'])
         if plotsDict[p]['decor'].has_key("log"):

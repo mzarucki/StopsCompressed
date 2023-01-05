@@ -86,17 +86,19 @@ if selSignals:
     samplesDict[selSignals[0].name] = selSignals[0]
 
 plotsDict = {
-   "lep_mt" :{'var':"mt",         "bins":[40,0,200],      "decor":{"title":"lepMt",                              "x":"m_{{T}}({lepLatex})",    "y":"Events", 'log':[0,log,0]}},
-   "lep_pt" :{'var':"l1_pt",      "bins":[40,0,200],      "decor":{"title":"lepPt",                              "x":"p_{{T}}({lepLatex})",    "y":"Events", 'log':[0,log,0]}},
-   "lep_eta":{'var':"l1_eta",     "bins":[20,-3,3],       "decor":{"title":"lepEta",                             "x":"#eta({lepLatex})",       "y":"Events", 'log':[0,log,0]}},
-   "lep_phi":{'var':"l1_phi",     "bins":[20,-3.15,3.15], "decor":{"title":"lepPhi",                             "x":"lep Phi",                "y":"Events", 'log':[0,log,0]}},
-   "MET"    :{'var':"MET_pt",     "bins":[40,200,1000],   "decor":{"title":"MET",                                "x":"E^{miss}_{T}",           "y":"Events", 'log':[0,log,0]}},
-   "genMET" :{'var':"GenMET_pt",  "bins":[40,200,1000],   "decor":{"title":"Generated MET",                      "x":"Gen. E^{miss}_{T}",      "y":"Events", 'log':[0,log,0]}},
-   "HT"     :{'var':"HT",         "bins":[40,200,1000],   "decor":{"title":"HT",                                 "x":"H_{T}",                  "y":"Events", 'log':[0,log,0]}},
-   "CT1"    :{'var':"CT1",        "bins":[40,100,1000],   "decor":{"title":"CT1",                                "x":"C_{T1}",                 "y":"Events", 'log':[0,log,0]}},
-   "CT2"    :{'var':"CT2",        "bins":[40,100,1000],   "decor":{"title":"CT2",                                "x":"C_{T2}",                 "y":"Events", 'log':[0,log,0]}},
-   "ISR_pt" :{'var':"ISRJets_pt", "bins":[45,100,1000],   "decor":{"title":"ISR Jet p_{T}",                      "x":"ISR Jet p_{T}",          "y":"Events", 'log':[0,log,0]}},
-   "nJets"  :{'var':"nJetGood",   "bins":[10,0,10],       "decor":{"title":"Number of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)", "y":"Events", 'log':[0,log,0]}},
+   "lep_mt" :{'var':"mt",             "bins":[40,0,200],      "decor":{"title":"lepMt",                         "x":"m_{{T}}({lepLatex})",    "y":"Events", 'log':[0,log,0]}},
+   "lep_pt" :{'var':"l1_pt",          "bins":[40,0,200],      "decor":{"title":"lepPt",                         "x":"p_{{T}}({lepLatex})",    "y":"Events", 'log':[0,log,0]}},
+   "lep_eta":{'var':"l1_eta",         "bins":[20,-3,3],       "decor":{"title":"lepEta",                        "x":"#eta({lepLatex})",       "y":"Events", 'log':[0,log,0]}},
+   "lep_phi":{'var':"l1_phi",         "bins":[60,-3.15,3.15], "decor":{"title":"lepPhi",                        "x":"#phi({lepLatex})",       "y":"Events", 'log':[0,log,0]}},
+   "MET"    :{'var':"MET_pt",         "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"E^{miss}_{T}",           "y":"Events", 'log':[0,log,0]}},
+   "MET_phi":{'var':"MET_phi",        "bins":[60,-3.15,3.15], "decor":{"title":"METPhi",                        "x":"#phi(E^{miss}_{T})",     "y":"Events", 'log':[0,log,0]}},
+   "genMET" :{'var':"GenMET_pt",      "bins":[40,200,1000],   "decor":{"title":"Generated MET",                 "x":"Gen. E^{miss}_{T}",      "y":"Events", 'log':[0,log,0]}},
+   "HT"     :{'var':"HT",             "bins":[40,200,1000],   "decor":{"title":"HT",                            "x":"H_{T}",                  "y":"Events", 'log':[0,log,0]}},
+   "CT1"    :{'var':"CT1",            "bins":[40,100,1000],   "decor":{"title":"CT1",                           "x":"C_{T1}",                 "y":"Events", 'log':[0,log,0]}},
+   "CT2"    :{'var':"CT2",            "bins":[40,100,1000],   "decor":{"title":"CT2",                           "x":"C_{T2}",                 "y":"Events", 'log':[0,log,0]}},
+   "ISR_pt" :{'var':"ISRJets_pt",     "bins":[45,100,1000],   "decor":{"title":"ISR Jet p_{T}",                 "x":"ISR Jet p_{T}",          "y":"Events", 'log':[0,log,0]}},
+   "ISR_phi":{'var':"JetGood_phi[0]", "bins":[60,-3.15,3.15], "decor":{"title":"ISRPhi",                        "x":"#phi(ISR Jet)",          "y":"Events", 'log':[0,log,0]}},
+   "nJets"  :{'var':"nJetGood",       "bins":[10,0,10],       "decor":{"title":"# of Jets with p_{T} > 30 GeV", "x":"N(Jets p_{T} > 30 GeV)", "y":"Events", 'log':[0,log,0]}},
    }
 
 from StopsCompressed.Analysis.Setup import Setup
