@@ -17,7 +17,9 @@ parser.add_option("--useGenMet",             dest="useGenMet",             defau
 parser.add_option("--overwrite",             dest="overwrite",             default=False,               action='store_true',  help="overwrite existing results?")
 parser.add_option("--lowMETregion",        action='store_true',            default=False,                                     help="Add low MET region")
 parser.add_option("--l1pT_CR_split",       action='store_true',            default=False,                                     help="lepton pT CR split")
-parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and HT in Z region")
+parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and 2 HT bins in Z region")
+parser.add_option("--splitCTZ3",           action='store_true',            default=False,                                     help="Split CT into MET and 3 HT bins in Z region")
+parser.add_option("--tightIPZ",            action='store_true',            default=False,                                     help="Tight IP cuts in Z region")
 parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
 parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', 'high5','low5','6'],    help="number of mT regions")
@@ -75,10 +77,20 @@ elif options.lowMETregion:
         print "Using regions_lowMET_low5mTregions.py for definition of regions."
         from StopsCompressed.Analysis.regions_lowMET_low5mTregions                    import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == 'high5':
-        if options.splitCTZ and options.lowHTbin:
-            _NBINS = 168
-            print "Using regions_lowMET_high5mTregions_splitCTZ_lowHTbin.py for definition of regions."
-            from StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+        if options.lowHTbin:
+            if options.splitCTZ:
+                _NBINS = 168
+                print "Using regions_lowMET_high5mTregions_splitCTZ_lowHTbin.py for definition of regions."
+                from StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
+            elif options.splitCTZ3:
+                if options.tightIPZ:
+                    _NBINS = 208
+                    print "Using regions_lowMET_high5mTregions_splitCTZ3_lowHTbin_tightIPZ.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ3_lowHTbin_tightIPZ import controlRegions, signalRegions, regionMapping, regionNames
+                else:
+                    _NBINS = 208
+                    print "Using regions_lowMET_high5mTregions_splitCTZ3_lowHTbin.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_high5mTregions_splitCTZ3_lowHTbin import controlRegions, signalRegions, regionMapping, regionNames
         else:
             _NBINS = 128
             print "Using regions_lowMET_high5mTregions.py for definition of regions."
@@ -238,7 +250,7 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
     allResults = {}
     
     scaleYieldsTable = 1
-    newRegionsOnly = False
+    newRegionsOnly = True
     
     suffix = ""
     if newRegionsOnly: suffix += "_newRegionsOnly"

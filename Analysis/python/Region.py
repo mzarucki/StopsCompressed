@@ -1,5 +1,5 @@
-allowedVars = ["HT", "mt", "l1_pdgId", "abs(l1_pdgId)", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt", "l1_charge", "MET_pt"] #NOTE: Caches do not like MET_pt or met_pt?
-texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{T}^{miss})", "l1_pdgId":"pdgId(l)", "abs(l1_pdgId)":"\abs{pdgId(l)}", "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}", "l1_charge":"charge(l)", "MET_pt":"p_{T}^{miss}"} #NOTE: Caches do not like MET_pt or met_pt?
+allowedVars = ["HT", "mt", "l1_pdgId", "abs(l1_pdgId)", "abs(l1_dxy)", "abs(l1_dz)", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt", "l1_charge", "MET_pt"]
+texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{T}^{miss})", "l1_pdgId":"pdgId(l)", "abs(l1_pdgId)":"\abs{pdgId(l)}", "abs(l1_dxy)":"\abs{d_{xy}(l)}", "abs(l1_dz)":"\abs{d_{z}(l)}", "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}", "l1_charge":"charge(l)", "MET_pt":"p_{T}^{miss}"}
 
 aliases     = { }
 
