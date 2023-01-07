@@ -250,7 +250,7 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
     allResults = {}
     
     scaleYieldsTable = 1
-    newRegionsOnly = True
+    newRegionsOnly = False
     
     suffix = ""
     if newRegionsOnly: suffix += "_newRegionsOnly"
@@ -278,17 +278,17 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
         ofilename = "%s/%s"%(texdir,ofile)
         print "Writing to ", ofilename 
         with open(ofilename, "w") as f:
-            f.write("\\documentclass[a4paper,10pt,oneside]{article} \n \\usepackage{caption} \n \\usepackage{rotating} \n")
+            f.write("\\documentclass[a4paper,10pt,oneside]{article} \n \\usepackage{caption} \n \\usepackage{rotating} \n \\usepackage{longtable}")
             f.write("\\usepackage[a4paper,bindingoffset=0.2in,left=1cm,right=1cm,top=1cm,bottom=1cm,footskip=.25in]{geometry} \n")
             f.write("\\begin{document}\n")
-            f.write("\\begin{table}\n")
+            #f.write("\\begin{table}\n")
             f.write("\\centering\n")
-            f.write("\\begin{tabular}{|c" + "|c"*len(allResults) + "|} \n")
+            f.write("\\begin{longtable}{|c" + "|c"*len(allResults) + "|} \n")
             f.write("\\hline Region & " + " & ".join(res for res in estListFull).replace("_", "\_") + "\\\\ \\hline \\hline \n")
             for (i, r) in enumerate(allRegions):
                 if newRegionsOnly and not 'Z' in regionNames[i]: continue # selecting new regions only
                 f.write("%s & "%regionNames[i] + " & ".join("${:0.1f} \pm {:1.1f}$".format(allResults[res][r].val, allResults[res][r].sigma) for res in estListFull) + "\\\\ \\hline \n")
-            f.write("\\end{tabular}\n")
-            f.write("\\end{table}\n")
+            f.write("\\end{longtable}\n")
+            #f.write("\\end{table}\n")
             f.write("\\end{document}")
         os.system("cd "+texdir+";pdflatex "+ofile)

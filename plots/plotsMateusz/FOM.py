@@ -108,6 +108,7 @@ plotsDict = {
    "lep_relIso"    :{'var':"l1_relIso03",        "bins":[30,0,3],        "decor":{"title":"lepRelIso",                     "x":"Relative Isolation ({lepLatex})",         "y":"Events", 'log':[0,logy,0]}},
    "lep_miniRelIso":{'var':"l1_miniRelIso",      "bins":[30,0,3],        "decor":{"title":"lepMiniRelIso",                 "x":"Mini Relative Isolation ({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
    "lep_HI"        :{'var':"l1_HI",              "bins":[50,0,5],        "decor":{"title":"lepHI",                         "x":"Hybrid Isolation ({lepLatex})",           "y":"Events", 'log':[0,logy,0]}},
+   "lep_charge"    :{'var':"l1_charge",          "bins":[3,-1,1],        "decor":{"title":"lepCharge",                     "x":"Charge ({lepLatex})",                     "y":"Events", 'log':[0,logy,0]}},
    "MET"           :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"p^{miss}_{T}",                            "y":"Events", 'log':[0,logy,0]}},
    "HT"            :{'var':"HT",                 "bins":[40,200,1000],   "decor":{"title":"HT",                            "x":"H_{T}",                                   "y":"Events", 'log':[0,logy,0]}},
    "CT1"           :{'var':"CT1",                "bins":[40,100,1000],   "decor":{"title":"CT1",                           "x":"C_{T1}",                                  "y":"Events", 'log':[0,logy,0]}},
