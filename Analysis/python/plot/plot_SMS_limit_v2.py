@@ -8,7 +8,7 @@ T8bbllnunu need some manual cleaning
 
 #!/usr/bin/env python
 import ROOT
-import sys, ctypes, os, array
+import sys, ctypes, os, shutil, array
 from StopsCompressed.Tools.helpers                import getObjFromFile
 from StopsCompressed.Tools.interpolate            import interpolate, rebin
 from StopsCompressed.Tools.niceColorPalette       import niceColorPalette
@@ -601,3 +601,6 @@ brazilPlot = smsPlotBrazil(modelname, fileIN.HISTOGRAM, fileIN.OBSERVED, fileIN.
 brazilPlot.Draw()
 brazilPlot.Save("%sBAND" %outputname)
 
+if os.path.isfile('tmp.root'):
+    shutil.copyfile('tmp.root', '%sObjects.root'%outputname) # keeping all objects for simultaneous plotting
+    os.remove('tmp.root') # remove temp file
