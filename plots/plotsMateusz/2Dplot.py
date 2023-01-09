@@ -9,6 +9,8 @@ from Workspace.DegenerateStopAnalysis.toolsMateusz.pythonFunctions import *
 from Workspace.DegenerateStopAnalysis.tools.degTools import getStackFromHists, setEventListToChains, setup_style, makeDir, anyIn, makeLegend, getFOMPlotFromStacks, makeLumiTag, drawCMSHeader
 from Workspace.HEPHYPythonTools.helpers import getChain, getPlotFromChain, getYieldFromChain
 
+from StopsCompressed.Tools.genFilter import genFilter
+
 #Sets TDR style
 #setup_style()
 
@@ -24,6 +26,7 @@ parser.add_argument("--region",   dest = "region",  help = "Analysis region", ty
 parser.add_argument("--year",     dest = "year",    help = "Year", type = str, default = "2018")
 parser.add_argument("--channel",  dest = "channel", help = "Lepton channel", type = str, choices = ['all', 'mu', 'e'], default = "all")
 parser.add_argument("--samples", dest="samples",  help="Samples", type=str, default=["T2tt_550_510"], nargs = "+")
+parser.add_argument("--maxZ", dest="maxZ",  help="Z-axis maximum", type=int, default=None)
 parser.add_argument("--log", dest="logy",  help="Log scale", type=int, default=1)
 parser.add_argument("--save", dest="save",  help="Toggle Save", type=int, default=1)
 parser.add_argument("--verbose", dest = "verbose",  help = "Verbosity switch", type = int, default = 0)
@@ -42,6 +45,7 @@ var1 = args.var1
 var2 = args.var2
 #slice = args.slice
 samples = args.samples 
+maxZ = args.maxZ
 log = args.logy
 save = args.save
 verbose = args.verbose
@@ -166,13 +170,36 @@ else:
 
 weight_str = presel["weightStr"] + "* {lumi_weight}".format(lumi_weight = lumi_fb)
 
-print "Using cut string: ", cut_str
-print "Using weight string: ", weight_str
+#print "Using cut string: ", cut_str
+#print "Using weight string: ", weight_str
 
 hists = {}
 
 for i, samp in enumerate(samples):
+    if "T2tt" in samp:
+        mStop = int(samp.split('_')[1])
+        mNeu  = int(samp.split('_')[2])
+
+        gFilter = genFilter(year = args.year, signal = "T2tt")
+        #genEff  = gFilter.getEff(mStop,mNeu) # NOTE: uses ROOT file insead # FIXME: for some reason messes up plotting
+        genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+    elif "T2bW" in samp:
+        mStop = int(samp.split('_')[1])
+        mNeu  = int(samp.split('_')[2])
+
+        gFilter = genFilter(year = args.year, signal = "T2bW")
+        genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+    elif "TChiWZ" in samp:
+        mCha  = int(samp.split('_')[1])
+        mNeu  = int(samp.split('_')[2])
+
+        gFilter = genFilter(year = args.year, signal = "TChiWZ")
+        genEff  = gFilter.getEffFromPkl(mCha,mNeu)
+    else:
+        genEff = 1
+   
     hists[samp] = make2DHist(samplesDict[samp].chain, plotsDict[var1]['var'], plotsDict[var2]['var'], "(%s)*(%s)"%(cut_str,weight_str), plotsDict[var1]['bins'][0], plotsDict[var1]['bins'][1], plotsDict[var1]['bins'][2], plotsDict[var2]['bins'][0], plotsDict[var2]['bins'][1], plotsDict[var2]['bins'][2])
+    if genEff != 1: hists[samp].Scale(genEff)
     hists[samp].SetName("2D_" + var1 + "_" + var2)
     hists[samp].SetTitle(plotsDict[var1]['decor']['title'] + " vs " + plotsDict[var2]['decor']['title'] + " Distribution (%s)"%args.region)
     hists[samp].GetXaxis().SetTitle("%s / GeV"%plotsDict[var1]['decor']['x'])
@@ -184,13 +211,18 @@ for i, samp in enumerate(samples):
         dOpt = "scat" #"box"
         dOpt += " same"
         #if i > 1: dOpt += " same"
-        if 'T2' in samp:
+        if 'T2' in samp or 'TChi' in samp:
             hists[samp].SetMarkerStyle(3)
         hists[samp].SetMarkerColor(samplesDict[samp].color)
         hists[samp].Draw(dOpt)
     else:
         hists[samp].Draw("COLZ") #CONT1-5 #plots the graph with axes and points
-    hists[samp].GetZaxis().SetRangeUser(0, hists[samp].GetMaximum()*1.5)
+
+    if maxZ:
+        hists[samp].GetZaxis().SetRangeUser(0, maxZ)
+    else:
+        hists[samp].GetZaxis().SetRangeUser(0, hists[samp].GetMaximum()*1.5)
+
     if log: ROOT.gPad.SetLogz() 
     #alignStats(hist)
    
@@ -204,6 +236,8 @@ if save: #web address: https://mzarucki.web.cern.ch/
     tag = "2022/StopsCompressed/" + samples_tag
 
     suffix = "_%s_%s"%(cut_name, channel)
+    if maxZ: suffix += "_maxZ%i"%maxZ
+
     savedir = "/eos/user/m/mzarucki/www/%s/2Dplots/%s/%s/%s/%svs%s"%(tag, sensitivityStudyName, args.region, channel, var1, var2)
 
     if len(samples) > 1:
