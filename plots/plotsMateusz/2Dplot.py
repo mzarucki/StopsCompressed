@@ -128,6 +128,9 @@ elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions", "baselinePlusLowM
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_ratioCTZ", "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ as regions
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin as regions

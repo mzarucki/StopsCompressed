@@ -120,6 +120,7 @@ plotsDict = {
    "dPhiLepMet"       :{'var':"dPhiLepMet",           "bins":[30,0,3.15],     "decor":{"title":"dPhiLepMet",                    "x":"#Delta#phi({lepLatex},p^{{miss}}_{{T}})", "y":"Events", 'log':[0,logy,0]}},
    "dPhiLepJet"       :{'var':"dPhiLepJet",           "bins":[30,0,3.15],     "decor":{"title":"dPhiLepJet",                    "x":"#Delta#phi({lepLatex},Leading Jet)",      "y":"Events", 'log':[0,logy,0]}},
    "ratio_MET-HT"     :{'var':"(MET_pt/HT)",          "bins":[40,0,2],        "decor":{"title":"ratioMETHT",                    "x":"p^{miss}_{T}/H_{T}",                      "y":"Events", 'log':[0,logy,0]}},
+   "ratio_HT-MET"     :{'var':"(HT/MET_pt)",          "bins":[40,0,2],        "decor":{"title":"ratioHTMET",                    "x":"H_{T}/p^{miss}_{T}",                      "y":"Events", 'log':[0,logy,0]}},
    "ratio_MET-lepPt"  :{'var':"(MET_pt/l1_pt)",       "bins":[30,0,30],       "decor":{"title":"ratioMETlepPt",                 "x":"p^{{miss}}_{{T}}/p_{{T}}({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
    "ratio_MET-lepWpt" :{'var':"(MET_pt/lep_wPt)",     "bins":[40,0.8,1.2],    "decor":{"title":"ratioMETlepWpt",                "x":"p^{{miss}}_{{T}}/W-p_{{T}}({lepLatex})",  "y":"Events", 'log':[0,logy,0]}},
    "recoil_ISR-MET"   :{'var':"(ISRJets_pt/MET_pt)",  "bins":[40,0,1.5],      "decor":{"title":"recoilISRMET",                  "x":"ISR Jet p_{T}/p^{miss}_{T}",              "y":"Events", 'log':[0,logy,0]}},
@@ -159,6 +160,9 @@ elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions", "baselinePlusLowM
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ as regions
+elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_ratioCTZ", "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ as regions
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin as regions 

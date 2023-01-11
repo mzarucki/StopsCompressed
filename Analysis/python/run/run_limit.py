@@ -47,6 +47,9 @@ elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions"]:
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ          import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ          import signalRegions, controlRegions, regionMapping
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin import signalRegions, controlRegions, regionMapping
