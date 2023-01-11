@@ -76,8 +76,7 @@ if year == "2018":
     # Data
     if getData:
         from StopsCompressed.samples.nanoTuples_Run2018_postProcessed import Run2018, MET_Run2018
-        Data = MET_Run2018 # FIXME
-        #Data = Run2018
+        Data = Run2018
 
     WJets        = WJets_18
     Top          = TTJets_18
