@@ -130,18 +130,23 @@ elif options.lowMETregion:
     else:
         raise NotImplementedError
 else:
-    _NBINS = 56
-    if (options.mT_cut_value == 95):
-        print "Using regions.py for definition of regions."
-        from StopsCompressed.Analysis.regions	               import controlRegions, signalRegions, regionMapping, regionNames
-    elif (options.mT_cut_value == 100):
-        print "Using regions_mT100.py for definition of regions."
-        from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
-    elif (options.mT_cut_value == 105):
-        print "Using regions_mt105.py for definition of regions."
-        from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
+    if options.mTregions == '4':
+        _NBINS = 72
+        print "Using regions_4mTregions.py for definition of regions."
+        from StopsCompressed.Analysis.regions_4mTregions import controlRegions, signalRegions, regionMapping, regionNames
     else:
-        raise NotImplementedError
+        _NBINS = 56
+        if (options.mT_cut_value == 95):
+            print "Using regions.py for definition of regions."
+            from StopsCompressed.Analysis.regions	               import controlRegions, signalRegions, regionMapping, regionNames
+        elif (options.mT_cut_value == 100):
+            print "Using regions_mT100.py for definition of regions."
+            from StopsCompressed.Analysis.regions_mT100	           import controlRegions, signalRegions, regionMapping
+        elif (options.mT_cut_value == 105):
+            print "Using regions_mt105.py for definition of regions."
+            from StopsCompressed.Analysis.regions_mt105	           import controlRegions, signalRegions, regionMapping
+        else:
+            raise NotImplementedError
 
 
 sensitivityStudyName = "{}_nbins{}_mt{}_{}mTregions_CT{}_isPrompt{}_lowMETregion{}".format(options.sensitivityStudyName, _NBINS,options.mT_cut_value,options.mTregions,options.CT_cut_value,options.isPrompt,options.lowMETregion)
