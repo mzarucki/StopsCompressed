@@ -22,6 +22,8 @@ parser.add_option("--splitCTZ",            action='store_true',            defau
 parser.add_option("--splitCTZ3",           action='store_true',            default=False,                                     help="Split CT into MET and 3 HT bins in Z region")
 parser.add_option("--tightIPZ",            action='store_true',            default=False,                                     help="Tight IP cuts in Z region")
 parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
+parser.add_option("--highPtBinZ",          action='store_true',            default=False,                                     help="Add high lepton pT bin in Z region")
+parser.add_option("--eta1SR1Z",            action='store_true',            default=False,                                     help="Tighten abs(eta) to 1 in SR1Z region")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
 parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', 'high5','low5','6'],    help="number of mT regions")
 parser.add_option("--CT_cut_value",        action='store',                 default=400,                 choices=[400, 450],   help="CT cut threshold")
@@ -70,9 +72,24 @@ elif options.lowMETregion:
                 print "Using regions_lowMET_4mTregions_splitCTZ.py for definition of regions."
                 from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ          import controlRegions, signalRegions, regionMapping, regionNames
         elif options.ratioCTZ:
-            _NBINS = 328
-            print "Using regions_lowMET_4mTregions_ratioCTZ.py for definition of regions."
-            from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ              import controlRegions, signalRegions, regionMapping, regionNames
+            if options.highPtBinZ:
+                if options.eta1SR1Z:
+                    _NBINS = 392
+                    print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z  import controlRegions, signalRegions, regionMapping, regionNames
+                else: 
+                    _NBINS = 392
+                    print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ           import controlRegions, signalRegions, regionMapping, regionNames
+            else:
+                if options.eta1SR1Z:
+                    _NBINS = 328
+                    print "Using regions_lowMET_4mTregions_ratioCTZ_eta1SR1Z.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_eta1SR1Z             import controlRegions, signalRegions, regionMapping, regionNames
+                else:
+                    _NBINS = 328
+                    print "Using regions_lowMET_4mTregions_ratioCTZ.py for definition of regions."
+                    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ                      import controlRegions, signalRegions, regionMapping, regionNames
         else:
             _NBINS = 104
             print "Using regions_lowMET_4mTregions.py for definition of regions."
@@ -255,7 +272,7 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
     allResults = {}
     
     scaleYieldsTable = 1
-    newRegionsOnly = False
+    newRegionsOnly = True
     
     suffix = ""
     if newRegionsOnly: suffix += "_newRegionsOnly"

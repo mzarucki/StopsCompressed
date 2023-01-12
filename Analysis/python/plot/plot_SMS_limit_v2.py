@@ -81,6 +81,14 @@ elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions", "
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_eta1SR1Z"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_low5mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions"]:

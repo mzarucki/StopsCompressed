@@ -14,238 +14,238 @@ from StopsCompressed.Analysis.Region import Region
 # nSR + nCR = 328 regions
 
 ### SR1
-SR1 = Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-1.5, 1.5)) #NOTE: reduced MET and HT cuts in Setup.py 
+SR1 = Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) #NOTE: reduced MET and HT cuts in Setup.py 
 signalRegions = []
 controlRegions = []
 region = {}
 
 ## SR1a
 # SR1aZ
-SR1laZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio 
-SR1maZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio 
+SR1maZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ0p6 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ0p7 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ0p8 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ0p9 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ1p0 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ1p1 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZ1p2 = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1laZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1maZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-SR1haZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
+SR1laZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1maZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1haZinf = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
 # SR1aX
-SR1vlaX   = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-SR1laX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-SR1maX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-SR1haX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
+SR1vlaX   = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1laX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1maX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1haX    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 # SR1aY
-SR1vlaY   = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
-SR1laY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
-SR1maY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1haY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
+SR1vlaY   = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1laY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1maY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1haY    = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## CR1a
-CR1aZ0p6  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-CR1aZ0p7  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZ0p8  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZ0p9  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZ1p0  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZ1p1  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZ1p2  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aZinf  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1aX     = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) 
-CR1aY     = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+CR1aZ0p6  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+CR1aZ0p7  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZ0p8  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZ0p9  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZ1p0  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZ1p1  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZ1p2  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aZinf  = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1aX     = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+CR1aY     = SR1 + Region("mt", (0,60)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## SR1b
 # SR1bZ
-SR1lbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-SR1mbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+SR1mbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ0p6 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ0p7 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ0p8 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ0p9 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ1p0 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ1p1 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZ1p2 = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hbZinf = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
 # SR1bX
-SR1vlbX   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
-SR1lbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
-SR1mbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
-SR1hbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400)) + Region("ISRJets_pt", (100,-999))
+SR1vlbX   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1lbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1mbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hbX    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 # SR1bY
-SR1vlbY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1lbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1mbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1hbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
+SR1vlbY   = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (3.5,5)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1lbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1mbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hbY    = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## CR1b
-CR1bZ0p6  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-CR1bZ0p7  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZ0p8  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZ0p9  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZ1p0  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZ1p1  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZ1p2  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bZinf  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1bX     = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) 
-CR1bY     = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
+CR1bZ0p6  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+CR1bZ0p7  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZ0p8  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZ0p9  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZ1p0  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZ1p1  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZ1p2  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bZinf  = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1bX     = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+CR1bY     = SR1 + Region("mt", (60,95)) + Region("l1_charge", (-1,-1)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## SR1c
 # SR1cZ
-SR1lcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-SR1mcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+SR1mcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ0p6 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ0p7 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ0p8 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ0p9 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ1p0 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ1p1 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZ1p2 = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1lcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1lcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hcZinf = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
 # SR1cX
-SR1lcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) 
-SR1mcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-SR1hcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
+SR1lcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1mcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hcX    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 # SR1cY
-SR1lcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1mcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
-SR1hcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+SR1lcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5)) 
+SR1mcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hcY    = SR1 + Region("mt", (95,130)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## CR1c
-CR1cZ0p6  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-CR1cZ0p7  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZ0p8  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZ0p9  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZ1p0  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZ1p1  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZ1p2  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cZinf  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) 
-CR1cX     = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-CR1cY     = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+CR1cZ0p6  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+CR1cZ0p7  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZ0p8  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZ0p9  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZ1p0  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZ1p1  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZ1p2  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cZinf  = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) 
+CR1cX     = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+CR1cY     = SR1 + Region("mt", (95,130)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## SR1d
 # SR1dZ
-SR1ldZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio 
-SR1mdZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio 
+SR1mdZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ0p6 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ0p7 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ0p8 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ0p9 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ1p0 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ1p1 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZ1p2 = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
-SR1ldZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1mdZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-SR1hdZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
+SR1ldZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (6,12))  + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1mdZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+SR1hdZinf = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
 
 # SR1dX
-SR1ldX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) 
-SR1mdX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-SR1hdX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
+SR1ldX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1mdX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hdX    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 # SR1dY
-SR1ldY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) 
-SR1mdY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
-SR1hdY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+SR1ldY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (5,12))  + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5)) 
+SR1mdY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (12,20)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+SR1hdY    = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (20,30)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ## CR1d
-CR1dZ0p6  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) # NOTE: replaced CT1 with MET and HT ratio
-CR1dZ0p7  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZ0p8  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZ0p9  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZ1p0  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZ1p1  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZ1p2  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dZinf  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13))
-CR1dX     = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999))
-CR1dY     = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999))
+CR1dZ0p6  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0,0.6))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1)) # NOTE: replaced CT1 with MET and HT ratio
+CR1dZ0p7  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.6,0.7))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZ0p8  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.7,0.8))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZ0p9  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.8,0.9))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZ1p0  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (0.9,1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZ1p1  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1,1.1))    + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZ1p2  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.1,1.2))  + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dZinf  = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("MET_pt", (200,300)) + Region("(MET_pt/HT)", (1.2,-999)) + Region("ISRJets_pt", (130,-999)) + Region("abs(l1_pdgId)", (13,13)) + Region("l1_eta", (-1, 1))
+CR1dX     = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (300,400))  + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
+CR1dY     = SR1 + Region("mt", (130,-999)) + Region("l1_pt", (30,-999)) + Region("CT1", (400,-999)) + Region("ISRJets_pt", (100,-999)) + Region("l1_eta", (-1.5, 1.5))
 
 ### SR2
 SR2 = Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) # NOTE: reduced MET cut in Setup.py
