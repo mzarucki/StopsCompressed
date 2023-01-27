@@ -61,7 +61,7 @@ if year == "2018":
     # Signals
     from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ
     signals = signals_T2tt + signals_T2bW + signals_TChiWZ
-    sigList = ["T2tt_500_420", "T2tt_500_460", "T2tt_500_490", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 500; mCha = 200 GeV
+    sigList = ["T2tt_550_470", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     #sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     selSignals = [s for s in signals if s.name in sigList]
     assert len(sigList) == len(selSignals)
@@ -80,7 +80,7 @@ else:
     print "Year %s not in choices. Exiting."%year
     sys.exit(0)
 
-samples = {
+samplesDict = {
          'WJets'     : WJets,
          'Top'       : Top,
          'ZInv'      : ZInv,
@@ -89,7 +89,11 @@ samples = {
      }
 
 sampleList = ['QCD', 'ZInv', 'Others', 'Top', 'WJets'] # NOTE: hard-coded due to plotting order
-assert len(sampleList) == len(samples.keys())
+assert len(sampleList) == len(samplesDict.keys())
+
+if selSignals:
+    for s in selSignals:
+        samplesDict[s.name] = s
 
 if getData: 
     dataList = ['Data']
@@ -102,9 +106,11 @@ plotsDict = {
    "lep_eta"          :{'var':"l1_eta",               "bins":[20,-3,3],       "decor":{"title":"lepEta",                        "x":"#eta({lepLatex})",                        "y":"Events", 'log':[0,logy,0]}},
    "lep_phi"          :{'var':"l1_phi",               "bins":[20,-3.15,3.15], "decor":{"title":"lepPhi",                        "x":"#phi({lepLatex})",                        "y":"Events", 'log':[0,logy,0]}},
    "lep_dxy"          :{'var':"l1_dxy",               "bins":[40,-0.02,0.02], "decor":{"title":"lepDxy",                        "x":"d_{{xy}}({lepLatex})",                    "y":"Events", 'log':[0,logy,0]}},
-   "lep_dxySig"       :{'var':"(l1_dxy/l1_dxyErr)",   "bins":[40,-2,2],       "decor":{"title":"lepDxySig",                     "x":"d_{{xy}}/#sigma_{{dxy}}({lepLatex})",     "y":"Events", 'log':[0,logy,0]}},
+   "lep_dxyErr"       :{'var':"l1_dxyErr",            "bins":[40,0,0.02],     "decor":{"title":"lepDxyErr",                     "x":"#sigma_{{dxy}}({lepLatex})",              "y":"Events", 'log':[0,logy,0]}},
+   "lep_dxySig"       :{'var':"(l1_dxy/l1_dxyErr)",   "bins":[40,-10,10],     "decor":{"title":"lepDxySig",                     "x":"d_{{xy}}/#sigma_{{dxy}}({lepLatex})",     "y":"Events", 'log':[0,logy,0]}},
    "lep_dz"           :{'var':"l1_dz",                "bins":[40,-0.1,0.1],   "decor":{"title":"lepDz",                         "x":"d_{{z}}({lepLatex})",                     "y":"Events", 'log':[0,logy,0]}},
-   "lep_dzSig"        :{'var':"(l1_dz/l1_dzErr)",     "bins":[40,-2,2],       "decor":{"title":"lepDzSig",                      "x":"d_{{z}}/#sigma_{{dz}}({lepLatex})",       "y":"Events", 'log':[0,logy,0]}},
+   "lep_dzErr"        :{'var':"l1_dzErr",             "bins":[40,0,0.1],      "decor":{"title":"lepDzErr",                      "x":"#sigma_{{dz}}({lepLatex})",               "y":"Events", 'log':[0,logy,0]}},
+   "lep_dzSig"        :{'var':"(l1_dz/l1_dzErr)",     "bins":[40,-10,10],     "decor":{"title":"lepDzSig",                      "x":"d_{{z}}/#sigma_{{dz}}({lepLatex})",       "y":"Events", 'log':[0,logy,0]}},
    "lep_relIso"       :{'var':"l1_relIso03",          "bins":[30,0,3],        "decor":{"title":"lepRelIso",                     "x":"Relative Isolation ({lepLatex})",         "y":"Events", 'log':[0,logy,0]}},
    "lep_miniRelIso"   :{'var':"l1_miniRelIso",        "bins":[30,0,3],        "decor":{"title":"lepMiniRelIso",                 "x":"Mini Relative Isolation ({lepLatex})",    "y":"Events", 'log':[0,logy,0]}},
    "lep_HI"           :{'var':"l1_HI",                "bins":[50,0,5],        "decor":{"title":"lepHI",                         "x":"Hybrid Isolation ({lepLatex})",           "y":"Events", 'log':[0,logy,0]}},
@@ -131,6 +137,7 @@ plotsDict = {
    "recoil_ISR-HT"    :{'var':"(ISRJets_pt/HT)",      "bins":[40,0,1.1],      "decor":{"title":"recoilISRHT",                   "x":"ISR Jet p_{T}/H_{T}",                     "y":"Events", 'log':[0,logy,0]}},
    "recoil_ISR-lepPt" :{'var':"(ISRJets_pt/l1_pt)",   "bins":[30,0,30],       "decor":{"title":"recoilISRlepPt",                "x":"ISR Jet p_{{T}}/p_{{T}}({lepLatex})",     "y":"Events", 'log':[0,logy,0]}},
    "recoil_ISR-lepWpt":{'var':"(ISRJets_pt/lep_wPt)", "bins":[40,0,2],        "decor":{"title":"recoilISRlepWpt",               "x":"ISR Jet p_{{T}}/W-p_{{T}}({lepLatex})",   "y":"Events", 'log':[0,logy,0]}},
+   "deltaR_ISR-lep"  :{'var':"sqrt((JetGood_eta[0] - l1_eta)^2 + (JetGood_phi[0] - l1_phi)^2)", "bins":[35,0,7], "decor":{"title":"deltaRISRlep", "x":"#DeltaR(ISR Jet,{lepLatex})","y":"Events", 'log':[0,logy,0]}}, # NOTE: assuming leading jet = ISR jet (= True when nISRJets >= 1)
    }
 
 plotsDict_mu = {
@@ -167,6 +174,9 @@ elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ", "baselin
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_ratioCTZ", "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ as regions
+elif sensitivityStudyName.replace("_redSys", "") in ["baselinePlusLowMET_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z_vTightMuonsZ"]:
+    fullSensitivityStudyName = sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    import StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z_vTightIPZ_tightIDZ as regions 
 elif sensitivityStudyName in ["baselinePlusLowMET_4mTregions_splitCTZ_lowHTbin", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     import StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin as regions 
@@ -244,7 +254,6 @@ for dataMC in ["Data", "MC"]: # DataMC
 
 isDataPlot = getData
 bkgList = sampleList
-plotLimits = []
 fomIntegral = True
 fomTitles = False
 ratioNorm = False
@@ -253,11 +262,11 @@ unity = True
 dOpt = "hist"
 
 addOverFlowBin = 'upper'
-plotLimits = [1, 100]
+plotLimits = [0.1, 100]
 denoms=["bkg"]
 noms = sigList
 fom = "SOB" # "SOBSYS", "AMS", "AMSSYS", "AMS1", "AMSc"
-fomLimits = [0,0.8]
+fomLimits = [0,0.5]
 normalize = False
 plotMin = 0.1
     
@@ -282,16 +291,16 @@ for p in plotList:
     bkgHists = []
     # MC
     for samp in sampleList:
-        hists[samp][p] = getPlotFromChain(samples[samp].chain, plotsDict[p]['var'], plotsDict[p]['bins'], cut_string, weight = weight_str["MC"], addOverFlowBin = addOverFlowBin, binningIsExplicit = binningIsExplicit, variableBinning = variableBinning, uniqueName = False)
+        hists[samp][p] = getPlotFromChain(samplesDict[samp].chain, plotsDict[p]['var'], plotsDict[p]['bins'], cut_string, weight = weight_str["MC"], addOverFlowBin = addOverFlowBin, binningIsExplicit = binningIsExplicit, variableBinning = variableBinning, uniqueName = False)
   
-        hists[samp][p].SetFillColor(samples[samp].color)
+        hists[samp][p].SetFillColor(samplesDict[samp].color)
         hists[samp][p].SetName("hist_%s_%s"%(samp,p))
         bkgHists.append(hists[samp][p])
  
     stacks['bkg'][p] = getStackFromHists(bkgHists)
    
     # Signal 
-    #stacks = getBkgSigStacks(samples, plotsDict, cut, sampleList = sampleList, plotList = plotList, normalize = normalize, transparency = normalize, scale = mc_scale, sName = cut_name)
+    #stacks = getBkgSigStacks(samplesDict, plotsDict, cut, sampleList = sampleList, plotList = plotList, normalize = normalize, transparency = normalize, scale = mc_scale, sName = cut_name)
     sigHists = [] 
     for i, sig in enumerate(sigList):
         if "T2tt" in sig:
@@ -321,13 +330,13 @@ for p in plotList:
         hists[sig][p].SetMarkerSize(1.2)
         if "T2" in sig:
             hists[sig][p].SetMarkerStyle(5)
-            hists[sig][p].SetMarkerColor(ROOT.kRed-(3*(i%3)))
-            hists[sig][p].SetLineColor(ROOT.kRed-(3*(i%3)))
+            hists[sig][p].SetMarkerColor(ROOT.kRed+(2*(i%2)))
+            hists[sig][p].SetLineColor(ROOT.kRed+(2*(i%2)))
         else:
             hists[sig][p].SetMarkerStyle(4)
             hists[sig][p].SetMarkerSize(0.5)
-            hists[sig][p].SetMarkerColor(ROOT.kCyan+(3*(i%3)))
-            hists[sig][p].SetLineColor(ROOT.kCyan+(3*(i%3)))
+            hists[sig][p].SetMarkerColor(ROOT.kCyan+(2*(i%2)))
+            hists[sig][p].SetLineColor(ROOT.kCyan+(2*(i%2)))
         sigHists.append(hists[sig][p])
 
     stacks['sig'][p] = getStackFromHists(sigHists)
@@ -424,13 +433,13 @@ for p in plotList:
         if getData:
             leg.AddEntry("hist_Data_%s"%p, "Data", "P")
         for sig in sigList:
-            leg.AddEntry("hist_%s_%s"%(sig,p), sig, "P")
+            leg.AddEntry("hist_%s_%s"%(sig,p), samplesDict[sig].texName, "P")
         for samp in sampleList:
-            leg.AddEntry("hist_%s_%s"%(samp,p), samp, "F")
+            leg.AddEntry("hist_%s_%s"%(samp,p), samplesDict[samp].texName, "F")
         leg.SetBorderSize(0)
         leg.Draw()
 
-        alignLegend(leg, x1 = 0.75, x2 = 0.9, y1 = 0.5, y2 = 0.8)
+        alignLegend(leg, x1 = 0.7, x2 = 0.9, y1 = 0.5, y2 = 0.85)
         ret['legs'].append(leg)
 
     if fom:
@@ -454,9 +463,10 @@ for p in plotList:
     if not fom:
         canvs[p][cMain].SetRightMargin(10)
     else:
-        canvs[p][cMain].SetRightMargin(0.03)
-        canvs[p][cSave].SetRightMargin(0.03)
-        canvs[p][cFom].SetRightMargin(0.03)
+        canvs[p][cMain].SetRightMargin(0.04)
+        canvs[p][cSave].SetRightMargin(0.04)
+        canvs[p][cFom].SetRightMargin(0.04)
+        #canvs[p][cMain].SetFrameFillStyle(4000)
 
     for c in canvs[p]:
        if c: c.RedrawAxis()
