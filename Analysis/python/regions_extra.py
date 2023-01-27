@@ -59,6 +59,11 @@ SR1Z1_vTightIPZ_tightID  = SR1Z1 + Region("abs(l1_dxy)", (0,0.0015)) + Region("a
 SR1Z2_vTightIPZ_tightID  = SR1Z2 + Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0.0012,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
 SR1Z3_vTightIPZ_tightID  = SR1Z3 + Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0.0012,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
 
+## SR1Z + higher MET
+
+SR1Z1to3 = SR1Z_base + SRZ + Region("MET_pt", (200,300))
+SR1Z1to5 = SR1Z_base + SRZ + Region("MET_pt", (200,-999)) + Region("CT1", (0,300))
+
 ## SR1Zc
 SR1Zc                   = SR1Z_base + SRZ + SRc
 SR1Z1c                  = SR1Zc + Region("MET_pt", (200,300)) + Region("HT", (200,300)) # NOTE: replaced CT1 with separate MET and HT cuts
