@@ -1,6 +1,6 @@
 # EWK xsec for TChiWZ (N2C1, wino/bino-like)
 # NOTE: values taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
-
+# TODO: x-check vs. /afs/cern.ch/user/a/amete/public/EWKGauginoCrossSections_13TeV/
 # values listed as {mass:(xsec in fb, % unc.)} # FIXME: just taking +pdf uncertainty as total unc
 xsecNNLL_fb = {
    100 :(22504    , 3.2),
