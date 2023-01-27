@@ -21,11 +21,12 @@ parser.add_option("--ratioCTZ",            action='store_true',            defau
 parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and 2 HT bins in Z region")
 parser.add_option("--splitCTZ3",           action='store_true',            default=False,                                     help="Split CT into MET and 3 HT bins in Z region")
 parser.add_option("--tightIPZ",            action='store_true',            default=False,                                     help="Tight IP cuts in Z region")
+parser.add_option("--vTightMuonsZ",        action='store_true',            default=False,                                     help="Very tight IP and ID cuts in Z region")
 parser.add_option("--lowHTbin",            action='store_true',            default=False,                                     help="Add low HT bin")
 parser.add_option("--highPtBinZ",          action='store_true',            default=False,                                     help="Add high lepton pT bin in Z region")
 parser.add_option("--eta1SR1Z",            action='store_true',            default=False,                                     help="Tighten abs(eta) to 1 in SR1Z region")
 parser.add_option("--mT_cut_value",        action='store',                 default=95,                  choices=[95,100,105], help="second mT threshold")
-parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4', 'high5','low5','6'],    help="number of mT regions")
+parser.add_option("--mTregions",           action='store',                 default='3',                 choices=['3','4','4Z','high5','low5','6'],    help="number of mT regions")
 parser.add_option("--CT_cut_value",        action='store',                 default=400,                 choices=[400, 450],   help="CT cut threshold")
 parser.add_option("--isPrompt",            action='store_true',            default=False,                                     help="prompt leptons contributing to regions")
 #parser.add_option("--isdPhiMetJets",       action='store_true',            default=False,   help="cut on min(dPhi(met,Jets>60)), not on dPhiJets")
@@ -74,9 +75,14 @@ elif options.lowMETregion:
         elif options.ratioCTZ:
             if options.highPtBinZ:
                 if options.eta1SR1Z:
-                    _NBINS = 392
-                    print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z.py for definition of regions."
-                    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z  import controlRegions, signalRegions, regionMapping, regionNames
+                    if options.vTightMuonsZ:
+                        _NBINS = 392
+                        print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z_vTightIPZ_tightIDZ.py for definition of regions."
+                        from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
+                    else:
+                        _NBINS = 392
+                        print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z.py for definition of regions."
+                        from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z  import controlRegions, signalRegions, regionMapping, regionNames
                 else: 
                     _NBINS = 392
                     print "Using regions_lowMET_4mTregions_ratioCTZ_highPtBinZ.py for definition of regions."
@@ -94,6 +100,12 @@ elif options.lowMETregion:
             _NBINS = 104
             print "Using regions_lowMET_4mTregions.py for definition of regions."
             from StopsCompressed.Analysis.regions_lowMET_4mTregions                       import controlRegions, signalRegions, regionMapping, regionNames
+    elif options.mTregions == '4Z':
+        if options.highPtBinZ:
+            if options.vTightMuonsZ:
+                _NBINS = 372
+                print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
+                from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == 'low5':
         _NBINS = 132
         print "Using regions_lowMET_low5mTregions.py for definition of regions."
@@ -202,7 +214,7 @@ estList = ['WJets','Top','Others', 'ZInv', 'QCD'] # ordered as opposed to below.
 
 allEstimators = estimators.constructEstimatorList(estList)
 if options.makeYieldsTable: 
-    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_500_470", "TChiWZ_200_170"]] # NOTE: choosing several signal points for yields table # TODO: incorporate generator filter efficiencies
+    allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals if s.name in ["T2tt_550_470", "T2tt_550_540"]] #, "TChiWZ_200_150", "TChiWZ_200_190"]] # NOTE: choosing several signal points for yields table
 else:
     allEstimators += [ MCBasedEstimate(name=s.name, sample=s) for s in signals]
 
@@ -274,10 +286,13 @@ if options.selectEstimator:
 # Yields Table
 
 if options.makeYieldsTable and not options.selectRegion and options.noSystematics and not options.selectEstimator:
+    from StopsCompressed.Tools.genFilter import genFilter
+
+
     allResults = {}
     
     scaleYieldsTable = 1
-    newRegionsOnly = True
+    newRegionsOnly = False
     
     suffix = ""
     if newRegionsOnly: suffix += "_newRegionsOnly"
@@ -296,9 +311,32 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
     for channel in channels:
         for res in allEstimators:
             res.initCache(setup.defaultCacheDir(specificNameForSensitivityStudy=sensitivityStudyName))
-            allResults[res.name] = {} 
+            estName = res.name
+            if "T2tt" in estName:
+                mStop = int(estName.split('_')[1])
+                mNeu  = int(estName.split('_')[2])
+
+                gFilter = genFilter(year = options.year, signal = "T2tt")
+                genEff  = gFilter.getEff(mStop,mNeu) # NOTE: uses ROOT file insead
+                #genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+            elif "T2bW" in estName:
+                mStop = int(estName.split('_')[1])
+                mNeu  = int(estName.split('_')[2])
+
+                gFilter = genFilter(year = options.year, signal = "T2bW")
+                genEff  = gFilter.getEffFromPkl(mStop,mNeu)
+            elif "TChiWZ" in estName:
+                mCha  = int(estName.split('_')[1])
+                mNeu  = int(estName.split('_')[2])
+
+                gFilter = genFilter(year = options.year, signal = "TChiWZ")
+                genEff  = gFilter.getEffFromPkl(mCha,mNeu)
+            else:
+                genEff = 1
+
+            allResults[estName] = {} 
             for (i, r) in enumerate(allRegions):
-                allResults[res.name][r] = res.cachedEstimate(r, channel, setup, overwrite = False) * scaleYieldsTable
+                allResults[estName][r] = res.cachedEstimate(r, channel, setup, overwrite = False) * genEff * scaleYieldsTable
 
         estListFull = estList + [x for x in allResults.keys() if x not in estList] # workaround to get ordered table 
         ofile = "yieldsTable_%s_%s%s.tex"%(sensitivityStudyName, channel, suffix)
@@ -310,11 +348,13 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
             f.write("\\begin{document}\n")
             #f.write("\\begin{table}\n")
             f.write("\\centering\n")
+            #f.write("\\small\n")
             f.write("\\begin{longtable}{|c" + "|c"*len(allResults) + "|} \n")
-            f.write("\\hline Region & " + " & ".join(res for res in estListFull).replace("_", "\_") + "\\\\ \\hline \\hline \n")
+            #f.write("\\begin{longtable}{|p{0.1\linewidth}" + "|p{0.1\linewidth}"*len(allResults) + "|} \n")
+            f.write("\\hline Region & " + " & ".join(est for est in estListFull).replace("_", "\_") + "\\\\ \\hline \\hline \n")
             for (i, r) in enumerate(allRegions):
                 if newRegionsOnly and not 'Z' in regionNames[i]: continue # selecting new regions only
-                f.write("%s & "%regionNames[i] + " & ".join("${:0.1f} \pm {:1.1f}$".format(allResults[res][r].val, allResults[res][r].sigma) for res in estListFull) + "\\\\ \\hline \n")
+                f.write("%s & "%regionNames[i] + " & ".join("${:0.1f} \pm {:1.1f}$".format(allResults[est][r].val, allResults[est][r].sigma) for est in estListFull) + "\\\\ \\hline \n")
             f.write("\\end{longtable}\n")
             #f.write("\\end{table}\n")
             f.write("\\end{document}")

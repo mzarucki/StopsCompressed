@@ -23,6 +23,8 @@ parser = OptionParser()
 parser.add_option("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
 parser.add_option("--year",             dest="year",   type="int",    default=2018, action="store",  help="Which year?")
+parser.add_option("--channel",          dest = "channel", help = "Lepton channel", type = str, default = "mu")
+parser.add_option("--scaled",           dest="scaled",   type="float",    default=1.0, action="store",  help="Scaled limits?")
 parser.add_option("--version",          dest="version",  default='v9',  action="store",  help="Which version?")
 parser.add_option("--subDir",           dest="subDir",  default='unblindV1',  action="store",  help="Give some extra name")
 parser.add_option("--smoothAlgo",       dest="smoothAlgo",  default='k5a', choices=["k5a", "k3a", "k5b"],  action="store",  help="Which smoothing algo?")
@@ -60,12 +62,10 @@ def toGraph(name,title,length,x,y):
     del c
     return result
 
-scale = 1.0 # 4.3 # 0.6 
+suffix = options.channel 
 
-suffix = "mu" #"comb" # "mu" "e"
-
-if scale != 1.0:
-    suffix += "_scaled%s"%str(scale).replace(".","p")
+if options.scaled != 1.0:
+    suffix += "_scaled%s"%str(options.scaled).replace(".","p")
 
 dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
@@ -75,6 +75,8 @@ signalString = options.signal
 
 if options.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
+elif options.sensitivityStudyName in ["baseline_redSys_4mTregions"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins72_mt95_4mTregions_CT400_isPromptFalse_lowMETregionFalse"
 elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
@@ -89,6 +91,10 @@ elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_rat
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z_vTightMuonsZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_low5mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions"]:

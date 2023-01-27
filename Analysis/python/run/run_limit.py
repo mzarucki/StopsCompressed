@@ -38,6 +38,9 @@ args = argParser.parse_args()
 if args.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
     from StopsCompressed.Analysis.regions                                     import signalRegions, controlRegions, regionMapping # NOTE: 2016 analysis regions
+elif args.sensitivityStudyName in ["baseline_redSys_4mTregions"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins72_mt95_4mTregions_CT400_isPromptFalse_lowMETregionFalse"
+    from StopsCompressed.Analysis.regions_4mTregions                          import signalRegions, controlRegions, regionMapping
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET                              import signalRegions, controlRegions, regionMapping
@@ -59,6 +62,12 @@ elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioC
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins372_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z_vTightMuonsZ"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregions_ratioCTZ_highPtBinZ_eta1SR1Z_vTightIPZ_tightIDZ import signalRegions, controlRegions, regionMapping
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregions_splitCTZ_lowHTbin import signalRegions, controlRegions, regionMapping
@@ -153,7 +162,8 @@ sSubDir = 'expected' if args.expected else 'observed'
 if args.signalInjection: sSubDir += '_signalInjected'
 
 limitDir    = os.path.join(baseDir, 'cardFiles', args.signal + args.extension, sSubDir)
-overWrite   = (args.only is not None) or args.overwrite # why?
+overWrite   = args.overwrite
+#overWrite   = (args.only is not None) or args.overwrite # why?
 
 if args.keepCard:
     overWrite = False

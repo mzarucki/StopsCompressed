@@ -28,6 +28,8 @@ parser = OptionParser()
 parser.add_option("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
 parser.add_option("--year",             dest="year",   type="int",    default=2018, action="store",  help="Which year?")
+parser.add_option("--channel",          dest = "channel", help = "Lepton channel", type = str, default = "mu")
+parser.add_option("--scaled",           dest="scaled",   type="float",    default=1.0, action="store",  help="Scaled limits?")
 parser.add_option("--version",          dest="version",  default='v9',  action="store",  help="Which version?")
 parser.add_option("--subDir",           dest="subDir",  default='unblindV1',  action="store",  help="Give some extra name")
 parser.add_option("--smoothAlgo",       dest="smoothAlgo",  default='k5a', choices=["k5a", "k3a", "k5b"],  action="store",  help="Which smoothing algo?")
@@ -65,14 +67,12 @@ def toGraph(name,title,length,x,y):
     del c
     return result
 
-scale = 1.0 # 4.3 # 0.6 
+suffix = options.channel 
 
-suffix = "mu" #"comb" # "mu" "e"
+if options.scaled != 1.0:
+    suffix += "_scaled%s"%str(options.scaled).replace(".","p")
 
-options.expected = True
-
-if scale != 1.0:
-    suffix += "_scaled%s"%str(scale).replace(".","p")
+options.expected = True # NOTE: hard-coded
 
 dmplot = options.dmPlot
 yearString = str(options.year) if not options.combined else 'comb'
@@ -104,29 +104,53 @@ rootFiles    = {'xsec':{}, 'cont':{}, 'objects':{}}
 canvs        = {'xsec':{}, 'cont':{}}
 plots        = {'xsec':{}, 'cont':{}}
 
-sensitivityStudies = [
+sensitivityStudies = [ # baseline
     "baseline_redSys", 
-    "baselinePlusLowMET3_redSys", 
-    ##"baselinePlusLowMET3_redSys_4mTregions", 
-    ##"baselinePlusLowMET3_redSys_4mTregions_splitCTZ", 
-    ##"baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin", 
-    "baselinePlusLowMET3_redSys_low5mTregions", 
-    "baselinePlusLowMET3_redSys_high5mTregions", 
-    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ_lowHTbin", 
-    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ3_lowHTbin", 
-    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ3_lowHTbin_tightIPZ", 
-    "baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin",
+    #"baselinePlusLowMET3_redSys", 
+    "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ", 
 ]
+
+#sensitivityStudies = [ # baseline with 4mT regions
+#    #"baseline_redSys", 
+#    #"baselinePlusLowMET3_redSys", 
+#    "baseline_redSys_4mTregions", 
+#    #"baselinePlusLowMET3_redSys_4mTregions", # NOTE: not redone
+#    #"baselinePlusLowMET3_redSys_4mTregions_splitCTZ", # NOTE: not redone
+#    #"baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin", # NOTE: not redone
+#    "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ", 
+#    "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60", 
+#    "baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z", 
+#    #"baselinePlusLowMET3_redSys_low5mTregions", 
+#    #"baselinePlusLowMET3_redSys_high5mTregions", 
+#    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ_lowHTbin", 
+#    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ3_lowHTbin", 
+#    #"baselinePlusLowMET3_redSys_high5mTregions_splitCTZ3_lowHTbin_tightIPZ", 
+#    #"baselinePlusLowMET3_redSys_6mTregions_splitCTZ_lowHTbin",
+#]
 
 for i, sens in enumerate(sensitivityStudies):
     if sens in ["baseline", "baseline_redSys"]:
         fullSensitivityStudyName = sens + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
+    elif sens in ["baseline_redSys_4mTregions"]:
+        fullSensitivityStudyName = sens + "_nbins72_mt95_4mTregions_CT400_isPromptFalse_lowMETregionFalse"
     elif sens in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
         fullSensitivityStudyName = sens + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_4mTregions", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
         fullSensitivityStudyName = sens + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_4mTregions_splitCTZ_lowHTbin"]:
         fullSensitivityStudyName = sens + "_nbins136_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ"]:
+        fullSensitivityStudyName = sens + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_eta1SR1Z"]:
+        fullSensitivityStudyName = sens + "_nbins328_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60"]:
+        fullSensitivityStudyName = sens + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z"]:
+        fullSensitivityStudyName = sens + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z_vTightMuonsZ"]:
+        fullSensitivityStudyName = sens + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
+        fullSensitivityStudyName = sens + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_low5mTregions"]:
         fullSensitivityStudyName = sens + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_high5mTregions"]:
@@ -163,7 +187,7 @@ for i, sens in enumerate(sensitivityStudies):
     # read input arguments
     outputname = os.path.join(saveDir, 'limit')
     
-    if i == 0 and sens in ["baseline", "baseline_redSys"]: # always baseline as default
+    if i == 0 and sens in ["baseline", "baseline_redSys", "baseline_redSys_4mTregions"]: # always baseline as default
         cMain = canvs['xsec'][sens].Clone()
         cMain.Draw()
     else:

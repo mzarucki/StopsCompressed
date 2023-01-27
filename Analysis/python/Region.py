@@ -1,5 +1,5 @@
-allowedVars = ["HT", "mt", "l1_pdgId", "abs(l1_pdgId)", "abs(l1_dxy)", "abs(l1_dz)", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt", "l1_charge", "MET_pt", "(MET_pt/HT)"]
-texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{T}^{miss})", "l1_pdgId":"pdgId(l)", "abs(l1_pdgId)":"\abs{pdgId(l)}", "abs(l1_dxy)":"\abs{d_{xy}(l)}", "abs(l1_dz)":"\abs{d_{z}(l)}", "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}", "l1_charge":"charge(l)", "MET_pt":"p_{T}^{miss}","(MET_pt/HT)":"p_{T}^{miss}/H_{T}"}
+allowedVars = ["HT", "mt", "l1_pdgId", "abs(l1_pdgId)", "abs(l1_dxy)", "abs(l1_dz)", "l1_dxyErr", "l1_dzErr", "l1_eta", "CT1" , "CT2", "ISRJets_pt", "nSoftBJets", "nHardBJets", "l1_pt", "l1_charge", "MET_pt", "(MET_pt/HT)", "Muon_tightId[l1_muIndex[0]]"]
+texString   = {"HT":"H_{T}", "mt":"M_{T}(l,E_{T}^{miss})", "l1_pdgId":"pdgId(l)", "abs(l1_pdgId)":"\abs{pdgId(l)}", "abs(l1_dxy)":"\abs{d_{xy}(l)}", "abs(l1_dz)":"\abs{d_{z}(l)}", "l1_dxyErr":"#sigma_{dxy(l)}", "l1_dzErr":"#sigma_{dz(l)}",  "l1_eta":"\eta(l)","l1_pt":"p_{T}(l)" ,"CT1":"C_{T1}","CT2":"C_{T2}", "ISRJets_pt":"p_{T}(ISRJet)","nSoftBJets":"N_{b}^{soft}","nHardBJets":"N_{b}^{hard}", "l1_charge":"charge(l)", "MET_pt":"p_{T}^{miss}","(MET_pt/HT)":"p_{T}^{miss}/H_{T}", "Muon_tightId[l1_muIndex[0]]":"TightMuonID"}
 
 aliases     = { }
 
@@ -41,7 +41,8 @@ class Region:
 		    if self.vals[var][1]>-999: s1+="&&"+svar+"<"+str(self.vals[var][1])
 		    res.append(s1)
         #return "&&".join(res)
-	return "&&".join(sorted(res)) # apparently need sorting
+	return "&&".join(sorted(res, reverse=True)) # apparently need sorting # NOTE: reverse as hack to enable index selection of leptons due to order of cuts
+	#return "&&".join(sorted(res)) # apparently need sorting
 
     def texStringForVar(self, var = None, useRootLatex = True):
         if var not in self.variables(): return None
