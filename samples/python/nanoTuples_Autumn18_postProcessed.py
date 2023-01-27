@@ -210,7 +210,7 @@ TTJets_18          = Sample.fromDirectory(name="TTJets",          treeName="Even
 #TTSingleLep_pow_18 = Sample.fromDirectory(name="TTSingleLep_pow", treeName="Events", isData=False, color=color.TTJets_1l,  texName="t#bar{t} (1l)",        directory=directories['TTSingleLep_pow'])
 #TTBar_pow_1l_18    = Sample.fromDirectory(name="Top_1l_pow",      treeName="Events", isData=False, color=color.TTJets_1l,  texName="t#bar{t} (1l)",        directory=directories['TTSingleLep_pow'])
 WJets_18           = Sample.fromDirectory(name="WJetsToLNu_HT",   treeName="Events", isData=False, color=color.WJetsToLNu, texName="W(#bf{l},#nu) + Jets", directory=directories['WJets']) # NOTE: #ell does not work, only \\ell in TMathText
-ZInv_18            = Sample.fromDirectory(name="ZInv",            treeName="Events", isData=False, color=color.ZInv,       texName="Z(#nu,#nu + Jets)",    directory=directories['ZInv'])
+ZInv_18            = Sample.fromDirectory(name="ZInv",            treeName="Events", isData=False, color=color.ZInv,       texName="Z(#nu,#nu) + Jets",    directory=directories['ZInv'])
 DY_18              = Sample.fromDirectory(name="DY",              treeName="Events", isData=False, color=color.DY,         texName="Drell-Yan",            directory=directories['DY'])
 ST_18              = Sample.fromDirectory(name="ST",              treeName="Events", isData=False, color=color.ST,         texName="Single top",           directory=directories['ST'])
 #ST_tch_18          = Sample.fromDirectory(name="ST_tch",          treeName="Events", isData=False, color=color.ST,         texName="Single top (tch)",     directory=directories['ST_tch'])
