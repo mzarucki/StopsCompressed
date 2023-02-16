@@ -3,7 +3,7 @@
 ## Scans
 python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample T2tt_dM-10to80     --susySignal --fastSim #SPLIT20
 python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample T2bW_X05_dM-10to80 --susySignal --fastSim #SPLIT20
-python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample TChiWZ             --susySignal --fastSim #SPLIT10
+python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample TChiWZ_dM-3to50    --susySignal --fastSim --EWKinos #SPLIT20
 #python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample N2C1-higgsino      --susySignal --fastSim #SPLIT10
 #python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample N2N1-higgsino      --susySignal --fastSim #SPLIT10
 #python nanoPostProcessing.py --skim MetSingleLep --year 2018 --processingEra softSingleLepton_nanoPP_2018_v1 --sample MSSM-higgsino      --susySignal --fastSim #SPLIT10

@@ -432,7 +432,7 @@ if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or option
     if options.small: output.reduceFiles( to = 1 )
     for i,s in enumerate(masspoints[job]):
         logger.info("Going to write masspoint {} {} {} {}".format(mass1_name, s[0], mass2_name, s[1]))
-        cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))==".format(mass1_pdgId = mass1_pdgId) + str(s[0]) + "&& Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId}))==".format(mass2_pdgId = mass2_pdgId) + str(s[1])
+        cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))==".format(mass1_pdgId = mass1_pdgId) + str(s[0]) + "&& Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId}))==".format(mass2_pdgId = mass2_pdgId) + str(s[1]) # NOTE: Max$ method preferable than cutting on mass1_name, due to issue with how it's done in post-processing
         logger.debug("Using cut %s", cut)
         if options.T2tt:          signal_prefix = 'T2tt_'
         elif options.T2bW:        signal_prefix = 'T2bW_'

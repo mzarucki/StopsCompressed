@@ -181,12 +181,14 @@ def getISRNorm(sample, mass1, mass2, massPoints, year, signal="T2tt", fillCache=
     
     cache = Cache(cacheDir, verbosity=2)
 
-    if signal == "T2tt":
+    if "T2" in signal:
         mass1_pdgId = 1000006 
         mass2_pdgId = 1000022
-    elif signal == "TChiWZ": # NOTE: ISR/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf)
+    elif "TChiWZ" in signal: # NOTE: ISR/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf)
         mass1_pdgId = 1000024
         mass2_pdgId = 1000022
+    else:
+        raise NotImplementedError
 
     key = (mass1, mass2, signal, year)
 

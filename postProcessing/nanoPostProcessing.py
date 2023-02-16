@@ -175,7 +175,7 @@ if isData:
         era = extractEra(samples[0].name)[-1]
         logger.info( "######### Era %s ########", era )
         ts = triggerSelector(options.year, era=era)
-        triggerCond  = ts.getSelection(options.samples[0] if isData else "MC")
+        triggerCond  = ts.getSelection(options.samples[0] if isData else "MC") # NOTE: MC can be dangerous here
         treeFormulas = {"triggerDecision": {'string':triggerCond} }
 
         logger.info("Sample will have the following trigger skim: %s"%triggerCond)
@@ -675,7 +675,7 @@ def filler( event ):
             event.mNeu  = mass2 
 
         if 'TChiWZ' in options.samples[0]:
-            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
+            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart]) # FIXME: incorrectly evaluates to 0 for some events
             r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
             mass1 = int(round(r.GenSusyMChargino,0))
             mass2 = int(round(r.GenSusyMNeutralino,0))
@@ -770,11 +770,11 @@ def filler( event ):
     muons      = getGoodMuons(r,     mu_selector = muSelector_ )
     for e in electrons:
         e['pdgId']      = int( -11*e['charge'] )
-        e['eleIndex']   = e['index']
+        e['eleIndex']   = e['index'] # TODO: add lepton indices for joint lepton collection?
         e['muIndex']    = -1
     for m in muons:
         m['pdgId']      = int( -13*m['charge'] )
-        m['muIndex']    = m['index']
+        m['muIndex']    = m['index'] # TODO: add lepton indices for joint lepton collection?
         m['eleIndex']   = -1
     nHEMElectrons 	= len(filter(lambda e:e['eta']<-1.392 and e['eta']>-3.00 and e['phi']<-0.87 and e['phi']>-1.57, electrons ))
     leptons 		= electrons + muons
