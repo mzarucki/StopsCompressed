@@ -288,7 +288,7 @@ def plotRegions(sorted=True):
 
     
     
-    hists["signal"].style        = styles.lineStyle( ROOT.kYellow, width=5 )
+    hists["signal"].style        = styles.lineStyle( ROOT.kRed, width=5 )
     hists["signal"].legendText   = "signal ({})".format(args.cardfile) if not args.bkgSubstracted else "signal"
     hists["signal"].legendOption = "ep" if args.bkgSubstracted else "ep"
 
