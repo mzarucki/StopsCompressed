@@ -108,7 +108,14 @@ sensitivityStudies = [ # baseline
     "baseline_redSys", 
     #"baselinePlusLowMET3_redSys", 
     "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ", 
+    #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ", 
 ]
+if options.signal == "TChiWZ":    
+    sensitivityStudies.extend([
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
+    ])
 
 #sensitivityStudies = [ # baseline with 4mT regions
 #    #"baseline_redSys", 
@@ -131,9 +138,15 @@ sensitivityStudies = [ # baseline
 for i, sens in enumerate(sensitivityStudies):
     if sens in ["baseline", "baseline_redSys"]:
         fullSensitivityStudyName = sens + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
+    elif sens in ["baseline_redSys_chargeInclusive"]:
+        fullSensitivityStudyName = sens + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
     elif sens in ["baseline_redSys_4mTregions"]:
         fullSensitivityStudyName = sens + "_nbins72_mt95_4mTregions_CT400_isPromptFalse_lowMETregionFalse"
     elif sens in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
+        fullSensitivityStudyName = sens + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_chargeInclusive"]:
+        fullSensitivityStudyName = sens + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_chargeInclusiveZ"]:
         fullSensitivityStudyName = sens + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_4mTregions", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
         fullSensitivityStudyName = sens + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
@@ -151,6 +164,16 @@ for i, sens in enumerate(sensitivityStudies):
         fullSensitivityStudyName = sens + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
         fullSensitivityStudyName = sens + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive"]:
+        fullSensitivityStudyName = sens + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
+        fullSensitivityStudyName = sens + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
+        fullSensitivityStudyName = sens + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive"]:
+        fullSensitivityStudyName = sens + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    elif sens in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
+        fullSensitivityStudyName = sens + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_low5mTregions"]:
         fullSensitivityStudyName = sens + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
     elif sens in ["baselinePlusLowMET3_redSys_high5mTregions"]:

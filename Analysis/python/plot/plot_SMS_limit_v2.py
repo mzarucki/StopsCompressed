@@ -75,9 +75,15 @@ signalString = options.signal
 
 if options.sensitivityStudyName in ["baseline", "baseline_redSys"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
+elif options.sensitivityStudyName in ["baseline_redSys_chargeInclusive"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins56_mt95_3mTregions_CT400_isPromptFalse_lowMETregionFalse"
 elif options.sensitivityStudyName in ["baseline_redSys_4mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins72_mt95_4mTregions_CT400_isPromptFalse_lowMETregionFalse"
 elif options.sensitivityStudyName in ["baselinePlusLowMET", "baselinePlusLowMET_redSys", "baselinePlusLowMET2_redSys", "baselinePlusLowMET3_redSys"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_chargeInclusive"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_chargeInclusiveZ"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins80_mt95_3mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions", "baselinePlusLowMET3_redSys_4mTregions_splitCTZ"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins104_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
@@ -95,8 +101,18 @@ elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_rat
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregions_ratioCTZ_highPtBinZ60_eta1SR1Z_vTightMuonsZ"]:
+    fullSensitivityStudyName = options.sensitivityStudyName + "_nbins392_mt95_4mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_low5mTregions"]:
     fullSensitivityStudyName = options.sensitivityStudyName + "_nbins132_mt95_low5mTregions_CT400_isPromptFalse_lowMETregionTrue"
 elif options.sensitivityStudyName in ["baselinePlusLowMET3_redSys_high5mTregions"]:
@@ -589,7 +605,10 @@ else:
     lumi = 137
 
 if True:
-    lumi_ = lumi
+    if options.year == 2018 and options.scaled == 4.3:
+        lumi_ = 260
+    else:
+        lumi_ = lumi
 else:
     lumi_ = fileIN.LUMI
 

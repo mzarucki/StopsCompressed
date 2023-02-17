@@ -695,7 +695,9 @@ if not args.signal == 'ttHinv':
     exp_list   = []
     obs_list   = []
     exp_up_list   = []
+    exp_2up_list   = []
     exp_down_list   = []
+    exp_2down_list   = []
     
     for r in results:
         s, res = r
@@ -708,7 +710,9 @@ if not args.signal == 'ttHinv':
         dm_list.append(dm)
         exp_list.append(res['0.500'])
         exp_up_list.append(res['0.160'])
+        exp_2up_list.append(res['0.975'])
         exp_down_list.append(res['0.840'])
+        exp_2down_list.append(res['0.025'])
         obs_list.append(res['-1.000'])
     
     scatter = ROOT.TGraph(len(mStop_list))
@@ -745,7 +749,9 @@ if not args.signal == 'ttHinv':
     val['dm']    = dm_list
     val['0.500'] = exp_list
     val['0.160'] = exp_up_list
+    val['0.975'] = exp_2up_list
     val['0.840'] = exp_down_list
+    val['0.025'] = exp_2down_list
     val['-1.000'] = obs_list
     #print val
     pickle.dump( val, file(pklFile,'w'))

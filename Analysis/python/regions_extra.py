@@ -17,6 +17,7 @@ from StopsCompressed.Analysis.Region import Region
 # MET > 200 GeV, HT > 200 GeV
 
 SRc = Region("mt", (95,-999))
+SRd = Region("mt", (130,-999))
 
 SR_lepPt = Region("l1_pt", (3.5,30))
 
@@ -61,8 +62,14 @@ SR1Z3_vTightIPZ_tightID  = SR1Z3 + Region("abs(l1_dxy)", (0,0.0015)) + Region("a
 
 ## SR1Z + higher MET
 
+tightMuon = Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0.0012,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
+
 SR1Z1to3 = SR1Z_base + SRZ + Region("MET_pt", (200,300))
 SR1Z1to5 = SR1Z_base + SRZ + Region("MET_pt", (200,-999)) + Region("CT1", (0,300))
+
+SR1Z1to3_vTightMuons = SR1Z_base + SRZ + Region("MET_pt", (200,300)) + tightMuon
+SR1Z1to5_vTightMuons = SR1Z_base + SRZ + Region("MET_pt", (200,-999)) + Region("CT1", (0,300)) + tightMuon
+
 
 ## SR1Zc
 SR1Zc                   = SR1Z_base + SRZ + SRc
@@ -73,6 +80,9 @@ SR1Z3c                  = SR1Zc + Region("MET_pt", (200,300)) + Region("HT", (40
 SR1Z1c_tightIPZ         = SR1Z1c + Region("abs(l1_dxy)", (0,0.005)) + Region("abs(l1_dz)", (0,0.01))
 SR1Z2c_tightIPZ         = SR1Z2c + Region("abs(l1_dxy)", (0,0.005)) + Region("abs(l1_dz)", (0,0.01))
 SR1Z3c_tightIPZ         = SR1Z3c + Region("abs(l1_dxy)", (0,0.005)) + Region("abs(l1_dz)", (0,0.01))
+
+SR1Z1to3c               = SR1Z1to3 + SRc 
+SR1Z1to3d               = SR1Z1to3 + SRd 
 
 ### SR2
 SR2_base                = SR_lepPt + Region("nSoftBJets", (1,-999)) + Region("nHardBJets", (0,0)) + Region("l1_eta", (-2.4, 2.4)) # NOTE: base = no MET/HT/CT/ISR cuts

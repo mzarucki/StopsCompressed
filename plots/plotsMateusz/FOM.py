@@ -103,7 +103,7 @@ else:
 plotsDict = {
    "lep_mt"           :{'var':"mt",                   "bins":[40,0,200],      "decor":{"title":"lepMt",                         "x":"m_{{T}}({lepLatex})",                     "y":"Events", 'log':[0,logy,0]}},
    "lep_pt"           :{'var':"l1_pt",                "bins":[40,0,200],      "decor":{"title":"lepPt",                         "x":"p_{{T}}({lepLatex})",                     "y":"Events", 'log':[0,logy,0]}},
-   "lep_eta"          :{'var':"l1_eta",               "bins":[20,-3,3],       "decor":{"title":"lepEta",                        "x":"#eta({lepLatex})",                        "y":"Events", 'log':[0,logy,0]}},
+   "lep_eta"          :{'var':"l1_eta",               "bins":[20,-2.4,2.4],   "decor":{"title":"lepEta",                        "x":"#eta({lepLatex})",                        "y":"Events", 'log':[0,logy,0]}},
    "lep_phi"          :{'var':"l1_phi",               "bins":[20,-3.15,3.15], "decor":{"title":"lepPhi",                        "x":"#phi({lepLatex})",                        "y":"Events", 'log':[0,logy,0]}},
    "lep_dxy"          :{'var':"l1_dxy",               "bins":[40,-0.02,0.02], "decor":{"title":"lepDxy",                        "x":"d_{{xy}}({lepLatex})",                    "y":"Events", 'log':[0,logy,0]}},
    "lep_dxyErr"       :{'var':"l1_dxyErr",            "bins":[40,0,0.02],     "decor":{"title":"lepDxyErr",                     "x":"#sigma_{{dxy}}({lepLatex})",              "y":"Events", 'log':[0,logy,0]}},
@@ -410,7 +410,7 @@ for p in plotList:
     if plotsDict[p].has_key("decor"):
         if plotsDict[p]['decor'].has_key("y"): decorAxis(refStack, 'y', plotsDict[p]['decor']['y'], tOffset=1.2, tSize = 0.05)
         if plotsDict[p]['decor'].has_key("x"):
-            if any(x in p.lower() for x in ['lep', 'mu', 'ele']): decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel).replace('all','l'), tOffset=1.4, tSize = 0.04)
+            if any(x in p.lower() for x in ['lep', 'mu', 'ele']): decorAxis(refStack, 'x', plotsDict[p]['decor']['x'].format(lepLatex = channel.replace('all','l').replace('mu','#mu')), tOffset=1.4, tSize = 0.04)
             else:          decorAxis(refStack, 'x', plotsDict[p]['decor']['x'], tOffset=1.4, tSize = 0.04)
         if plotsDict[p]['decor'].has_key("title"): refStack.SetTitle(plotsDict[p]['decor']['title'])
         if plotsDict[p]['decor'].has_key("log"):
