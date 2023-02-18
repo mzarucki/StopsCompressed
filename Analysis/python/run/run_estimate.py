@@ -19,7 +19,8 @@ parser.add_option("--lowMETregion",        action='store_true',            defau
 parser.add_option("--plusHighMETZ",        action='store_true',            default=False,                                     help="Add high MET at low HT to region Z")
 parser.add_option("--l1pT_CR_split",       action='store_true',            default=False,                                     help="lepton pT CR split")
 parser.add_option("--ratioCTZ",            action='store_true',            default=False,                                     help="Split CT into MET/HT ratio bins in Z region")
-parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and 2 HT bins in Z region")
+parser.add_option("--ratioCTZ2",           action='store_true',            default=False,                                     help="Split CT into MET/HT ratio bins in Z region")
+parser.add_option("--splitCTZ",            action='store_true',            default=False,                                     help="Split CT into MET and 2 HT bins in Z region (half size)")
 parser.add_option("--splitCTZ3",           action='store_true',            default=False,                                     help="Split CT into MET and 3 HT bins in Z region")
 parser.add_option("--tightIPZ",            action='store_true',            default=False,                                     help="Tight IP cuts in Z region")
 parser.add_option("--vTightMuonsZ",        action='store_true',            default=False,                                     help="Very tight IP and ID cuts in Z region")
@@ -111,30 +112,44 @@ elif options.lowMETregion:
             print "Using regions_lowMET_4mTregions.py for definition of regions."
             from StopsCompressed.Analysis.regions_lowMET_4mTregions                       import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == '4Z':
-        if options.highPtBinZ:
-            if options.vTightMuonsZ:
-                if options.plusHighMETZ:
-                    _NBINS = 376
+        if options.ratioCTZ:
+            if options.highPtBinZ:
+                if options.vTightMuonsZ:
+                    if options.plusHighMETZ:
+                        _NBINS = 376
+                        if options.chargeInclusive:
+                            print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import controlRegions, signalRegions, regionMapping, regionNames
+                        elif options.chargeInclusiveZ:
+                            print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import controlRegions, signalRegions, regionMapping, regionNames
+                        else:
+                            print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
+                    else: 
+                        _NBINS = 376
+                        if options.chargeInclusive:
+                            print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import controlRegions, signalRegions, regionMapping, regionNames
+                        elif options.chargeInclusiveZ:
+                            print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import controlRegions, signalRegions, regionMapping, regionNames
+                        else:
+                            print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
+                            from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
+        elif options.ratioCTZ2: # final
+            if options.highPtBinZ:
+                if options.vTightMuonsZ:
+                    _NBINS = 256
                     if options.chargeInclusive:
-                        print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import controlRegions, signalRegions, regionMapping, regionNames
+                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive.py for definition of regions."
+                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import controlRegions, signalRegions, regionMapping, regionNames
                     elif options.chargeInclusiveZ:
-                        print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import controlRegions, signalRegions, regionMapping, regionNames
+                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ.py for definition of regions."
+                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import controlRegions, signalRegions, regionMapping, regionNames
                     else:
-                        print "Using regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
-                else: 
-                    _NBINS = 376
-                    if options.chargeInclusive:
-                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import controlRegions, signalRegions, regionMapping, regionNames
-                    elif options.chargeInclusiveZ:
-                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import controlRegions, signalRegions, regionMapping, regionNames
-                    else:
-                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
-                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
+                        print "Using regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ.py for definition of regions."
+                        from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ import controlRegions, signalRegions, regionMapping, regionNames
     elif options.mTregions == 'low5':
         _NBINS = 132
         print "Using regions_lowMET_low5mTregions.py for definition of regions."

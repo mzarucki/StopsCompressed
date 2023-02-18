@@ -80,6 +80,15 @@ elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratio
 elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins256_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins256_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusiveZ import signalRegions, controlRegions, regionMapping
+elif args.sensitivityStudyName in ["baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusive"]:
+    fullSensitivityStudyName = args.sensitivityStudyName + "_nbins256_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
+    from StopsCompressed.Analysis.regions_lowMET_4mTregionsZ_ratioCTZ2_highPtBinZ_vTightIPZ_tightIDZ_chargeInclusive import signalRegions, controlRegions, regionMapping
 elif args.sensitivityStudyName in ["baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ"]:
     fullSensitivityStudyName = args.sensitivityStudyName + "_nbins376_mt95_4ZmTregions_CT400_isPromptFalse_lowMETregionTrue"
     from StopsCompressed.Analysis.regions_lowPlusHighMET_4mTregionsZ_ratioCTZ_highPtBinZ_vTightIPZ_tightIDZ import signalRegions, controlRegions, regionMapping

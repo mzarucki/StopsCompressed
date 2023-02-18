@@ -49,6 +49,21 @@ if False:
        sensitivityStudies_.append(sens) 
     sensitivityStudies = sensitivityStudies_
 
+# test
+if False:
+    sensitivityStudies = [ 
+        "baseline_redSys", # baseline
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
+    ]
+
 # final
 if True:
     sensitivityStudies = [ 
