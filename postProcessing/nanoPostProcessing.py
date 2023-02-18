@@ -683,16 +683,16 @@ def filler( event ):
                     event.LHE_weight[nEvt] = weight_friend.chain.GetLeaf("LHE_weight").GetValue(nEvt)
 
         if 'T2' in options.samples[0]:
-            r.GenSusyMStop = max([p['mass']*(abs(p['pdgId']==1000006)) for p in gPart])
-            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
+            r.GenSusyMStop = max([p['mass']*(abs(p['pdgId'])==1000006) for p in gPart])
+            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId'])==1000022) for p in gPart])
             mass1 = int(round(r.GenSusyMStop,0))
             mass2 = int(round(r.GenSusyMNeutralino,0))
             event.mStop = mass1 
             event.mNeu  = mass2 
 
         if 'TChiWZ' in options.samples[0]:
-            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart]) # FIXME: incorrectly evaluates to 0 for some events
-            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId']==1000022)) for p in gPart])
+            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId'])==1000024) for p in gPart])
+            r.GenSusyMNeutralino = max([p['mass']*(abs(p['pdgId'])==1000022) for p in gPart])
             mass1 = int(round(r.GenSusyMChargino,0))
             mass2 = int(round(r.GenSusyMNeutralino,0))
             event.mCha = mass1 
@@ -709,16 +709,16 @@ def filler( event ):
                         event.M1 = mass2
         
         if 'T8bbllnunu' in options.samples[0]:
-            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
-            r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000011)) for p in gPart]) #FIXME check PDG ID of slepton in sample
+            r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId'])==1000024) for p in gPart])
+            r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId'])==1000011) for p in gPart]) #FIXME check PDG ID of slepton in sample
             logger.debug("Slepton is selectron with mass %i", r.GenSusyMSlepton)
             event.sleptonPdg = 1000011
             if not r.GenSusyMSlepton > 0:
-                r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000013)) for p in gPart])
+                r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId'])==1000013) for p in gPart])
                 logger.debug("Slepton is smuon with mass %i", r.GenSusyMSlepton)
                 event.sleptonPdg = 1000013
             if not r.GenSusyMSlepton > 0:
-                r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000015)) for p in gPart])
+                r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId'])==1000015) for p in gPart])
                 logger.debug("Slepton is stau with mass %i", r.GenSusyMSlepton)
                 event.sleptonPdg = 1000015
             mass1 = int(round(r.GenSusyMChargino,0))
