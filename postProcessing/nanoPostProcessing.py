@@ -66,6 +66,7 @@ def get_parser():
     argParser.add_argument('--small',       action='store_true',                                                                        help="Run the file on a small sample (for test purpose), bool flag set to True if used" )
     argParser.add_argument('--susySignal',  action='store_true',                                                                        help="Is SUSY signal?" )
     argParser.add_argument('--EWKinos',     action='store_true',                                                                        help="Is EWKino signal?" )
+    argParser.add_argument('--MSSM',        action='store_true',                                                                        help="Is MSSM signal?" )
     argParser.add_argument('--fastSim',     action='store_true',                                                                        help="FastSim?" )
     argParser.add_argument('--TTDM',        action='store_true',                                                                        help="Is TTDM signal?" )
     argParser.add_argument('--triggerSelection',            action='store_true',                                                        help="Trigger selection?" ) 
@@ -477,6 +478,17 @@ if isMC:
         VectorTreeVariable.fromString('Muon[genPartIdx/I,genPartFlav/b]'),
     ]
 
+if isMC and options.susySignal and options.MSSM:
+    mus = [100, 120, 140, 160, 180, 200, 220, 240]
+    M1s = [300, 400, 500, 600, 800, 1000, 1200]
+
+    modelStr = {}
+    for mu in mus:
+        for M1 in M1s:
+            modelStr["%i_%i"%(mu,M1)] = "GenModel_MSSM_higgsino_{mu}_{M1}".format(mu = mu, M1 = M1) # NOTE: https://cms-pdmv.gitbook.io/project/analyzers-corner/how-to-use-randomized-parameters-samples#how-to-use-nanoaod
+
+    read_variables += [TreeVariable.fromString(x + '/O') for x in modelStr.values()]
+    #read_variables += map(TreeVariable.fromString, modelStr.values())
 
 new_variables += [\
     'nlep/I',
@@ -503,6 +515,8 @@ if options.susySignal:
     from StopsCompressed.samples.helpers import getSignalWeight, getISRNorm
     if options.EWKinos:
         xsec_channel = "TChiWZ_13TeV"
+    elif options.MSSM:
+        xsec_channel = "MSSM_higgsino_13TeV"
     else: 
         xsec_channel = "stop13TeV"
 
@@ -510,12 +524,12 @@ if options.susySignal:
     logger.info("Done fetching signal weights.")
 
     masspoints = signalWeight.keys()
-    
-    if getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal = nameForISR, cacheDir = cache_dir):
-        renormISR = True
-        logger.info("Successfully loaded ISR normalzations.")
-    else:
-        logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
+    if not options.MSSM:
+        if getISRNorm(sample, masspoints[0][0], masspoints[0][1], masspoints, options.year, signal = nameForISR, cacheDir = cache_dir):
+            renormISR = True
+            logger.info("Successfully loaded ISR normalzations.")
+        else:
+            logger.info("!!WARNING!! No ISR normaliztion factors found. Using the ISR weights will therefore change the normalization. Be careful!")
 		    
 if sample.isData: new_variables.extend( ['jsonPassed/I','isData/I'] )
 new_variables.extend( ['nBTag/I','nISRJets/I', 'nHardBJets/I', 'nSoftBJets/I', 'HT/F', 'dphij0j1/F', 'dPhiJetMet/F', 'dPhiLepMet/F', 'dPhiLepJet/F'] )
@@ -551,6 +565,8 @@ if options.susySignal:
         new_variables  += ['weight_pol_L/F', 'weight_pol_R/F']
     if 'TChiWZ' in options.samples[0]:
         new_variables  += ['mCha/I', 'mNeu/I']
+    if 'MSSM' in options.samples[0]:
+        new_variables  += ['mu/I', 'M1/I']
 
 if not options.skipNanoTools:
     # prepare metsignificance and jes/jer
@@ -682,6 +698,16 @@ def filler( event ):
             event.mCha = mass1 
             event.mNeu = mass2 
         
+        if 'MSSM' in options.samples[0]:
+            for mu in mus:
+                for M1 in M1s:
+                    modelCheck = getattr(r,modelStr["%i_%i"%(mu,M1)])
+                    if modelCheck:
+                        mass1 = mu
+                        mass2 = M1
+                        event.mu = mass1 
+                        event.M1 = mass2
+        
         if 'T8bbllnunu' in options.samples[0]:
             r.GenSusyMChargino = max([p['mass']*(abs(p['pdgId']==1000024)) for p in gPart])
             r.GenSusyMSlepton = max([p['mass']*(abs(p['pdgId']==1000011)) for p in gPart]) #FIXME check PDG ID of slepton in sample
@@ -745,9 +771,9 @@ def filler( event ):
         # NOTE: use this way only when you have unfiltered SUSY samples, w/o met,ht filters applied, otherwise we might change normalization of sample and not realize if done on filtered samples
         
         isr = ISRweight()
-        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)           if (options.susySignal and not options.EWKinos) else 1
-        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)  if (options.susySignal and not options.EWKinos) else 1
-        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1) if (options.susySignal and not options.EWKinos) else 1
+        event.reweight_nISR     = isr.getISRWeight(r, norm=ISRnorm, isFast=True)           if (options.susySignal and not options.EWKinos and not options.MSSM) else 1
+        event.reweight_nISRUp   = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=1)  if (options.susySignal and not options.EWKinos and not options.MSSM) else 1
+        event.reweight_nISRDown = isr.getISRWeight(r, norm=ISRnorm, isFast=True, sigma=-1) if (options.susySignal and not options.EWKinos and not options.MSSM) else 1
         # NOTE: ISR-pt/W-pt reweighting is probably more relevant than the nISR reweighting for EWKinos (see https://indico.cern.ch/event/616816/contributions/2489809/attachments/1418579/2174166/17-02-22_ana_isr_ewk.pdf). getISRWeight also relies on mStop. Therefore, turning off nISR reweighting for EWKinos.
         
         # top pt reweighting

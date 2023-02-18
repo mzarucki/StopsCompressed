@@ -144,7 +144,7 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
         logger.info("Loading signal weights from %s", cacheFile)
         hNEvents = getObjFromFile(cacheFile, "hNEvents")
     else:
-        if channel == "MSSM_higgsino_13TeV":
+        if "MSSM" in channel:
     	    logger.info("Processing MSSM sample")
             modelStr = {}
             hNEvents = ROOT.TH2F("hNEvents", "hNEvents", len(mus), mus[0], mus[len(mus)-1], len(M1s), M1s[0], M1s[len(M1s)-1])
@@ -164,9 +164,9 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
         writeObjToFile(cacheFile, hNEvents)
 
     for i in range(mMax):
-        if channel == "MSSM_higgsino_13TeV" and i not in mus: continue # workaround for FindBin interpolation issue
+        if "MSSM" in channel and i not in mus: continue # workaround for FindBin interpolation issue
         for j in range(mMax):
-            if channel == "MSSM_higgsino_13TeV" and j not in M1s: continue # workaround for FindBin interpolation issue
+            if "MSSM" in channel and j not in M1s: continue # workaround for FindBin interpolation issue
             n = hNEvents.GetBinContent(hNEvents.FindBin(i,j))
             if n>0:
                 if "MSSM" in channel:
