@@ -5,9 +5,11 @@ class xSecSusy:
     def __init__(self):
         from StopsCompressed.Tools.xSecSusyData.stops_13TeV import xsec as stop13TeV # FIXME: why not xsecNNLL? 
         from StopsCompressed.Tools.xSecSusyData.TChiWZ_13TeV import xsecNNLL as TChiWZ_13TeV
+        #from StopsCompressed.Tools.getGauginoXSec import getGauginoXSec, getHiggsinoXSec
         self.xSec = {
             'stop13TeV':stop13TeV,
-            'TChiWZ_13TeV':TChiWZ_13TeV
+            'TChiWZ_13TeV':TChiWZ_13TeV # NOTE: could be replaced with getGauginoXSec
+            #'MSSM_higgsino_13TeV':getHiggsinoXSec # NOTE: implemented in getSignalWeight directly
         }
 
     def getXSec(self, mass, sigma=0, channel='stop13TeV'):

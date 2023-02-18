@@ -129,6 +129,11 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
         mass2_name = "mNeu"
         mass1_pdgId = 1000024
         mass2_pdgId = 1000022
+    elif channel == "MSSM_higgsino_13TeV":
+        mass1_name = "mu"
+        mass2_name = "M1"
+        mus = [100, 120, 140, 160, 180, 200, 220, 240]
+        M1s = [300, 400, 500, 600, 800, 1000, 1200]
     else:
         raise NotImplementedError
 
@@ -139,20 +144,40 @@ def getSignalWeight(sample, lumi, cacheDir, channel = 'stop13TeV'):
         logger.info("Loading signal weights from %s", cacheFile)
         hNEvents = getObjFromFile(cacheFile, "hNEvents")
     else:
-        sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId})):Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))>>hNEvents(".format(mass1_pdgId = mass1_pdgId, mass2_pdgId = mass2_pdgId) + ','.join([bStr, bStr])+")", "", "goff")
+        if channel == "MSSM_higgsino_13TeV":
+    	    logger.info("Processing MSSM sample")
+            modelStr = {}
+            hNEvents = ROOT.TH2F("hNEvents", "hNEvents", len(mus), mus[0], mus[len(mus)-1], len(M1s), M1s[0], M1s[len(M1s)-1])
+            for mu in mus:
+                for M1 in M1s:
+                    modelStr["%i_%i"%(mu,M1)] = "GenModel_MSSM_higgsino_{mu}_{M1}".format(mu = mu, M1 = M1) # NOTE: https://cms-pdmv.gitbook.io/project/analyzers-corner/how-to-use-randomized-parameters-samples#how-to-use-nanoaod
+                    print modelStr["%i_%i"%(mu,M1)] 
+                    sample.chain.Draw("1>>hNEvents2(" + ','.join([bStr])+")", "Alt$({modelStr},0)".format(modelStr = modelStr["%i_%i"%(mu,M1)]), "goff")
+                    hNEvents2 = ROOT.gDirectory.Get("hNEvents2")
+                    hNEvents.SetBinContent(hNEvents.FindBin(mu, M1), hNEvents2.GetEntries())
+                    del hNEvents2
+        else: 
+            sample.chain.Draw("Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId})):Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))>>hNEvents(".format(mass1_pdgId = mass1_pdgId, mass2_pdgId = mass2_pdgId) + ','.join([bStr, bStr])+")", "", "goff")
 
         hNEvents = ROOT.gDirectory.Get("hNEvents")
         logger.info("Writing signal weights to %s", cacheFile)
         writeObjToFile(cacheFile, hNEvents)
 
-    for i in range (mMax):
-        for j in range (mMax):
+    for i in range(mMax):
+        if channel == "MSSM_higgsino_13TeV" and i not in mus: continue # workaround for FindBin interpolation issue
+        for j in range(mMax):
+            if channel == "MSSM_higgsino_13TeV" and j not in M1s: continue # workaround for FindBin interpolation issue
             n = hNEvents.GetBinContent(hNEvents.FindBin(i,j))
             if n>0:
-                signalWeight[(i,j)] = {'weight':lumi*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
+                if "MSSM" in channel:
+                    from StopsCompressed.Tools.getGauginoXSec import getHiggsinoXSec #, getGauginoXSec
+                    xsec = getHiggsinoXSec(i,j)[0] 
+                    signalWeight[(i,j)] = {'weight':lumi*xsec/n, 'xSecFacUp':1.05, 'xSecFacDown':0.95} # adding flat +/- 5 % lumi unc.
+                else:
+                    xsec = xSecSusy_.getXSec(channel=channel,mass=i,sigma=0) 
+                    signalWeight[(i,j)] = {'weight':lumi*xsec/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
 
-    	        logger.info("Found {mass1_name} %5i {mass2_name} %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)".format(mass1_name = mass1_name, mass2_name = mass2_name), i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'])
-
+    	        logger.info("Found {mass1_name} %5i {mass2_name} %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f)".format(mass1_name = mass1_name, mass2_name = mass2_name), i,j,n, xsec, signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'])
                 #genEff = genFilter.getEff(i,j) # TODO: add gen filter weights? only after mass point splitting?
                 #         signalWeight[(i,j)] = {'weight':lumi*genEff*xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)/n, 'xSecFacUp':xSecSusy_.getXSec(channel=channel,mass=i,sigma=1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0), 'xSecFacDown':xSecSusy_.getXSec(channel=channel,mass=i,sigma=-1)/xSecSusy_.getXSec(channel=channel,mass=i,sigma=0)}
                 #logger.info( "Found mStop %5i mNeu %5i Number of events: %6i, xSec: %10.6f, weight: %6.6f (+1 sigma rel: %6.6f, -1 sigma rel: %6.6f), genEff: %6.6f", i,j,n, xSecSusy_.getXSec(channel=channel,mass=i,sigma=0),  signalWeight[(i,j)]['weight'], signalWeight[(i,j)]['xSecFacUp'], signalWeight[(i,j)]['xSecFacDown'], genEff)
