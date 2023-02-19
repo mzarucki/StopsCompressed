@@ -143,18 +143,27 @@ def get_parser():
         action='store_true',
         help="Is T2tt signal?"
         )
+
     argParser.add_argument('--TChiWZ',
         action='store_true',
         help="Is TChiWZ signal?"
         )
+
+    argParser.add_argument('--MSSM',
+        action='store_true',
+        help="Is MSSM signal?"
+        )
+
     argParser.add_argument('--T2bW',
         action='store_true',
         help="Is T2bW signal?"
         )
+
     argParser.add_argument('--T2bt',
         action='store_true',
         help="Is T2bt signal?"
         )
+
     argParser.add_argument('--small',
         action='store_true',
         help="Run the file on a small sample (for test purpose), bool flag set to True if used",
@@ -175,6 +184,7 @@ def get_parser():
         action='store_true',
         help="Is T8bbstausnu signal?"
         )
+
     argParser.add_argument('--TTDM',
         action='store_true',
         help="Is TTDM signal?"
@@ -307,6 +317,10 @@ if options.TChiWZ:
     mass2_name = "mNeu"
     mass1_pdgId = 1000024
     mass2_pdgId = 1000022
+elif options.MSSM:
+    xsec_channel = "MSSM_higgsino_13TeV"
+    mass1_name = "mu"
+    mass2_name = "M1"
 elif options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options.T8bbstausnu:
     xsec_channel = "stop13TeV"
     mass1_name = "mStop"
@@ -335,7 +349,7 @@ outDir = os.path.join(options.targetDir, options.processingEra, options.skim, sa
 
 print outDir
 
-if options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options.T8bbstausnu or options.TChiWZ:
+if options.T2tt or options.T8bbllnunu or options.T2bW or options.T2bt or options.T8bbstausnu or options.TChiWZ or options.MSSM:
     xSection = None
     # special filter for bad jets in FastSim: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSRecommendationsICHEP16#Cleaning_up_of_fastsim_jets_from
     skimConds.append( "Sum$(JetFailId_pt>30&&abs(JetFailId_eta)<2.5&&JetFailId_mcPt==0&&JetFailId_chHEF<0.1)+Sum$(Jet_pt>30&&abs(Jet_eta)<2.5&&Jet_mcPt==0&&Jet_chHEF<0.1)==0" )
@@ -361,7 +375,11 @@ if options.T2bW:
     if not os.path.exists(signalDir): os.makedirs(signalDir)
 
 if options.TChiWZ:
-    signalDir = os.path.join(options.targetDir, options.processingEra, options.skim, "TChiWZ_split")
+    signalDir = os.path.join(options.targetDir, options.processingEra, options.skim, "TChiWZ")
+    if not os.path.exists(signalDir): os.makedirs(signalDir)
+
+if options.MSSM:
+    signalDir = os.path.join(options.targetDir, options.processingEra, options.skim, "MSSM")
     if not os.path.exists(signalDir): os.makedirs(signalDir)
 
 if options.T8bbllnunu:
@@ -419,10 +437,11 @@ print "Running over:"
 print masspoints[job]
 
 # Write one file per mass point for T2tt
-if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or options.T8bbstausnu or options.TChiWZ:
+if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or options.T8bbstausnu or options.TChiWZ or options.MSSM:
     if options.T2tt:          output = Sample.fromDirectory("T2tt_output", inDir)
     elif options.T2bW:        output = Sample.fromDirectory("T2bW_output", inDir)
     elif options.TChiWZ:      output = Sample.fromDirectory("TChiWZ_output", inDir)
+    elif options.MSSM:        output = Sample.fromDirectory("MSSM_output", inDir)
     elif options.T2bt:        output = Sample.fromDirectory("T2bt_output", inDir)
     elif options.T8bbstausnu: output = Sample.fromDirectory("T8bbstausnu_output", inDir) 
     else:                     output = Sample.fromDirectory("T8bbllnunu_output", inDir) #FIXME
@@ -432,17 +451,18 @@ if options.T2tt or options.T8bbllnunu  or options.T2bW or options.T2bt or option
     if options.small: output.reduceFiles( to = 1 )
     for i,s in enumerate(masspoints[job]):
         logger.info("Going to write masspoint {} {} {} {}".format(mass1_name, s[0], mass2_name, s[1]))
-        cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))==".format(mass1_pdgId = mass1_pdgId) + str(s[0]) + "&& Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId}))==".format(mass2_pdgId = mass2_pdgId) + str(s[1]) # NOTE: Max$ method preferable than cutting on mass1_name, due to issue with how it's done in post-processing
+        cut = "(%s==%s) && (%s == %s)"%(mass1_name, str(s[0]), mass2_name, str(s[1])) # NOTE: mass variable cut
+        #cut = "Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass1_pdgId}))==".format(mass1_pdgId = mass1_pdgId) + str(s[0]) + "&& Max$(GenPart_mass*(abs(GenPart_pdgId)=={mass2_pdgId}))==".format(mass2_pdgId = mass2_pdgId) + str(s[1]) # NOTE: pdgId cut
         logger.debug("Using cut %s", cut)
         if options.T2tt:          signal_prefix = 'T2tt_'
         elif options.T2bW:        signal_prefix = 'T2bW_'
         elif options.TChiWZ:      signal_prefix = 'TChiWZ_'
+        elif options.MSSM:        signal_prefix = 'MSSM_'
         elif options.T2bt:        signal_prefix = 'T2bt_'
         elif options.T8bbstausnu: signal_prefix = 'T8bbstausnu_XCha%s_XStau%s_'%(x_cha,x_stau)
         elif options.T8bbllnunu:  signal_prefix = 'T8bbllnunu_XCha%s_XSlep%s_'%(x_cha,x_slep)
         else: logger.info("Model isn't specified") 
         signalFile = os.path.join(signalDir, signal_prefix + str(s[0]) + '_' + str(s[1]) + '.root' )
-        #signalFile = os.path.join(signalDir, 'T2tt_'+str(s[0])+'_'+str(s[1])+'.root' )
         logger.debug("Ouput file will be %s", signalFile)
         if os.path.exists(signalFile) and deepCheckRootFile(signalFile):
             c = ROOT.TChain("Events")
