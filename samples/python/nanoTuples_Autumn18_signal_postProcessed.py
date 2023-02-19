@@ -113,3 +113,32 @@ try:
     logger.debug("Loaded TChiWZ signals: %s", ",".join([s.name for s in signals_TChiWZ]))
 except:
     logger.info("No TChiWZ signals found.")
+
+signals_MSSM=[]
+
+try:
+    for f in os.listdir(os.path.join(data_directory_, postProcessing_directory_, 'MSSM')):
+        if f.endswith('.root') and f.startswith('MSSM_'):
+            name = f.replace('.root','')
+            mu, M1 = name.replace('MSSM_','').split('_')
+    
+            tmp = Sample.fromFiles(\
+                name = name,
+                files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'MSSM',f))],
+                treeName = "Events",
+                isData = False,
+                color = 7 ,
+                texName = "Higgsino pMSSM ("+mu+","+M1+")"
+            )
+    
+            tmp.mu = int(mu)
+            tmp.M1 = int(M1)
+            tmp.isFastSim = True
+    
+            exec("%s=tmp"%name)
+            exec("signals_MSSM.append(%s)"%name)
+    
+    logger.info("Loaded %i MSSM signals", len(signals_MSSM))
+    logger.debug("Loaded MSSM signals: %s", ",".join([s.name for s in signals_MSSM]))
+except:
+    logger.info("No MSSM signals found.")

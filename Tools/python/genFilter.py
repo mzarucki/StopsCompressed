@@ -31,8 +31,8 @@ class genFilter:
             elif self.signal == "T2bW":
                 pklFileName = "filterEffs_SMS_T2bW_X05_dM_10to80_genHT_160_genMET_80_mWMin_0p1"
             elif self.signal == "TChiWZ":
-                pklFileName = "filterEffs_SMS_TChiWZ_genHT_160_genMET_80" # FIXME: need to re-compte for higher chargino masses
-            elif self.signal == "MSSM_higgsino":
+                pklFileName = "filterEffs_SMS_TChiWZ_genHT_160_genMET_80"
+            elif self.signal == "MSSM":
                 pklFileName = "filterEffs_MSSM_higgsino_genHT_160_genMET_80"
             else:
                 raise NotImplementedError

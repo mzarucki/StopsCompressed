@@ -7,7 +7,7 @@ import argparse
 argParser = argparse.ArgumentParser(description = "Argument parser")
 argParser.add_argument("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
 argParser.add_argument('--logLevel',       action='store', default='INFO',          nargs='?', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE', 'NOTSET'],             help="Log level for logging")
-argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
+argParser.add_argument("--signal",         action='store', default='T2tt',          nargs='?', choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ", "MSSM"], help="which signal?")
 argParser.add_argument("--only",           action='store', default=None,            nargs='?',                                                                                           help="pick only one masspoint?")
 argParser.add_argument("--scale",          action='store', default=1.0, type=float, nargs='?',                                                                                           help="scaling all yields")
 argParser.add_argument("--overwrite",      default = False, action = "store_true", help="Overwrite existing output files")
@@ -211,7 +211,7 @@ cacheFileNameS  = os.path.join(limitDir, 'calculatedSignifs')
 signifCache     = Cache(cacheFileNameS, verbosity=2)
 
 fastSim = False # default value
-if args.signal in ["T2tt", "T2bW", "TChiWZ"] and not args.fullSim: fastSim = True
+if args.signal in ["T2tt", "T2bW", "TChiWZ", "MSSM"] and not args.fullSim: fastSim = True
 
 if fastSim:
     logger.info("Assuming the signal sample is FastSim!")
@@ -249,6 +249,12 @@ def wrapper(s):
         genEff = gFilter.getEffFromPkl(s.mCha,s.mNeu)
         if genEff == 0:
 	        genEff = 0.1 # FIXME: hard-coded value for EWKinos 
+	        print "No gen. filter eff. found in map for %s, %s. Setting gen. filter eff. to %s."%(s.mCha, s.mNeu, genEff)
+    elif hasattr(s, "mu") and hasattr(s, "M1"): 
+        gFilter = genFilter(year = year, signal = "MSSM")
+        genEff = gFilter.getEffFromPkl(s.mu,s.M1)
+        if genEff == 0:
+	        genEff = 0.1 # FIXME: hard-coded value for MSSM
 	        print "No gen. filter eff. found in map for %s, %s. Setting gen. filter eff. to %s."%(s.mCha, s.mNeu, genEff)
     else:
         genEff = 1
@@ -620,7 +626,7 @@ def wrapper(s):
 # Load the signals and run the code! #
 ######################################
 
-if args.signal in ["T2tt", "T2bW", "TChiWZ"]:
+if args.signal in ["T2tt", "T2bW", "TChiWZ", "MSSM"]:
     if "2016" in year:
         if args.fullSim:
              from StopsCompressed.samples.nanoTuples_Summer16_FullSimSignal_postProcessed import signals_T2tt as jobs
@@ -649,6 +655,8 @@ if args.signal in ["T2tt", "T2bW", "TChiWZ"]:
                 from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2bW as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
             elif args.signal == "TChiWZ": 
                 from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_TChiWZ as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
+            elif args.signal == "MSSM": 
+                from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_MSSM as jobs, data_directory_ as data_directory, postProcessing_directory_ as postProcessing_directory 
             #data_directory              = '/afs/hephy.at/data/cms07/nanoTuples/'
             #postProcessing_directory    = 'stops_2018_nano_v0p21/dilep/'
             #from StopsDilepton.samples.nanoTuples_FastSim_Autumn18_postProcessed import signals_T2tt as jobs

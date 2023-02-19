@@ -216,8 +216,8 @@ if options.year == "2016":
     from StopsCompressed.samples.nanoTuples_FastSim_Summer16_postProcessed import signals_T2tt
     signals = signals_T2tt
 elif options.year == "2018":
-    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ
-    signals = signals_T2tt + signals_T2bW + signals_TChiWZ
+    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ, signals_MSSM
+    signals = signals_T2tt + signals_T2bW + signals_TChiWZ + signals_MSSM
 else:
     raise NotImplementedError
 
@@ -379,6 +379,12 @@ if options.makeYieldsTable and not options.selectRegion and options.noSystematic
 
                 gFilter = genFilter(year = options.year, signal = "TChiWZ")
                 genEff  = gFilter.getEffFromPkl(mCha,mNeu)
+            elif "MSSM" in estName:
+                mu = int(estName.split('_')[1])
+                M1 = int(estName.split('_')[2])
+
+                gFilter = genFilter(year = options.year, signal = "MSSM")
+                genEff  = gFilter.getEffFromPkl(mu,M1)
             else:
                 genEff = 1
 

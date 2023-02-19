@@ -59,9 +59,10 @@ if year == "2018":
     # MC
     from StopsCompressed.samples.nanoTuples_Autumn18_postProcessed import WJets_18, TTJets_18, ZInv_18, QCD_18, Others_18
     # Signals
-    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ
-    signals = signals_T2tt + signals_T2bW + signals_TChiWZ
+    from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ, signals_MSSM
+    signals = signals_T2tt + signals_T2bW + signals_TChiWZ + signals_MSSM
     sigList = ["T2tt_550_470", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
+    #sigList = ["T2tt_550_470", "T2tt_550_540", "MSSM_100_400", "MSSM_100_1000"] # benchmark signals: mStop = 550; mu = 100 GeV
     #sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     selSignals = [s for s in signals if s.name in sigList]
     assert len(sigList) == len(selSignals)
@@ -322,6 +323,12 @@ for p in plotList:
 
             gFilter = genFilter(year = args.year, signal = "TChiWZ")
             genEff  = gFilter.getEffFromPkl(mCha,mNeu)
+        elif "MSSM" in sig:
+            mu = int(sig.split('_')[1])
+            M1 = int(sig.split('_')[2])
+
+            gFilter = genFilter(year = args.year, signal = "MSSM")
+            genEff  = gFilter.getEffFromPkl(mu,M1)
         else:
             raise NotImplementedError
     
@@ -487,7 +494,8 @@ for p in plotList:
     if isDataPlot:
         drawCMSHeader(lumi = lumi_fb)
     else:
-        drawCMSHeader(lumi = lumi_fb, preliminary = "Simulation")
+        drawCMSHeader(lumi = lumi_fb, preliminary = "Private Work")
+        #drawCMSHeader(lumi = lumi_fb, preliminary = "Simulation")
 
     ret['latex'] = latex
   
