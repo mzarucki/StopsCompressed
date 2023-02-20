@@ -528,6 +528,7 @@ def wrapper(s):
     elif args.signal == "T2bt":                         sConfig = s.mStop, s.mNeu
     elif args.signal == "T2bW":                         sConfig = s.mStop, s.mNeu
     elif args.signal == "TChiWZ":                       sConfig = s.mCha,  s.mNeu
+    elif args.signal == "MSSM":                         sConfig = s.mu,    s.M1
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05": sConfig = s.mStop, s.mNeu
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09": sConfig = s.mStop, s.mNeu
     elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":  sConfig = s.mStop, s.mNeu
@@ -601,6 +602,7 @@ def wrapper(s):
       elif args.signal == "T2bt":                           sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T2bW":                           sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "TChiWZ":                         sString = "mCha  %i mNeu %i" % sConfig
+      elif args.signal == "MSSM":                           sString = "mu %i M1 %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p05":   sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p09":   sString = "mStop %i mNeu %i" % sConfig
       elif args.signal == "T8bbllnunu_XCha0p5_XSlep0p5":    sString = "mStop %i mNeu %i" % sConfig

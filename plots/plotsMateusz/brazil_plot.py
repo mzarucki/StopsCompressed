@@ -50,13 +50,13 @@ if False:
     sensitivityStudies = sensitivityStudies_
 
 # test
-if False:
+if True:
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
         #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
         #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
         #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
         #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
         #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
@@ -65,7 +65,7 @@ if False:
     ]
 
 # final
-if True:
+if False:
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
         "baseline_redSys_chargeInclusive",
@@ -106,12 +106,18 @@ if args.scan == 'TChiWZ':
     scanVar = 'dm'
     fixedVar = 'stop'
     fixedMass = 100
+    suffix += "_mCha" + str(fixedMass)
+elif args.scan == 'MSSM':
+    scanVar = 'lsp'
+    fixedVar = 'stop'
+    fixedMass = 100
+    suffix += "_mu" + str(fixedMass)
 else:
     scanVar = 'dm'
     fixedVar = 'stop'
     fixedMass = 550
+    suffix += "_mStop" + str(fixedMass)
 
-suffix += "_mCha" + str(fixedMass)
 
 limits_files = {}
 res = {}
@@ -260,6 +266,8 @@ if args.scan == 'mPhi':
     elif tp == 'pseudoscalar': tp_ = 'm_{a}'
 elif args.scan == 'TChiWZ':
     tp_ = '#Deltam(#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}, #tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}})'
+elif args.scan == 'MSSM':
+    tp_ = 'M1'
 else:
     tp_ = 'm_{#chi}'
 mg.GetXaxis().SetTitle(tp_+" [GeV]")
@@ -309,7 +317,13 @@ none = ROOT.TH1F()
 #if tp == 'scalar': tp_ = 'Scalar mediator'
 #elif tp == 'pseudoscalar': tp_ = 'Pseudoscalar mediator'
 
-tp = "TChiWZ"
+if args.scan == "TChiWZ":
+    tp = "TChiWZ"
+elif args.scan == "MSSM":
+    tp = "MSSM"
+else:
+    tp = "T2"
+
 tp_ = tp
 
 #extraText = ""
@@ -325,11 +339,15 @@ elif args.scan == 'mChi' and args.spin == 'pseudoscalar':
     latex2.DrawLatex(0.20,0.89,'#bf{'+tp_+', Dirac DM, m_{a} = '+str(fixedMass)+' GeV}')
 elif args.scan == 'TChiWZ':
     latex2.DrawLatex(0.20,0.89,'#bf{#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}} #rightarrow WZ#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}}')
+elif args.scan == 'MSSM':
+    latex2.DrawLatex(0.20,0.89,'Higgsino pMSSM')
 else:
     latex2.DrawLatex(0.20,0.89,'#bf{'+tp_+', Dirac DM, m_{#chi} = '+str(fixedMass)+' GeV}')
 
 if args.scan == 'TChiWZ':
     latex2.DrawLatex(0.20,0.85,'#bf{m_{#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}} = m_{#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}}} = %s GeV}'%fixedMass)
+elif args.scan == 'MSSM':
+    latex2.DrawLatex(0.20,0.85,'#bf{#mu} = %s GeV'%fixedMass)
 else: 
     latex2.DrawLatex(0.20,0.85,'#bf{g_{q} = 1, g_{DM} = 1}')
     

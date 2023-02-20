@@ -21,7 +21,7 @@ from optparse import OptionParser
 parser = OptionParser()
 #parser.add_option("--file",             dest="filename",    default=None,   type="string", action="store",  help="Which file?")
 parser.add_option("--sensitivityStudyName", default = "baseline",  type=str,    action="store",      help="Name of sensitivity study")
-parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ"], help="which signal?")
+parser.add_option("--signal",           action='store',     default='T2tt',  choices=["T2tt","TTbarDM","T8bbllnunu_XCha0p5_XSlep0p05", "T8bbllnunu_XCha0p5_XSlep0p5", "T8bbllnunu_XCha0p5_XSlep0p95", "T2bt","T2bW", "T8bbllnunu_XCha0p5_XSlep0p09", "ttHinv", "TChiWZ", "MSSM"], help="which signal?")
 parser.add_option("--year",             dest="year",   type="int",    default=2018, action="store",  help="Which year?")
 parser.add_option("--channel",          dest = "channel", help = "Lepton channel", type = str, default = "mu")
 parser.add_option("--scaled",           dest="scaled",   type="float",    default=1.0, action="store",  help="Scaled limits?")
@@ -185,6 +185,13 @@ elif options.signal == 'TChiWZ':
     nbinsy = (70-0)/10 * 5 
     #nbinsx = 50
     #nbinsy = 35
+elif options.signal == 'MSSM':
+    #mus = [100, 120, 140, 160, 180, 200, 220, 240]
+    #M1s = [300, 400, 500, 600, 800, 1000, 1200]
+    #nbinsx = 8
+    #nbinsy = 10
+    nbinsx = (250-100)/25 * 2 # max: 240
+    nbinsy = (1200-300)/10 * 5 
 elif options.signal.startswith('T8'):
     nbins = 64 # bin size 25 GeV
 #if options.signal == 'T2bW':
@@ -231,11 +238,22 @@ if options.signal == 'T8bbllnunu_XCha0p5_XSlep0p5':
 #print "x: ", results_df['stop'].tolist()
 #print "y: ", results_df['dm'].tolist()
 #print "z: ", results_df['0.500'].tolist()
-#exp_graph       = toGraph2D('exp',      'exp',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['0.500'].tolist())
-exp_dm_graph       = toGraph2D('exp_dm',      'exp_dm',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.500'].tolist())
-exp_dm_up_graph    = toGraph2D('exp_dm_up',   'exp_dm_up',   len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.840'].tolist())
-exp_dm_down_graph  = toGraph2D('exp_dm_down', 'exp_dm_down', len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.160'].tolist())
-obs_dm_graph       = toGraph2D('obs_dm',      'obs_dm',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['-1.000'].tolist())
+
+if options.signal == "MSSM": # workaround to not use dm results for MSSM
+    exp_graph       = toGraph2D('exp',      'exp',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['0.500'].tolist())
+    exp_up_graph    = toGraph2D('exp_dm_up',   'exp_dm_up',   len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['0.840'].tolist())
+    exp_down_graph  = toGraph2D('exp_dm_down', 'exp_dm_down', len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['0.160'].tolist())
+    obs_graph       = toGraph2D('obs_dm',      'obs_dm',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['-1.000'].tolist())
+    exp_dm_graph       = exp_graph 
+    exp_dm_up_graph    = exp_up_graph 
+    exp_dm_down_graph  = exp_down_graph 
+    obs_dm_graph       = obs_graph 
+else:
+    #exp_graph       = toGraph2D('exp',      'exp',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['0.500'].tolist())
+    exp_dm_graph       = toGraph2D('exp_dm',      'exp_dm',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.500'].tolist())
+    exp_dm_up_graph    = toGraph2D('exp_dm_up',   'exp_dm_up',   len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.840'].tolist())
+    exp_dm_down_graph  = toGraph2D('exp_dm_down', 'exp_dm_down', len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['0.160'].tolist())
+    obs_dm_graph       = toGraph2D('obs_dm',      'obs_dm',      len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['dm'].tolist(),results_df['-1.000'].tolist())
 #signif_graph    = toGraph2D('signif',   'signif',   len(results_df['stop'].tolist()),results_df['stop'].tolist(),results_df['lsp'].tolist(),results_df['significance'].tolist())
 
 #graphs["exp"]       = exp_graph
@@ -385,7 +403,6 @@ if options.signal == 'TChiWZ':
             v_exp   = hists['exp_dm'].GetBinContent(hists[xSecKey].FindBin(mCha, dm)) # get expected limit
             
             #if mCha>=100 and v>0:
-            print "!!! mCha", mCha
             if mCha>=100:
                 scaleup   = xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=1) /xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=0)
                 scaledown = xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=-1)/xSecSusy_.getXSec(channel='TChiWZ_13TeV',mass=mCha,sigma=0)
@@ -397,7 +414,31 @@ if options.signal == 'TChiWZ':
             
                 if v>0 and xSec>0:
                     xsecLimits_df.append({'mCha':mCha, 'dm':dm, 'exp':v_exp * xSec, 'obs': v * xSec})
-                    print "mCha: ", mCha, "dm: ", dm, "v_exp: ", v_exp,"xSec: ", xSec
+                    #print "mCha: ", mCha, "dm: ", dm, "v_exp: ", v_exp,"xSec: ", xSec
+elif options.signal == 'MSSM':
+    from StopsCompressed.Tools.getGauginoXSec import getHiggsinoXSec #, getGauginoXSec
+
+    for ix in range(hists[xSecKey].GetNbinsX()):
+        for iy in range(hists[xSecKey].GetNbinsY()):
+            mu      = (hists[xSecKey].GetXaxis().GetBinUpEdge(ix)+hists[xSecKey].GetXaxis().GetBinLowEdge(ix)) / 2.
+            M1      = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            #dm      = (hists[xSecKey].GetYaxis().GetBinUpEdge(iy)+hists[xSecKey].GetYaxis().GetBinLowEdge(iy)) / 2.
+            v       = hists[xSecKey].GetBinContent(hists[xSecKey].FindBin(mu, M1))
+            v_exp   = hists['exp_dm'].GetBinContent(hists[xSecKey].FindBin(mu, M1)) # get expected limit
+            
+            #if mCha>=100 and v>0:
+            if mu>=100:
+                scaleup   = 1.05 # adding flat +/- 5 % lumi unc.
+                scaledown = 0.95 # adding flat +/- 5 % lumi unc.
+                xSec = getHiggsinoXSec(mu,M1)[0]
+                hists["obs_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mu, M1), v * xSec)
+                hists["exp_dm_UL"].SetBinContent(hists[xSecKey].FindBin(mu, M1), v_exp * xSec)
+                hists["obs_dm_up"].SetBinContent(hists[xSecKey].FindBin(mu, M1), v*scaleup)
+                hists["obs_dm_down"].SetBinContent(hists[xSecKey].FindBin(mu, M1), v*scaledown)
+            
+                if v>0 and xSec>0:
+                    xsecLimits_df.append({'mu':mu, 'M1':M1, 'exp':v_exp * xSec, 'obs': v * xSec})
+                    print "mu: ", mu, "M1: ", M1, "v_exp: ", v_exp,"xSec: ", xSec
 else:
     for ix in range(hists[xSecKey].GetNbinsX()):
         for iy in range(hists[xSecKey].GetNbinsY()):
@@ -497,6 +538,7 @@ for i in ["exp_dm", "exp_dm_down", "exp_dm_up", "obs_dm_up", "obs_dm_down", "obs
         #contourPoints[i][j] = getPoints(g)
         cleanContour(g, model=modelname)
         g = extendContour(g)
+
     contours = max(contours , key=lambda x:x.GetN()).Clone("contour_" + i)
     contours.Draw()
     c1.Print(os.path.join(plotDir, 'contour_%s.png'%i))
