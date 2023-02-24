@@ -55,6 +55,9 @@ def cleanContour(g, model="T2tt"):
             #if y > (x-100) or x>1450 or x<700:
             #if x<700 or x > 1400:
             #    remove.append(i)
+        elif model=="T2-dm_simul": # remove contour on edges for simultaneous plotting
+            if y<10.1 or y>79.9: 
+                remove.append(i)
         else: pass# print model, "not implemented"
     for i in reversed(remove):
         g.RemovePoint(i)

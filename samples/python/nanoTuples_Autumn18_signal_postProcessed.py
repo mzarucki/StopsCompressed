@@ -69,7 +69,7 @@ try:
                 files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'T2bW',f))],
                 treeName = "Events",
                 isData = False,
-                color = 6 ,
+                color = 6,
                 texName = "#tilde{t} #rightarrow t#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}} ("+mStop+","+mNeu+")"
             )
     
@@ -98,7 +98,7 @@ try:
                 files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'TChiWZ',f))],
                 treeName = "Events",
                 isData = False,
-                color = 7 ,
+                color = 7,
                 texName = "#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}} #rightarrow WZ#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}} ("+mCha+","+mNeu+")"
             )
     
@@ -127,7 +127,7 @@ try:
                 files = [os.path.join(os.path.join(data_directory_, postProcessing_directory_,'MSSM',f))],
                 treeName = "Events",
                 isData = False,
-                color = 7 ,
+                color = ROOT.kViolet+1,
                 texName = "Higgsino pMSSM ("+mu+","+M1+")"
             )
     

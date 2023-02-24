@@ -50,13 +50,16 @@ if False:
     sensitivityStudies = sensitivityStudies_
 
 # test
-if True:
+if False:
+    suffix += "_test"
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baseline_redSys_scaled4p3",
+        #"baselinePlusLowMET3_redSys_scaled4p3", 
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ2_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
         #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
         #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
         #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
@@ -64,22 +67,49 @@ if True:
         #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
     ]
 
-# final
-if False:
+# final 1
+if True:
+    suffix += "_final"
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
-        "baseline_redSys_chargeInclusive",
-        #"baseline_redSys_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
-        "baseline_redSys_chargeInclusive_scaled4p3",
-        #"baselinePlusLowMET3_redSys_scaled4p3", 
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
-        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
-        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
-        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
-        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ",
+        "baseline_redSys_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3",
     ]
+
+# final 2
+if False:
+    suffix += "_finalCI"
+    sensitivityStudies = [ # option 1 (2018) 
+        "baseline_redSys", # baseline
+        "baseline_redSys_chargeInclusive",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
+    ]
+    
+    sensitivityStudies = [ # option 2 (scaled) 
+        "baseline_redSys", # baseline
+        "baseline_redSys_chargeInclusive_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
+    ]
+    
+    sensitivityStudies = [ # option 3 (mix) # TODO: max 5 
+        #"baseline_redSys", # baseline
+        "baseline_redSys_chargeInclusive",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
+        "baseline_redSys_chargeInclusive_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
+    ]
+
+labelsColours = {
+    "baseline_redSys":("Baseline", 1), # black
+    "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ":("Baseline + lowMET", 2), # red
+    "baseline_redSys_scaled4p3":("Baseline", 4), # blue
+    "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3":("Baseline + lowMET", 6), # magenta
+}
 
 #ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.LoadMacro('../../../RootTools/plot/scripts/tdrstyle.C')
@@ -115,7 +145,7 @@ elif args.scan == 'MSSM':
 else:
     scanVar = 'dm'
     fixedVar = 'stop'
-    fixedMass = 550
+    fixedMass = 500
     suffix += "_mStop" + str(fixedMass)
 
 
@@ -212,11 +242,12 @@ for i, sens in enumerate(sensitivityStudies):
         a_exp_[sens]      = array('d',exp_[sens]) 
         expM_[sens]        = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_exp_[sens], a_zeros, a_zeros, a_zeros, a_zeros)
         expM_[sens].SetLineWidth(2)
-        expM_[sens].SetLineStyle(2)
-        if i == 3: # avoid yellow
-            expM_[sens].SetLineColor(7)
-        else:
-            expM_[sens].SetLineColor(i+2)
+        expM_[sens].SetLineStyle(2) # 9
+        expM_[sens].SetLineColor(labelsColours[sens][1])
+        #if i == 3: # avoid yellow
+        #    expM_[sens].SetLineColor(7)
+        #else:
+        #    expM_[sens].SetLineColor(i+2)
 
 exp2Sigma   = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_exp, a_zeros, a_zeros, a_exp2Down, a_exp2Up)
 exp1Sigma   = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_exp, a_zeros, a_zeros, a_exp1Down, a_exp1Up)
@@ -225,7 +256,9 @@ obs         = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_obs, a_zeros, a_zeros
 obs1Sigma   = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_obs, a_zeros, a_zeros, a_obsDown, a_obsUp)
 xsecs       = ROOT.TGraphAsymmErrors(len(zeros), a_mass, a_xsecs, a_zeros, a_zeros, a_zeros, a_zeros)
 
-exp2Sigma.SetFillColor(ROOT.kOrange)
+exp2Sigma.SetFillColor(5)
+#exp2Sigma.SetFillColor(ROOT.kOrange)
+#exp2Sigma.SetFillColor(ROOT.kYellow)
 exp1Sigma.SetFillColor(ROOT.kGreen+1)
 obs1Sigma.SetFillStyle(3345)
 obs1Sigma.SetFillColor(ROOT.kGray+2)
@@ -234,11 +267,11 @@ obs1Sigma.SetMarkerSize(0)
 obs1Sigma.SetFillColorAlpha(ROOT.kGray, 0.5)
 
 expM.SetLineWidth(2)
-expM.SetLineStyle(2)
+expM.SetLineStyle(5)
 obs.SetLineWidth(2)
-xsecs.SetLineWidth(2)
+xsecs.SetLineWidth(1)
 #xsecs.SetLineColor(ROOT.kRed+1)
-xsecs.SetLineStyle(3)
+xsecs.SetLineStyle(1) # 3
 
 can = ROOT.TCanvas("can","",700,700)
 can.SetLogy()
@@ -249,7 +282,7 @@ mg = ROOT.TMultiGraph()
 mg.SetTitle("Exclusion graphs")
 mg.Add(exp2Sigma)
 mg.Add(exp1Sigma)
-mg.Add(obs1Sigma)
+#mg.Add(obs1Sigma) # expected only
 y_max = 500
 y_min = 0.05
 if mChi == 10:
@@ -274,6 +307,20 @@ mg.GetXaxis().SetTitle(tp_+" [GeV]")
 mg.GetYaxis().SetTitle("95% CL upper limit #sigma/#sigma_{theory}")
 min_x = min(filteredResults[sensitivityStudies[0]][scanVar].tolist()) if not args.scan == 'mPhi' else 35
 mg.GetXaxis().SetRangeUser(min_x,max(filteredResults[sensitivityStudies[0]][scanVar].tolist()))
+if args.scan == "MSSM": 
+    mg.GetXaxis().SetNdivisions(505)
+    #mg.GetXaxis().ChangeLabel(-1,-1,-1,31) # right adjusted
+    mg.GetXaxis().ChangeLabel(-1,-1,0.)
+    #mg.GetXaxis().SetRangeUser(min_x-75,max(filteredResults[sensitivityStudies[0]][scanVar].tolist())+75)
+    #mg.GetXaxis().SetMaxDigits(3)
+    #mg.GetXaxis().ChangeLabel(5,-1,0.)
+    #mg.GetXaxis().ChangeLabel(7,-1,0.)
+    #mg.GetXaxis().ChangeLabel(9,-1,0.)
+    #can.SetRightMargin(0.05)
+    #mg.GetXaxis().SetLabelSize(0.028)
+    #can.SetBottomMargin(0.12) # adds lines in pdf
+#else:
+#    can.SetBottomMargin(0.1)
 
 xsecs.Draw("l same")
 expM.Draw("l same")
@@ -281,10 +328,10 @@ for i,sens in enumerate(sensitivityStudies):
     if i > 0:
         expM_[sens].Draw("l same")
 if not args.blinded: obs.Draw("l same")
-leg_size = 0.04 * 4
+leg_size = 0.18
 
 
-leg = ROOT.TLegend(0.185,0.79-leg_size,0.5,0.79)
+leg = ROOT.TLegend(0.185,0.79-leg_size,0.6,0.79)
 leg.SetBorderSize(1)
 leg.SetFillColor(0)
 leg.SetLineColor(0)
@@ -299,17 +346,18 @@ elif args.year == 2018:
 else:
     lumi = 137
 
-lumiStr = "#bf{(%s fb^{-1})}"
+lumiStr = "%s fb^{-1}"
+#lumiStr = "#bf{(%s fb^{-1})}"
 
 #leg.AddEntry(obs,"#bf{Observed}",'l')
 #leg.AddEntry(obs1Sigma,"#bf{Observed #pm theory uncertainty}")
-leg.AddEntry(expM,"#bf{Median expected} " + lumiStr%lumi,'l')
-leg.AddEntry(exp1Sigma,"#bf{68% expected} " + lumiStr%lumi,'f')
-leg.AddEntry(exp2Sigma,"#bf{95% expected} " + lumiStr%lumi,'f')
+leg.AddEntry(expM,     "#bf{Median expected (Baseline, %s)}"%lumiStr%lumi,'l')
+leg.AddEntry(exp1Sigma,"#bf{68% expected (Baseline, " + "%s)}"%lumiStr%lumi,'f')
+leg.AddEntry(exp2Sigma,"#bf{95% expected (Baseline, " + "%s)}"%lumiStr%lumi,'f')
 for i, sens in enumerate(sensitivityStudies):
     if i > 0:
         if args.year == 2018 and "scaled4p3" in sens: lumi = 260 # 2018 + Run 3
-        leg.AddEntry(expM_[sens],"#bf{Median expected %i} "%i + lumiStr%lumi,'l')
+        leg.AddEntry(expM_[sens],"#bf{Median expected (%s, %s)}"%(labelsColours[sens][0],lumiStr%lumi),'l')
 leg.Draw()
 
 none = ROOT.TH1F()
@@ -340,14 +388,14 @@ elif args.scan == 'mChi' and args.spin == 'pseudoscalar':
 elif args.scan == 'TChiWZ':
     latex2.DrawLatex(0.20,0.89,'#bf{#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}} #rightarrow WZ#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}}}')
 elif args.scan == 'MSSM':
-    latex2.DrawLatex(0.20,0.89,'Higgsino pMSSM')
+    latex2.DrawLatex(0.20,0.89,'#bf{Higgsino pMSSM}')
 else:
     latex2.DrawLatex(0.20,0.89,'#bf{'+tp_+', Dirac DM, m_{#chi} = '+str(fixedMass)+' GeV}')
 
 if args.scan == 'TChiWZ':
     latex2.DrawLatex(0.20,0.85,'#bf{m_{#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}} = m_{#tilde{#chi}_{#lower[-0.3]{2}}^{#lower[0.4]{0}}} = %s GeV}'%fixedMass)
 elif args.scan == 'MSSM':
-    latex2.DrawLatex(0.20,0.85,'#bf{#mu} = %s GeV'%fixedMass)
+    latex2.DrawLatex(0.20,0.85,'#bf{#mu = %s GeV}'%fixedMass)
 else: 
     latex2.DrawLatex(0.20,0.85,'#bf{g_{q} = 1, g_{DM} = 1}')
     
@@ -360,7 +408,7 @@ latex1.SetNDC()
 latex1.SetTextSize(0.04)
 latex1.SetTextAlign(11) # align right
 latex1.DrawLatex(0.16,0.96,'CMS #bf{#it{'+extraText+'}}')
-latex1.DrawLatex(0.8,0.96,"#bf{13 TeV}")
+latex1.DrawLatex(0.85,0.96,"#bf{13 TeV}")
 #latex1.DrawLatex(0.71,0.96,"#bf{137 fb^{-1} (13 TeV)}")
 
 can.RedrawAxis()

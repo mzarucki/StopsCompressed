@@ -215,6 +215,7 @@ for i, sens in enumerate(sensitivityStudies):
         cMain.Draw()
     else:
         cMain.cd()
+        cleanContour(plots['cont'][sens], "T2-dm_simul")
         plots['cont'][sens].SetLineColor(i+2) # ignoring black and red and starting from green
         plots['cont'][sens].SetLineStyle(1)
         plots['cont'][sens].SetLineWidth(2)

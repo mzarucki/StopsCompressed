@@ -61,7 +61,7 @@ if year == "2018":
     # Signals
     from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ, signals_MSSM
     signals      = signals_T2tt + signals_T2bW + signals_TChiWZ + signals_MSSM
-    #sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # just choosing benchmark signals
+    #sigList = ["T2tt_500_420", "T2tt_500_460", "T2tt_500_490", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # just choosing benchmark signals
     selSignals = [s for s in signals if s.name in samples]
     assert len(selSignals) <= 1 # one signal at a time
     #assert len(sigList) == len(selSignals)
@@ -93,7 +93,7 @@ if selSignals:
 
 plotsDict = {
    "lep_mt"    :{'var':"mt",                 "bins":[40,0,200],      "decor":{"title":"lepMt",                         "x":"m_{{T}}({lepLatex})",                 "y":"Events", 'log':[0,log,0]}},
-   "lep_pt"    :{'var':"l1_pt",              "bins":[40,0,200],      "decor":{"title":"lepPt",                         "x":"p_{{T}}({lepLatex})",                 "y":"Events", 'log':[0,log,0]}},
+   "lep_pt"    :{'var':"l1_pt",              "bins":[50,0,100],      "decor":{"title":"lepPt",                         "x":"p_{{T}}({lepLatex})",                 "y":"Events", 'log':[0,log,0]}},
    "lep_eta"   :{'var':"l1_eta",             "bins":[20,-3,3],       "decor":{"title":"lepEta",                        "x":"#eta({lepLatex})",                    "y":"Events", 'log':[0,log,0]}},
    "lep_phi"   :{'var':"l1_phi",             "bins":[60,-3.15,3.15], "decor":{"title":"lepPhi",                        "x":"#phi({lepLatex})",                    "y":"Events", 'log':[0,log,0]}},
    "lep_dxy"   :{'var':"l1_dxy",             "bins":[40,-0.02,0.02], "decor":{"title":"lepDxy",                        "x":"d_{{xy}}({lepLatex})",                "y":"Events", 'log':[0,log,0]}},
@@ -102,9 +102,9 @@ plotsDict = {
    "lep_dz"    :{'var':"l1_dz",              "bins":[40,-0.1,0.1],   "decor":{"title":"lepDz",                         "x":"d_{{z}}({lepLatex})",                 "y":"Events", 'log':[0,log,0]}},
    "lep_dzErr" :{'var':"l1_dzErr",           "bins":[40,0,0.1],      "decor":{"title":"lepDzErr",                      "x":"#sigma_{{dz}}({lepLatex})",           "y":"Events", 'log':[0,log,0]}},
    "lep_dzSig" :{'var':"(l1_dz/l1_dzErr)",   "bins":[40,-10,10],     "decor":{"title":"lepDzSig",                      "x":"d_{{z}}/#sigma_{{dz}}({lepLatex})",   "y":"Events", 'log':[0,log,0]}},
-   "MET"       :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"E^{miss}_{T}",                        "y":"Events", 'log':[0,log,0]}},
-   "MET_phi"   :{'var':"MET_phi",            "bins":[60,-3.15,3.15], "decor":{"title":"METPhi",                        "x":"#phi(E^{miss}_{T})",                  "y":"Events", 'log':[0,log,0]}},
-   "genMET"    :{'var':"GenMET_pt",          "bins":[40,200,1000],   "decor":{"title":"Generated MET",                 "x":"Gen. E^{miss}_{T}",                   "y":"Events", 'log':[0,log,0]}},
+   "MET"       :{'var':"MET_pt",             "bins":[40,200,1000],   "decor":{"title":"MET",                           "x":"p^{miss}_{T}",                        "y":"Events", 'log':[0,log,0]}},
+   "MET_phi"   :{'var':"MET_phi",            "bins":[60,-3.15,3.15], "decor":{"title":"METPhi",                        "x":"#phi(p^{miss}_{T})",                  "y":"Events", 'log':[0,log,0]}},
+   "genMET"    :{'var':"GenMET_pt",          "bins":[40,200,1000],   "decor":{"title":"Generated MET",                 "x":"Gen. p^{miss}_{T}",                   "y":"Events", 'log':[0,log,0]}},
    "HT"        :{'var':"HT",                 "bins":[40,200,1000],   "decor":{"title":"HT",                            "x":"H_{T}",                               "y":"Events", 'log':[0,log,0]}},
    "CT1"       :{'var':"CT1",                "bins":[40,100,1000],   "decor":{"title":"CT1",                           "x":"C_{T1}",                              "y":"Events", 'log':[0,log,0]}},
    "CT2"       :{'var':"CT2",                "bins":[40,100,1000],   "decor":{"title":"CT2",                           "x":"C_{T2}",                              "y":"Events", 'log':[0,log,0]}},
@@ -172,7 +172,10 @@ if args.region not in [None, "presel"]:
     region = getattr(regions, args.region)
 
 c1 = ROOT.TCanvas("c1", "Canvas 1", 1800, 1500)
-c1.SetRightMargin(0.1)
+if len(samples) > 1: # simultaneous
+    c1.SetRightMargin(0.1)
+else:
+    c1.SetRightMargin(0.18)
 
 presel = setup.preselection("MC", channel = channel)
     
@@ -191,7 +194,7 @@ weight_str = presel["weightStr"] + "* {lumi_weight}".format(lumi_weight = lumi_f
 hists = {}
     
 if drawLegend:
-    leg = ROOT.TLegend(0.65, 0.2, 0.85, 0.4)
+    leg = ROOT.TLegend(0.55, 0.2, 0.85, 0.4)
 
 for i, samp in enumerate(samples):
     if "T2tt" in samp:
@@ -237,7 +240,7 @@ for i, samp in enumerate(samples):
         dOpt = "scat" #"box"
         dOpt += " same"
         #if i > 1: dOpt += " same"
-        if 'T2' in samp or 'TChi' in samp:
+        if 'T2' in samp or 'TChi' in samp or 'MSSM' in samp:
             hists[samp].SetMarkerStyle(3)
             hists[samp].SetMarkerSize(2)
         else:
@@ -258,8 +261,9 @@ for i, samp in enumerate(samples):
     if drawLegend:
         leg.AddEntry("hist_%s"%samp, samplesDict[samp].texName, "P")
 
-leg.SetBorderSize(0)
-leg.Draw()
+if drawLegend:
+    leg.SetBorderSize(0)
+    leg.Draw()
    
 c1.Modified()
 c1.Update()

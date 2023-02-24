@@ -61,7 +61,8 @@ if year == "2018":
     # Signals
     from StopsCompressed.samples.nanoTuples_Autumn18_signal_postProcessed import signals_T2tt, signals_T2bW, signals_TChiWZ, signals_MSSM
     signals = signals_T2tt + signals_T2bW + signals_TChiWZ + signals_MSSM
-    sigList = ["T2tt_550_470", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
+    sigList = ["T2tt_500_420", "T2tt_500_490", "TChiWZ_200_150", "TChiWZ_200_190"] # benchmark signals: mStop = 500; mCha = 200 GeV
+    #sigList = ["T2tt_550_470", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     #sigList = ["T2tt_550_470", "T2tt_550_540", "MSSM_100_400", "MSSM_100_1000"] # benchmark signals: mStop = 550; mu = 100 GeV
     #sigList = ["T2tt_550_470", "T2tt_550_510", "T2tt_550_540", "TChiWZ_200_150", "TChiWZ_200_170", "TChiWZ_200_190"] # benchmark signals: mStop = 550; mCha = 200 GeV
     selSignals = [s for s in signals if s.name in sigList]
@@ -445,8 +446,10 @@ for p in plotList:
             leg.AddEntry("hist_%s_%s"%(samp,p), samplesDict[samp].texName, "F")
         leg.SetBorderSize(0)
         leg.Draw()
-
-        alignLegend(leg, x1 = 0.7, x2 = 0.9, y1 = 0.5, y2 = 0.85)
+        if 'charge' in p:
+            alignLegend(leg, x1 = 0.45, x2 = 0.65, y1 = 0.5, y2 = 0.85)
+        else:
+            alignLegend(leg, x1 = 0.7, x2 = 0.9, y1 = 0.5, y2 = 0.85)
         ret['legs'].append(leg)
 
     if fom:

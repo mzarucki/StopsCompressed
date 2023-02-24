@@ -160,8 +160,8 @@ setup = Setup(year=year)
 
 # Define CR
 # Define channels for CR
-setup.channels = ['mu'] #lepChannels # NOTE = ['mu', 'e']
-#setup.channels = allChannels # NOTE: = ['all']
+#setup.channels = ['mu'] #lepChannels # NOTE = ['mu', 'e']
+setup.channels = allChannels # NOTE: = ['all']
 
 # Define regions for CR
 if args.controlOnly:
@@ -179,7 +179,7 @@ estList.remove('Data')
 setup.estimators     = estimators.constructEstimatorList(estList) # method just converts it to a list..
 setups = [setup]
 
-suffix = "mu" #"comb" # "mu" "el"
+suffix = "comb" # "mu" "el"
 
 if args.scale != 1.0:
     suffix += "_scaled%s"%str(args.scale).replace(".","p")

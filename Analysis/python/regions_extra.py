@@ -62,7 +62,7 @@ SR1Z3_vTightIPZ_tightID  = SR1Z3 + Region("abs(l1_dxy)", (0,0.0015)) + Region("a
 
 ## SR1Z + higher MET
 
-tightMuon = Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0.0012,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
+tightMuon = Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
 
 SR1Z1to3 = SR1Z_base + SRZ + Region("MET_pt", (200,300))
 SR1Z1to5 = SR1Z_base + SRZ + Region("MET_pt", (200,-999)) + Region("CT1", (0,300))
