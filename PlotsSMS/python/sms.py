@@ -3,14 +3,16 @@ from array import *
 class sms():
 
     def __init__(self, modelname):
-        if modelname.find("T1tttt")   != -1: self.T1tttt()
-        if modelname.find("T1bbbb")   != -1: self.T1bbbb()
-        if modelname.find("T1qqqq")   != -1: self.T1qqqq()
-        if modelname.find("T2tt")     != -1: self.T2tt()
-        if modelname.find("T2bW")     != -1: self.T2bW()
-        if modelname.find("T2bt")     != -1: self.T2bt()
-        if modelname.find("T2deg_dm") != -1: self.T2deg_dm()
-        if modelname.find("TChiWZ_dm")   != -1: self.TChiWZ_dm()
+        if modelname.find("T1tttt")    != -1: self.T1tttt()
+        if modelname.find("T1bbbb")    != -1: self.T1bbbb()
+        if modelname.find("T1qqqq")    != -1: self.T1qqqq()
+        if modelname.find("T2tt")      != -1: self.T2tt()
+        if modelname.find("T2bW")      != -1: self.T2bW()
+        if modelname.find("T2bt")      != -1: self.T2bt()
+        if modelname.find("T2tt_dm")   != -1: self.T2tt_dm()
+        if modelname.find("T2bW_dm")   != -1: self.T2bW_dm()
+        if modelname.find("TChiWZ_dm") != -1: self.TChiWZ_dm()
+        if modelname.find("MSSM")      != -1: self.MSSM()
         if modelname.find("T8bbllnunu_XCha0p5_XSlep0p05") != -1: self.T8bbllnunu_XCha0p5_XSlep0p05()
         if modelname.find("T8bbllnunu_XCha0p5_XSlep0p09") != -1: self.T8bbllnunu_XCha0p5_XSlep0p09()
         if modelname.find("T8bbllnunu_XCha0p5_XSlep0p5") != -1: self.T8bbllnunu_XCha0p5_XSlep0p5()
@@ -112,11 +114,33 @@ class sms():
         #self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
         # turn off diagonal lines
         #self.diagOn = False
-    def T2deg_dm(self):
+
+    def T2tt_dm(self):
         # model name
-        self.modelname = "T2deg_dm"
+        self.modelname = "T2tt_dm"
         # decay chain
         self.label= "pp #rightarrow #tilde{t} #bar{#tilde{t}}, #tilde{t} #rightarrow b f f' #tilde{#chi}^{0}_{1}";
+        # scan range to plot
+        #changes wrt degStop1l dm plot
+        self.Xmin = 250.
+        self.Xmax = 800.
+        self.Ymin = 10.
+        self.Ymax = 107. # max dm = 80 GeV
+        self.Zmin = 0.1
+        self.Zmax = 100.
+        #produce sparticle
+        self.sParticle = "m_{#tilde{t}} (GeV)"
+        # LSP
+        self.LSP = "#Deltam(#tilde{t},#tilde{#chi}^{0}_{1}) [GeV]" 
+        # turn off diagonal lines
+        self.diagOn = False
+
+    def T2bW_dm(self):
+        # model name
+        self.modelname = "T2bW_dm"
+        # decay chain
+        self.label= "pp #rightarrow #tilde{t}_{1} #bar{#tilde{t}}_{1}, #tilde{t}_{1} #rightarrow b#tilde{#chi}^{+}_{1} #rightarrow bW^{+}#tilde{#chi}^{0}_{1}";
+        self.mSlep = "m_{#tilde{#chi}^{#pm}_{1}} = 0.5 (m_{#tilde{t}_{1}} + m_{#tilde{#chi}^{0}_{1}})" #use mSlep since it's drawn on top
         # scan range to plot
         #changes wrt degStop1l dm plot
         self.Xmin = 250.
@@ -148,6 +172,25 @@ class sms():
         self.sParticle = "m_{#tilde{#chi}^{#pm}_{1}} = m_{#tilde{#chi}^{0}_{2}} (GeV)"
         # LSP
         self.LSP = "#Deltam(#tilde{#chi}^{#pm}_{1}, #tilde{#chi}^{0}_{1}) [GeV]" 
+        # turn off diagonal lines
+        self.diagOn = False
+    
+    def MSSM(self):
+        # model name
+        self.modelname = "MSSM"
+        # decay chain
+        self.label= "Higgsino pMSSM"
+        # scan range to plot
+        self.Xmin = 100. # mu
+        self.Xmax = 240.
+        self.Ymin = 300. # M1
+        self.Ymax = 1200. 
+        self.Zmin = 0.1
+        self.Zmax = 100.
+        #produce sparticle
+        self.sParticle = "#mu"
+        # LSP
+        self.LSP = "M_1"
         # turn off diagonal lines
         self.diagOn = False
 

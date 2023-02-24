@@ -112,9 +112,9 @@ sensitivityStudies = [ # baseline
 ]
 if options.signal == "TChiWZ":    
     sensitivityStudies.extend([
-        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        "baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
+        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        #"baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        "baselinePlusLowPlusHighMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
     ])
 
 #sensitivityStudies = [ # baseline with 4mT regions
@@ -216,9 +216,10 @@ for i, sens in enumerate(sensitivityStudies):
     else:
         cMain.cd()
         cleanContour(plots['cont'][sens], "T2-dm_simul")
-        plots['cont'][sens].SetLineColor(i+2) # ignoring black and red and starting from green
-        plots['cont'][sens].SetLineStyle(1)
-        plots['cont'][sens].SetLineWidth(2)
+        plots['cont'][sens].SetLineColor(i+1) # ignoring black and red and starting from green
+        #plots['cont'][sens].SetLineColor(i+2) # ignoring black and red and starting from green
+        plots['cont'][sens].SetLineStyle(7)
+        plots['cont'][sens].SetLineWidth(4)
         plots['cont'][sens].Draw('same')
         
 for ext in [".root", ".png", ".pdf"]:

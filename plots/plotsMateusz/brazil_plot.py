@@ -68,7 +68,7 @@ if False:
     ]
 
 # final 1
-if True:
+if False:
     suffix += "_final"
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
@@ -78,29 +78,15 @@ if True:
     ]
 
 # final 2
-if False:
+if True:
     suffix += "_finalCI"
-    sensitivityStudies = [ # option 1 (2018) 
-        "baseline_redSys", # baseline
-        "baseline_redSys_chargeInclusive",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
-    ]
     
-    sensitivityStudies = [ # option 2 (scaled) 
-        "baseline_redSys", # baseline
-        "baseline_redSys_chargeInclusive_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
-    ]
-    
-    sensitivityStudies = [ # option 3 (mix) # TODO: max 5 
-        #"baseline_redSys", # baseline
+    sensitivityStudies = [
         "baseline_redSys_chargeInclusive",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ", # not a fair comparison (better in some higher dm though)
         "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive",
         "baseline_redSys_chargeInclusive_scaled4p3",
-        "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3",
+        #"baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusiveZ_scaled4p3", # not a fair comparison (better in some higher dm though)
         "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3",
     ]
 
@@ -109,6 +95,11 @@ labelsColours = {
     "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ":("Baseline + lowMET", 2), # red
     "baseline_redSys_scaled4p3":("Baseline", 4), # blue
     "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_scaled4p3":("Baseline + lowMET", 6), # magenta
+        
+    "baseline_redSys_chargeInclusive":("Baseline, Q^{#pm}", 1), # black
+    "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive":("Baseline + lowMET, Q^{#pm}", 2), # red
+    "baseline_redSys_chargeInclusive_scaled4p3":("Baseline, Q^{#pm}", 4), # blue
+    "baselinePlusLowMET3_redSys_4mTregionsZ_ratioCTZ_highPtBinZ60_vTightMuonsZ_chargeInclusive_scaled4p3":("Baseline + lowMET, Q^{#pm}", 6), # magenta
 }
 
 #ROOT.gROOT.SetBatch(True)
@@ -300,7 +291,7 @@ if args.scan == 'mPhi':
 elif args.scan == 'TChiWZ':
     tp_ = '#Deltam(#tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{#pm}}, #tilde{#chi}_{#lower[-0.3]{1}}^{#lower[0.4]{0}})'
 elif args.scan == 'MSSM':
-    tp_ = 'M1'
+    tp_ = 'M_{1}'
 else:
     tp_ = 'm_{#chi}'
 mg.GetXaxis().SetTitle(tp_+" [GeV]")
@@ -354,6 +345,9 @@ lumiStr = "%s fb^{-1}"
 leg.AddEntry(expM,     "#bf{Median expected (Baseline, %s)}"%lumiStr%lumi,'l')
 leg.AddEntry(exp1Sigma,"#bf{68% expected (Baseline, " + "%s)}"%lumiStr%lumi,'f')
 leg.AddEntry(exp2Sigma,"#bf{95% expected (Baseline, " + "%s)}"%lumiStr%lumi,'f')
+#leg.AddEntry(expM,     "#bf{Median expected (Baseline, Q^{#pm}, %s)}"%lumiStr%lumi,'l')
+#leg.AddEntry(exp1Sigma,"#bf{68% expected (Baseline, Q^{#pm}, " + "%s)}"%lumiStr%lumi,'f')
+#leg.AddEntry(exp2Sigma,"#bf{95% expected (Baseline, Q^{#pm}, " + "%s)}"%lumiStr%lumi,'f')
 for i, sens in enumerate(sensitivityStudies):
     if i > 0:
         if args.year == 2018 and "scaled4p3" in sens: lumi = 260 # 2018 + Run 3

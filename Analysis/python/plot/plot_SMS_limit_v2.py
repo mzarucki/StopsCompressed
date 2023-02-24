@@ -516,8 +516,12 @@ c1.Print(os.path.join(plotDir, 'limit.png'))
 
 if signalString == "TChiWZ":
     modelname = 'TChiWZ_dm'
-else:
-    modelname = 'T2deg_dm'
+elif signalString == "T2bW":
+    modelname = 'T2bW_dm'
+elif signalString == "MSSM":
+    modelname = 'MSSM'
+else: # T2tt
+    modelname = 'T2tt_dm'
 
 temp = ROOT.TFile("tmp.root","recreate")
 
