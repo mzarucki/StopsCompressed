@@ -32,9 +32,9 @@ class sms():
         self.Zmin = 0.001
         self.Zmax = 2.
         # produce sparticle
-        self.sParticle = "m_{#tilde{g}} (GeV)"
+        self.sParticle = "m_{#tilde{g}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
         
@@ -51,9 +51,9 @@ class sms():
         self.Zmin = 0.001
         self.Zmax = 2.
         # produce sparticle
-        self.sParticle = "m_{#tilde{g}} (GeV)"
+        self.sParticle = "m_{#tilde{g}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -70,9 +70,9 @@ class sms():
         self.Zmin = 0.001
         self.Zmax = 2.
         # produce sparticle
-        self.sParticle = "m_{#tilde{g}} (GeV)"
+        self.sParticle = "m_{#tilde{g}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -90,9 +90,9 @@ class sms():
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle
-        self.sParticle = "m_{#tilde{t}} (GeV)"
+        self.sParticle = "m_{#tilde{t}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{0}^{1}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{0}^{1}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
         #mW = 80
@@ -109,9 +109,9 @@ class sms():
         #self.Zmin = 0.001
         #self.Zmax = 100.
         # produce sparticle
-        #self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        #self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        #self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        #self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         #self.diagOn = False
 
@@ -129,7 +129,7 @@ class sms():
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle
-        self.sParticle = "m_{#tilde{t}} (GeV)"
+        self.sParticle = "m_{#tilde{t}} [GeV]"
         # LSP
         self.LSP = "#Deltam(#tilde{t},#tilde{#chi}^{0}_{1}) [GeV]" 
         # turn off diagonal lines
@@ -150,7 +150,7 @@ class sms():
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle
-        self.sParticle = "m_{#tilde{t}} (GeV)"
+        self.sParticle = "m_{#tilde{t}} [GeV]"
         # LSP
         self.LSP = "#Deltam(#tilde{t},#tilde{#chi}^{0}_{1}) [GeV]" 
         # turn off diagonal lines
@@ -169,7 +169,7 @@ class sms():
         self.Zmin = 0.1
         self.Zmax = 100.
         #produce sparticle
-        self.sParticle = "m_{#tilde{#chi}^{#pm}_{1}} = m_{#tilde{#chi}^{0}_{2}} (GeV)"
+        self.sParticle = "m_{#tilde{#chi}^{#pm}_{1}} = m_{#tilde{#chi}^{0}_{2}} [GeV]"
         # LSP
         self.LSP = "#Deltam(#tilde{#chi}^{#pm}_{1}, #tilde{#chi}^{0}_{1}) [GeV]" 
         # turn off diagonal lines
@@ -208,9 +208,9 @@ class sms():
         self.Zmin = 0.001
         self.Zmax = 100.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -227,9 +227,9 @@ class sms():
         self.Zmin = 0.001
         self.Zmax = 100.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -249,9 +249,9 @@ class sms():
         self.Zmin = 0.0001
         self.Zmax = 500.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -271,9 +271,9 @@ class sms():
         self.Zmin = 0.0001
         self.Zmax = 500.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -293,9 +293,9 @@ class sms():
         self.Zmin = 0.0001
         self.Zmax = 500.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False
 
@@ -315,8 +315,8 @@ class sms():
         self.Zmin = 0.0001
         self.Zmax = 500.
         # produce sparticle
-        self.sParticle = "m_{#tilde{t}_{1}} (GeV)"
+        self.sParticle = "m_{#tilde{t}_{1}} [GeV]"
         # LSP
-        self.LSP = "m_{#tilde{#chi}_{1}^{0}} (GeV)"
+        self.LSP = "m_{#tilde{#chi}_{1}^{0}} [GeV]"
         # turn off diagonal lines
         self.diagOn = False

@@ -10,6 +10,7 @@ from Workspace.DegenerateStopAnalysis.tools.degTools import getStackFromHists, s
 from Workspace.HEPHYPythonTools.helpers import getChain, getPlotFromChain, getYieldFromChain
 
 from StopsCompressed.Tools.genFilter import genFilter
+from StopsCompressed.Tools.niceColorPalette import niceColorPalette
 
 #Sets TDR style
 #setup_style()
@@ -172,6 +173,8 @@ if args.region not in [None, "presel"]:
     region = getattr(regions, args.region)
 
 c1 = ROOT.TCanvas("c1", "Canvas 1", 1800, 1500)
+niceColorPalette(255)
+
 if len(samples) > 1: # simultaneous
     c1.SetRightMargin(0.1)
 else:
@@ -229,8 +232,8 @@ for i, samp in enumerate(samples):
     if genEff != 1: hists[samp].Scale(genEff)
     hists[samp].SetName("2D_" + var1 + "_" + var2)
     hists[samp].SetTitle(plotsDict[var1]['decor']['title'] + " vs " + plotsDict[var2]['decor']['title'] + " Distribution (%s)"%args.region)
-    hists[samp].GetXaxis().SetTitle("%s / GeV"%plotsDict[var1]['decor']['x'])
-    hists[samp].GetYaxis().SetTitle("%s / GeV"%plotsDict[var2]['decor']['x'])
+    hists[samp].GetXaxis().SetTitle("%s [GeV]"%plotsDict[var1]['decor']['x'])
+    hists[samp].GetYaxis().SetTitle("%s [GeV]"%plotsDict[var2]['decor']['x'])
     hists[samp].GetXaxis().SetTitleOffset(0.9) 
     hists[samp].GetYaxis().SetTitleOffset(1.2) 
     hists[samp].GetZaxis().SetTitleOffset(0.9)

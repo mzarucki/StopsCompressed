@@ -232,8 +232,6 @@ if args.plotBins:     labels = filter( lambda (i,(lab, ch, reg)): lab in args.pl
 if args.plotRegions:  labels = filter( lambda (i,(lab, ch, reg)): reg in args.plotRegions, labels )
 if args.plotChannels: labels = filter( lambda (i,(lab, ch, reg)): ch in args.plotChannels, labels )
 
-print "Final labels:", labels
-
 crName    = [ cr for i, (year, lep, cr) in labels ]
 plotBins  = [ i  for i, (year, lep, cr) in labels ]
 crLabel   = map( lambda (i,(year, ch, lab)): ", ".join( [ ch.replace("mu","#mu").replace("tight","") ] ), labels )
@@ -247,8 +245,7 @@ nBins     = len(crLabel)
 
 # region plot, sorted/not sorted, w/ or w/o +-1sigma changes in one nuisance
 def plotRegions(sorted=True):
-    
-    resHisto = (Results.getRegionHistos( postFit=args.postFit, plotBins=plotBins, nuisances=args.plotNuisances, addStatOnlyHistos=True, bkgSubstracted=args.bkgSubstracted, labelFormater=labelFormater ))
+    resHisto = (Results.getRegionHistos( postFit=args.postFit, plotBins=plotBins, nuisances=args.plotNuisances, addStatOnlyHistos=True, bkgSubstracted=args.bkgSubstracted, labelFormater=labelFormater))
 
     F = ROOT.TFile("myfile.root", "recreate")
     for hist_name in resHisto["Bin0"].keys() :
@@ -273,7 +270,7 @@ def plotRegions(sorted=True):
                 
         shift += regionMapping[j]+1#resHisto[creg][proc].GetNbinsX()
 
-    labels = regionNames 
+    labels = regionNames  # these are different to the labels defined globally..
     #labels = [str(k) for k in range(0,_NBINS)]
     #labels = 2*(["VL","L","M","H","VH","CR"]*4+["L","M","H","VH","CR"]*4)
     for p in hists.keys() : 
@@ -282,9 +279,9 @@ def plotRegions(sorted=True):
             hists[p].LabelsOption("v","X") #"vu" for 45 degree labels
 
 
-    hists["data"].style        = styles.errorStyle( ROOT.kBlack )
-    hists["data"].legendText   = "data" if not args.bkgSubstracted else "data (syst + total error)"
-    hists["data"].legendOption = "ep" if args.bkgSubstracted else "p"
+    #hists["data"].style        = styles.errorStyle( ROOT.kBlack )
+    #hists["data"].legendText   = "Data" if not args.bkgSubstracted else "data (syst + total error)"
+    #hists["data"].legendOption = "ep" if args.bkgSubstracted else "p"
 
     
     
@@ -312,6 +309,7 @@ def plotRegions(sorted=True):
     histModifications += [lambda h: h.GetYaxis().SetLabelSize(formatSettings(nBins)["ylabelsize"])]
     histModifications += [lambda h: h.GetYaxis().SetTitleOffset(formatSettings(nBins)["textoffset"])]
     #histModifications += [ setPTBinLabels(ptLabels, crName, fac=formatSettings(nBins)["offsetfactor"]*hists["total"].GetMaximum())]
+    histModifications += [lambda h: h.GetXaxis().SetRangeUser(minbin,maxbin)]
 
     ratioHistModifications  = []
     ratioHistModifications += [lambda h: h.GetYaxis().SetTitleSize(formatSettings(nBins)["textsize"])]
@@ -335,19 +333,26 @@ def plotRegions(sorted=True):
     # ratioHistos = [item for sublist in ratioHistos_list for item in sublist]
     
     plots, ratioHistos = Results.getRegionHistoList( hists, processes=processes, noData=False, sorted=sorted, bkgSubstracted=args.bkgSubstracted )
-
     addon = []
     if args.bkgSubstracted: addon += ["bkgSub"]
     if args.substituteCard: addon += ["rebinned"] + [ cr for cr in args.substituteCard.split("_") if cr not in args.cardfile.split("_") ]
     if args.plotNuisances:  addon += args.plotNuisances
     if args.postFit:        addon += ["postFit"]
-
+   
+    # hard-coded bin filtering.. (plotBins is a mess) 
+    addon += ["CRs"]    # Bins 0 - 76 
+    #addon += ["SR1ab"] # Bins 76 - 156 
+    #addon += ["SR1cd"] # Bins 156 - 226 
+    #addon += ["SR2ab"] # Bins 226 - 306 
+    #addon += ["SR2cd"] # Bins 306 - 376
+    minbin = 0
+    maxbin = 76 
     # plot name
     if   args.plotRegions and args.plotChannels: plotName = "_".join( ["regions"] + addon + args.plotRegions + [ch for ch in args.plotChannels if not "tight" in ch] )
     elif args.plotBins    and args.plotChannels: plotName = "_".join( ["bins"]    + addon + args.plotBins + [ch for ch in args.plotChannels if not "tight" in ch] )
     elif args.plotRegions:                       plotName = "_".join( ["regions"] + addon + args.plotRegions )
     elif args.plotChannels:                      plotName = "_".join( ["regions"] + addon + [ch for ch in args.plotChannels if not "tight" in ch] )
-    else:                                        plotName = "_".join( ["controlRegions"] + addon )
+    else:                                        plotName = "_".join( ["allRegions"] + addon )
     
     
     plotting.draw(
@@ -361,7 +366,7 @@ def plotRegions(sorted=True):
         legend            = [ (0.2, 0.86 if args.bkgSubstracted else formatSettings(nBins)["legylower"], 0.9, 0.9), formatSettings(nBins)["legcolumns"] ],
         widths            = { "x_width":formatSettings(nBins)["padwidth"], "y_width":formatSettings(nBins)["padheight"], "y_ratio_width":formatSettings(nBins)["padratio"] },
         yRange            = ( 0.01, hists["total"].GetMaximum()*formatSettings(nBins)["heightFactor"] ),
-        ratio             = { "yRange": ((1-minMax)*0.99, (1+minMax)*1.01), "texY":"Theory/Data" if args.bkgSubstracted else "Data/MC", "histos":ratioHistos, "drawObjects":ratio_boxes if not args.bkgSubstracted else [], "histModifications":ratioHistModifications },
+        ratio             = None, #{ "yRange": ((1-minMax)*0.99, (1+minMax)*1.01), "texY":"Theory/Data" if args.bkgSubstracted else "Data/MC", "histos":ratioHistos, "drawObjects":ratio_boxes if not args.bkgSubstracted else [], "histModifications":ratioHistModifications }, # FIXME with s/sqrt(b)?
         drawObjects       = drawObjects_,
         histModifications = histModifications,
         copyIndexPHP      = False,

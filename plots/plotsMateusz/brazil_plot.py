@@ -68,7 +68,7 @@ if False:
     ]
 
 # final 1
-if False:
+if True:
     suffix += "_final"
     sensitivityStudies = [ 
         "baseline_redSys", # baseline
@@ -78,7 +78,7 @@ if False:
     ]
 
 # final 2
-if True:
+if False:
     suffix += "_finalCI"
     
     sensitivityStudies = [
@@ -419,7 +419,7 @@ if not os.path.isdir(plot_dir):
 if not args.blinded:
     plot_dir += '/brazil_%s_scan_%s%s'%(tp, args.scan, suffix)
 else:
-    plot_dir += '/brazil_%s_scan_%s%s_blinded'%(tp, scanVar, suffix)
+    plot_dir += '/brazil_%s_scan_%s%s_blinded'%(tp, args.scan, suffix)
 
 filetypes = [".pdf",".png",".root"]
 
