@@ -14,7 +14,7 @@ from StopsCompressed.Analysis.Region import Region
 # nSR + nCR = 392 regions
 
 # tight muon selection
-tightMuon = Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0.0012,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
+tightMuon = Region("abs(l1_dxy)", (0,0.0015)) + Region("abs(l1_dz)", (0,0.003)) + Region("l1_dxyErr", (0,0.0022)) + Region("l1_dzErr", (0,0.004)) + Region("Muon_tightId[l1_muIndex[0]]", (1,1))
 
 ### SR1
 SR1 = Region("nSoftBJets", (0,0)) + Region("nHardBJets", (0,0)) #NOTE: reduced MET and HT cuts in Setup.py 
